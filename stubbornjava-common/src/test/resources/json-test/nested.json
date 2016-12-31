@@ -1,0 +1,12 @@
+{
+  "foo": "test",
+  "nested1": {
+    "bar": "test",
+    "nested2": {
+      "baz": "test",
+      "nested3": {
+        "message": "Nested!"
+      }
+    }
+  }
+}

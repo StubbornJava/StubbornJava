@@ -1,0 +1,3 @@
+rootProject.name = 'stubbornjava-parent'
+
+include 'stubbornjava-undertow', 'stubbornjava-common'
