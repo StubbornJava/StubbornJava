@@ -11,7 +11,7 @@ import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
 import com.typesafe.config.ConfigRenderOptions;
 
-//{{start:config}}
+// {{start:config}}
 public class Configs {
     private static final Logger logger = LoggerFactory.getLogger(Configs.class);
     /*
@@ -68,4 +68,4 @@ public class Configs {
         Configs.properties();
     }
 }
-//{{end:config}}
+// {{end:config}}
