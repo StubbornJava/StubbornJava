@@ -21,6 +21,21 @@ public class JsonTest {
      */
 
     @Test
+    public void jsonSerializingShouldPass() {
+        // {{start:toJson}}
+        Message message = new Message(LocalDate.of(2017, 1, 1), "Happy New Year!");
+        String json = Json.serializer().toString(message);
+        // {{end:toJson}}
+
+        // {{start:fromJson}}
+        String expectedJson = Resources.asString("json-test/full-message.json");
+        Message expectedMessage = Json.serializer().fromJson(expectedJson, new TypeReference<Message>() {});
+        // {{end:fromJson}}
+
+        assertEquals(expectedMessage, Json.serializer().fromJson(json, new TypeReference<Message>() {}));
+    }
+
+    @Test
     public void parseShouldNotFailOnFullMessage() {
         String rawJson = Resources.asString("json-test/full-message.json");
         Message message = Json.serializer().fromJson(rawJson, new TypeReference<Message>() {});
@@ -70,6 +85,7 @@ public class JsonTest {
         assertEquals(message, Json.serializer().fromJson(actualJson, new TypeReference<Message>() {}));
     }
 
+    // {{start:pojo}}
     private static class Message {
         private final LocalDate date;
         private final String message;
@@ -85,6 +101,7 @@ public class JsonTest {
         public String getMessage() {
             return message;
         }
+        // {{end:pojo}}
         @Override
         public int hashCode() {
             final int prime = 31;
