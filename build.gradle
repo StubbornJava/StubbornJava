@@ -10,10 +10,11 @@ buildscript {
 def jacksonV = '2.8.5'
 def okhttpV = '3.4.1'
 def slf4jV = '1.7.21'
+def logbackV = '1.1.8'
 def undertowV = '1.3.22.Final'
 def metricsV = '3.1.2'
 def guavaV = '19.0'
-
+def typesafeConfigV = '1.3.1'
 // Test
 def junitV = '4.12'
 
@@ -31,8 +32,13 @@ ext {
         , [group: 'io.dropwizard.metrics', name: 'metrics-json', version: metricsV]
     ]
     undertowLib = [[group: 'io.undertow', name: 'undertow-core', version: undertowV]]
-    slf4jLib = [[group: 'org.slf4j', name: 'slf4j-api', version: slf4jV]]
+    loggingLib = [
+        [group: 'org.slf4j', name: 'slf4j-api', version: slf4jV]
+        , [group: 'ch.qos.logback', name: 'logback-classic', version: logbackV]
+        
+    ]
     guavaLib = [[group: 'com.google.guava', name: 'guava', version: guavaV]]
+    typesafeConfigLib = [[group: 'com.typesafe', name: 'config', version: typesafeConfigV]]
 
     junitLib = [[group: 'junit', name: 'junit', version: junitV]]
 }
