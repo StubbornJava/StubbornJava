@@ -22,6 +22,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 public class Json {
     private static final Logger logger = LoggerFactory.getLogger(Json.class);
 
+    // {{start:setup}}
     private static final Json DEFAULT_SERIALIZER;
     static {
         ObjectMapper mapper = new ObjectMapper();
@@ -44,17 +45,15 @@ public class Json {
 
         DEFAULT_SERIALIZER = new Json(mapper);
     }
+    // {{end:setup}}
 
-    public static Json defaultSerializer() {
+    public static Json serializer() {
         return DEFAULT_SERIALIZER;
     }
 
-    // {{start:setup}}
     private final ObjectMapper mapper;
     private final ObjectWriter writer;
     private final ObjectWriter prettyWriter;
-
-    // {{end:setup}}
 
     // Only let this be called statically. Hide the constructor
     private Json(ObjectMapper mapper) {
@@ -75,8 +74,6 @@ public class Json {
         return prettyWriter;
     }
 
-    // {{start:readJson}}
-    // Not recommended to catch / throw runtime exceptions like this but I am lazy.
     public <T> T fromJson(byte[] bytes, TypeReference<T> typeRef) {
         try {
             return mapper.readValue(bytes, typeRef);
@@ -84,8 +81,8 @@ public class Json {
             throw new JsonException(e);
         }
     }
-    // {{end:readJson}}
 
+    // {{start:readJson}}
     public <T> T fromJson(String json, TypeReference<T> typeRef) {
         try {
             return mapper.readValue(json, typeRef);
@@ -93,6 +90,7 @@ public class Json {
             throw new JsonException(e);
         }
     }
+    // {{end:readJson}}
 
     public <T> T fromNode(JsonNode node, TypeReference<T> typeRef) {
         try {
@@ -102,7 +100,6 @@ public class Json {
         }
     }
 
-    // {{start:writeJson}}
     public byte[] writeValueAsBytes(Object obj) {
         try {
             return writer.writeValueAsBytes(obj);
@@ -110,7 +107,6 @@ public class Json {
             throw new JsonException(e);
         }
     }
-    // {{end:writeJson}}
 
     public <T> T fromObject(Object obj, TypeReference<T> typeRef) {
         try {
@@ -128,6 +124,7 @@ public class Json {
         }
     }
 
+    // {{start:writeJson}}
     public String toString(Object obj) {
         try {
             return writer.writeValueAsString(obj);
@@ -135,6 +132,7 @@ public class Json {
             throw new JsonException(e);
         }
     }
+    // {{end:writeJson}}
 
     public String toPrettyString(Object obj) {
         try {
@@ -162,6 +160,7 @@ public class Json {
         }
     }
 
+    // {{start:jsonNode}}
     public JsonNode nodeFromJson(String json) {
         try {
             return mapper.readTree(json);
@@ -169,6 +168,7 @@ public class Json {
             throw new JsonException(e);
         }
     }
+    // {{end:jsonNode}}
 
     public JsonNode nodeFromObject(Object obj) {
         try {
@@ -179,7 +179,7 @@ public class Json {
     }
 
     public static class JsonException extends RuntimeException {
-        public JsonException(Exception ex) {
+        private JsonException(Exception ex) {
             super(ex);
         }
     }

@@ -23,31 +23,31 @@ public class JsonTest {
     @Test
     public void parseShouldNotFailOnFullMessage() {
         String rawJson = Resources.asString("json-test/full-message.json");
-        Message message = Json.defaultSerializer().fromJson(rawJson, new TypeReference<Message>() {});
+        Message message = Json.serializer().fromJson(rawJson, new TypeReference<Message>() {});
 
         assertEquals("Happy New Year!", message.getMessage());
         assertEquals(LocalDate.of(2017, 1, 1), message.getDate());
 
-        String actualJson = Json.defaultSerializer().toString(message);
-        assertEquals(message, Json.defaultSerializer().fromJson(actualJson, new TypeReference<Message>() {}));
+        String actualJson = Json.serializer().toString(message);
+        assertEquals(message, Json.serializer().fromJson(actualJson, new TypeReference<Message>() {}));
     }
 
     @Test
     public void parseShouldNotFailOnPartialMessage() {
         String rawJson = Resources.asString("json-test/partial-message.json");
-        Message message = Json.defaultSerializer().fromJson(rawJson, new TypeReference<Message>() {});
+        Message message = Json.serializer().fromJson(rawJson, new TypeReference<Message>() {});
 
         assertEquals("Partial", message.getMessage());
         assertEquals(null, message.getDate());
 
-        String actualJson = Json.defaultSerializer().toString(message);
-        assertEquals(message, Json.defaultSerializer().fromJson(actualJson, new TypeReference<Message>() {}));
+        String actualJson = Json.serializer().toString(message);
+        assertEquals(message, Json.serializer().fromJson(actualJson, new TypeReference<Message>() {}));
     }
 
     @Test(expected=JsonException.class)
     public void parseShouldFailOnInvalidType() {
         String rawJson = Resources.asString("json-test/invalid-message.json");
-        Json.defaultSerializer().fromJson(rawJson, new TypeReference<Message>() {});
+        Json.serializer().fromJson(rawJson, new TypeReference<Message>() {});
     }
 
     /*
@@ -56,18 +56,18 @@ public class JsonTest {
     @Test
     public void parseShouldNotFailOnJsonNode() {
         String rawJson = Resources.asString("json-test/nested.json");
-        JsonNode node = Json.defaultSerializer()
+        JsonNode node = Json.serializer()
                             .nodeFromJson(rawJson)
                             .path("nested1")
                             .path("nested2")
                             .path("nested3");
-        Message message = Json.defaultSerializer().fromNode(node, new TypeReference<Message>() {});
+        Message message = Json.serializer().fromNode(node, new TypeReference<Message>() {});
 
         assertEquals("Nested!", message.getMessage());
         assertEquals(null, message.getDate());
 
-        String actualJson = Json.defaultSerializer().toString(message);
-        assertEquals(message, Json.defaultSerializer().fromJson(actualJson, new TypeReference<Message>() {}));
+        String actualJson = Json.serializer().toString(message);
+        assertEquals(message, Json.serializer().fromJson(actualJson, new TypeReference<Message>() {}));
     }
 
     private static class Message {
