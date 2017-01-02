@@ -1,4 +1,4 @@
 # See it in action
 
 ## JSON Serialization
-* [Jackson configuration / usage](https://www.stubbornjava.com/posts/2016-12-21-practical-jackson-objectmapper-config)
+* [Jackson configuration / usage](https://www.stubbornjava.com/posts/practical-jackson-objectmapper-configuration)
