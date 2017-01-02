@@ -1,0 +1,100 @@
+buildscript {
+  repositories {
+      jcenter()
+  }
+  dependencies {
+    classpath "com.github.jengelman.gradle.plugins:shadow:1.2.3"
+  }
+}
+
+def jacksonV = '2.8.5'
+def okhttpV = '3.4.1'
+def slf4jV = '1.7.21'
+def undertowV = '1.3.22.Final'
+def metricsV = '3.1.2'
+def guavaV = '19.0'
+
+// Test
+def junitV = '4.12'
+
+ext {
+    jacksonLib = [
+        [group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: jacksonV]
+        , [group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: jacksonV]
+        , [group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: jacksonV]
+        , [group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jdk8', version: jacksonV]
+        , [group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: jacksonV]
+    ]
+    metricsLib = [
+        [group: 'io.dropwizard.metrics', name: 'metrics-core', version: metricsV]
+        , [group: 'io.dropwizard.metrics', name: 'metrics-jvm', version: metricsV]
+        , [group: 'io.dropwizard.metrics', name: 'metrics-json', version: metricsV]
+    ]
+    undertowLib = [[group: 'io.undertow', name: 'undertow-core', version: undertowV]]
+    slf4jLib = [[group: 'org.slf4j', name: 'slf4j-api', version: slf4jV]]
+    guavaLib = [[group: 'com.google.guava', name: 'guava', version: guavaV]]
+
+    junitLib = [[group: 'junit', name: 'junit', version: junitV]]
+}
+
+
+allprojects {
+    // Apply the java plugin to add support for Java
+    apply plugin: 'java'
+    apply plugin: 'idea'
+    apply plugin: 'eclipse'
+    apply plugin: 'maven-publish'
+
+    group = 'com.stubbornjava'
+    version = '0.1.0-SNAPSHOT'
+
+    repositories { 
+        mavenLocal()
+        mavenCentral()
+    }
+
+    configurations.all {
+        resolutionStrategy {
+            // fail eagerly on version conflict (includes transitive dependencies)
+            // e.g. multiple different versions of the same dependency (group and name are equal)
+            // Turn this on eventually
+            failOnVersionConflict()
+
+            // prefer modules that are part of this build (multi-project or composite build) over external modules
+            //preferProjectModules()
+
+            // Auto force all of our explicit dependencies.
+            this.ext.properties.findAll { k, v -> k.endsWith('Lib') }.each { k, v -> force(v) }
+
+            // cache dynamic versions for 10 minutes
+            cacheDynamicVersionsFor 10*60, 'seconds'
+            // don't cache changing modules at all
+            cacheChangingModulesFor 0, 'seconds'
+        }
+    }
+
+    // Maven Publish Begin
+    task sourceJar(type: Jar) {
+        from sourceSets.main.allJava
+    }
+
+    publishing {
+        publications {
+            mavenJava(MavenPublication) {
+                from components.java
+                artifact sourceJar {
+                    classifier "sources"
+                }
+            }
+        }
+    }
+    // Maven Publish End
+}
+
+subprojects {
+    apply plugin: 'com.github.johnrengelman.shadow'
+
+    shadowJar {
+       classifier = null
+    }
+}
