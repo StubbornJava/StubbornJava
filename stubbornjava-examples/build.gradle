@@ -1,5 +1,6 @@
 dependencies {
-    runtime project(':stubbornjava-undertow')
+    compile project(':stubbornjava-undertow')
+    compile project(':stubbornjava-common')
 
     // The production code uses the SLF4J logging API at compile time
     compile loggingLib
@@ -9,14 +10,14 @@ dependencies {
 
     // Metrics 
     compile metricsLib
-    
+
     // Guava
     compile guavaLib
 
     // Configuration
     compile typesafeConfigLib
-
-    compile handlebarsLib
+    
+    compile undertowLib
 
     testCompile junitLib
 }
