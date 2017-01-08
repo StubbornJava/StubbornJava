@@ -10,6 +10,7 @@ import io.undertow.util.Headers;
 public class HelloWorldServer {
     private static final Logger logger = LoggerFactory.getLogger(HelloWorldServer.class);
 
+    // {{start:helloworld}}
     /*
      * Creating HttpHandlers as a method and passing it as a method reference is pretty clean.
      * This also helps reduce accidentally adding state to handlers.
@@ -47,4 +48,5 @@ public class HelloWorldServer {
         logger.debug("starting on http://" + host + ":" + port);
         server.start();
     }
+    // {{end:helloworld}}
 }
