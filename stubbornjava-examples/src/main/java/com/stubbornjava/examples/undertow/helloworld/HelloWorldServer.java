@@ -29,17 +29,8 @@ public class HelloWorldServer {
         String host = "localhost";
 
         /*
-         * If you really want to abstract out the server construction you can.
-         * StubbornJava recommends to only use abstractions / wrappers on very simple APIs.
-         * When you abstract over something like an HTTP server its very difficult to have
-         * an abstraction that covers the nuances of each webserver. Instead accept it and let
-         * the framework bleed out a bit. Realistically you shouldn't be changing your web server
-         * all that often. Even if you did fully abstract it out your custom logic tends to bleed
-         * out eventually, embrace it and move on. You could also just have a static method or
-         * factory that created the server with your common configurations and allows further
-         * customization later.
-         *
-         * This web server has a single handler with no routing. All urls will respond the same way.
+         * This web server has a single handler with no routing.
+         * ALL urls are handled by the helloWorldHandler.
          */
         Undertow server = Undertow.builder()
             // Add the helloWorldHandler as a method reference.
