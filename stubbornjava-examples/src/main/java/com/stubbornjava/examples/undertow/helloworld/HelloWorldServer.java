@@ -37,6 +37,8 @@ public class HelloWorldServer {
          * out eventually, embrace it and move on. You could also just have a static method or
          * factory that created the server with your common configurations and allows further
          * customization later.
+         *
+         * This web server has a single handler with no routing. All urls will respond the same way.
          */
         Undertow server = Undertow.builder()
             // Add the helloWorldHandler as a method reference.
