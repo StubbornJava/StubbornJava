@@ -4,6 +4,7 @@ import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
 import io.undertow.util.Headers;
 
+// {{start:handler}}
 public class ConstantStringHandler implements HttpHandler {
     private final String value;
     public ConstantStringHandler(String value) {
@@ -16,3 +17,4 @@ public class ConstantStringHandler implements HttpHandler {
         exchange.getResponseSender().send(value);
     }
 }
+// {{end:handler}}

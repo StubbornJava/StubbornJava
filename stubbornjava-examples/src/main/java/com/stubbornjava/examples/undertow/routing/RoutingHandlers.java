@@ -6,6 +6,7 @@ import io.undertow.util.Headers;
 
 public class RoutingHandlers {
 
+    // {{start:handler}}
     /*
      * Creating static factory methods to construct handlers let's you keep
      * them better organized and reduce some boilerplate. This will be shown
@@ -14,7 +15,9 @@ public class RoutingHandlers {
     public static HttpHandler constantStringHandler(String value) {
         return new ConstantStringHandler(value);
     }
+    // {{end:handler}}
 
+    // {{start:anonymous}}
     /*
      * Alternate way to create constantStringHandler using an anonymous HttpHandler.
      * This is fine for simple handlers but more complex ones might be better off
@@ -26,7 +29,9 @@ public class RoutingHandlers {
             exchange.getResponseSender().send(value);
         };
     }
+    // {{end:anonymous}}
 
+    // {{start:method}}
     /*
      * This is a 3rd approach to creating HttpHandlers and is heavily utilized
      * in StubbornJava. We can use Java 8 method references for this approach.
@@ -42,4 +47,5 @@ public class RoutingHandlers {
         exchange.getResponseHeaders().put(Headers.CONTENT_TYPE, "text/plain");
         exchange.getResponseSender().send("Page Not Found!!");
     }
+    // {{end:method}}
 }
