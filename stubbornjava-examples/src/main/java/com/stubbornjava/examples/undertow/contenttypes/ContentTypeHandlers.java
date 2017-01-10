@@ -20,7 +20,7 @@ public class ContentTypeHandlers {
         exchange.getResponseHeaders().put(Headers.CONTENT_TYPE, "text/html");
         exchange.getResponseSender().send("<h1>Hello World</h1>");
     }
-    // {{start:html}}
+    // {{end:html}}
 
     // {{start:file}}
     public static void helloWorldFileDownload(HttpServerExchange exchange) {
