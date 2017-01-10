@@ -1,5 +1,7 @@
 package com.stubbornjava.examples.undertow.contenttypes;
 
+import com.stubbornjava.common.server.Senders;
+
 import io.undertow.server.HttpServerExchange;
 import io.undertow.util.Headers;
 
@@ -36,4 +38,10 @@ public class ContentTypeHandlers {
         exchange.getResponseSender().send("{\"message\": \"Hello World\"}");
     }
     // {{end:json}}
+
+    // {{start:senders}}
+    public static void helloWorldJsonSender(HttpServerExchange exchange) {
+        Senders.send().json(exchange, "{\"message\": \"Hello World\"}");
+    }
+    // {{end:senders}}
 }

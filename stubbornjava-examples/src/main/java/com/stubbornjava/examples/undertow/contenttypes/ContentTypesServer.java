@@ -22,6 +22,7 @@ public class ContentTypesServer {
         .get("/helloWorldHtml", ContentTypeHandlers::helloWorldHtml)
         .get("/helloWorldFileDownload", ContentTypeHandlers::helloWorldFileDownload)
         .get("/helloWorldJson", ContentTypeHandlers::helloWorldJson)
+        .get("/helloWorldJsonSender", ContentTypeHandlers::helloWorldJsonSender)
     ;
     // {{end:routes}}
 
