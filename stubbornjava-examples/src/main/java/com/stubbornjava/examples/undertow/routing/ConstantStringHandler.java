@@ -14,7 +14,7 @@ public class ConstantStringHandler implements HttpHandler {
     @Override
     public void handleRequest(HttpServerExchange exchange) throws Exception {
         exchange.getResponseHeaders().put(Headers.CONTENT_TYPE, "text/plain");
-        exchange.getResponseSender().send(value);
+        exchange.getResponseSender().send(value + "\n");
     }
 }
 // {{end:handler}}
