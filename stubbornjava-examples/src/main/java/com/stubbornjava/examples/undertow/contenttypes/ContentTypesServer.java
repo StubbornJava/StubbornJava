@@ -7,6 +7,7 @@ import io.undertow.server.RoutingHandler;
 
 public class ContentTypesServer {
 
+    // {{start:routes}}
     /*
      * Pretty clean am I right? Unless you REALLY REALLY love annotations
      * and the magic that comes with them. Don't forget about the copious
@@ -22,9 +23,12 @@ public class ContentTypesServer {
         .get("/helloWorldFileDownload", ContentTypeHandlers::helloWorldFileDownload)
         .get("/helloWorldJson", ContentTypeHandlers::helloWorldJson)
     ;
+    // {{end:routes}}
 
+    // {{start:server}}
     public static void main(String[] args) {
         SimpleServer server = SimpleServer.simpleServer(ROUTES);
         server.start();
     }
+    // {{end:server}}
 }
