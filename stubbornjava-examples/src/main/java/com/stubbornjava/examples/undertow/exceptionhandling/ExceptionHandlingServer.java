@@ -1,6 +1,5 @@
 package com.stubbornjava.examples.undertow.exceptionhandling;
 
-import com.stubbornjava.common.server.Senders;
 import com.stubbornjava.common.server.SimpleServer;
 
 import io.undertow.Handlers;
@@ -13,7 +12,7 @@ public class ExceptionHandlingServer {
     private static final HttpHandler ROUTES = new RoutingHandler()
         .get("/throwWebException", ExceptionHandlers::throwWebException)
         .get("/throwApiException", ExceptionHandlers::throwApiException)
-        .get("/ok", (exchange) -> Senders.send().text(exchange, "ok"))
+        .get("/ok", ExceptionHandlers::ok)
     ;
     // {{end:routes}}
 
