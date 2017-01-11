@@ -12,7 +12,7 @@ import io.undertow.server.handlers.accesslog.AccessLogHandler;
 
 public class AccessLogServer {
 
-    // {{root:routes}}
+    // {{start:routes}}
     // For brevity just borrow the RoutingServer routes. Copy Pasta!
     private static final HttpHandler ROUTES = new RoutingHandler()
         .get("/", RoutingHandlers.constantStringHandler("GET - My Homepage"))
@@ -26,7 +26,7 @@ public class AccessLogServer {
     ;
     // {{end:routes}}
 
-    // {{end:accesslog}}
+    // {{start:accesslog}}
     private static final HttpHandler ROOT = new AccessLogHandler(
         ROUTES,
         new Slf4jAccessLogReceiver(LoggerFactory.getLogger(AccessLogServer.class)),
