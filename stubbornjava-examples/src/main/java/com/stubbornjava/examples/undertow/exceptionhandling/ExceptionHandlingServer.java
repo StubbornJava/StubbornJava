@@ -52,7 +52,7 @@ public class ExceptionHandlingServer {
             super(statusCode, message);
         }
     }
-    // {{start:exceptions}}
+    // {{end:exceptions}}
 
     // {{start:server}}
     public static void main(String[] args) {
