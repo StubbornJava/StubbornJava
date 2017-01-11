@@ -29,7 +29,7 @@ public class AccessLogServer {
     // {{start:accesslog}}
     private static final HttpHandler ROOT = new AccessLogHandler(
         ROUTES,
-        new Slf4jAccessLogReceiver(LoggerFactory.getLogger(AccessLogServer.class)),
+        new Slf4jAccessLogReceiver(LoggerFactory.getLogger("com.stubbornjava.accesslog")),
         "combined",
         AccessLogServer.class.getClassLoader())
     ;
