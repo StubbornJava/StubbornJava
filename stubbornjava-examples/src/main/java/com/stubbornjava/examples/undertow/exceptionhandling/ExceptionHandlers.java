@@ -37,6 +37,10 @@ public class ExceptionHandlers {
         throw new ApiException(503, "API Server Error");
     }
 
+    public static void throwException(HttpServerExchange exchange) {
+        throw new RuntimeException();
+    }
+
     public static void ok(HttpServerExchange exchange) {
         Senders.send().text(exchange, "ok");
     }

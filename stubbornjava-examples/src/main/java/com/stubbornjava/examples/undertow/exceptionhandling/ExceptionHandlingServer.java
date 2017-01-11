@@ -12,6 +12,7 @@ public class ExceptionHandlingServer {
     private static final HttpHandler ROUTES = new RoutingHandler()
         .get("/throwWebException", ExceptionHandlers::throwWebException)
         .get("/throwApiException", ExceptionHandlers::throwApiException)
+        .get("/throwException", ExceptionHandlers::throwException)
         .get("/ok", ExceptionHandlers::ok)
     ;
     // {{end:routes}}
