@@ -1,6 +1,8 @@
 package com.stubbornjava.common.undertow;
 
 import com.stubbornjava.undertow.exchange.ContentTypeSenders;
+import com.stubbornjava.undertow.exchange.PathParams;
+import com.stubbornjava.undertow.exchange.QueryParams;
 import com.stubbornjava.undertow.exchange.RedirectSenders;
 
 /*
@@ -19,9 +21,15 @@ public class Exchange {
         return REDIRECT;
     }
 
-    public static interface QueryParamImpl extends RedirectSenders {};
+    public static interface QueryParamImpl extends QueryParams {};
     private static final QueryParamImpl QUERYPARAMS = new QueryParamImpl(){};
     public static QueryParamImpl queryParams() {
         return QUERYPARAMS;
+    }
+
+    public static interface PathParamImpl extends PathParams {};
+    private static final PathParamImpl PATHPARAMS = new PathParamImpl(){};
+    public static PathParamImpl pathParams() {
+        return PATHPARAMS;
     }
 }

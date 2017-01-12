@@ -13,14 +13,10 @@ public interface QueryParams {
     }
 
     default Optional<Long> queryParamAsLong(HttpServerExchange exchange, String name) {
-        return Optional.ofNullable(exchange.getQueryParameters().get(name))
-                       .map(Deque::getFirst)
-                       .map(Long::parseLong);
+        return queryParam(exchange, name).map(Long::parseLong);
     }
 
     default Optional<Integer> queryParamAsInteger(HttpServerExchange exchange, String name) {
-        return Optional.ofNullable(exchange.getQueryParameters().get(name))
-                       .map(Deque::getFirst)
-                       .map(Integer::parseInt);
+        return queryParam(exchange, name).map(Integer::parseInt);
     }
 }
