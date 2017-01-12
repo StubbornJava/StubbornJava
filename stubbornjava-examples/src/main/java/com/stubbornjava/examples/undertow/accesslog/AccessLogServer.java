@@ -2,7 +2,7 @@ package com.stubbornjava.examples.undertow.accesslog;
 
 import org.slf4j.LoggerFactory;
 
-import com.stubbornjava.common.server.SimpleServer;
+import com.stubbornjava.common.undertow.SimpleServer;
 import com.stubbornjava.examples.undertow.routing.RoutingHandlers;
 import com.stubbornjava.undertow.handlers.accesslog.Slf4jAccessLogReceiver;
 

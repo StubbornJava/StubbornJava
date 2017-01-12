@@ -1,6 +1,6 @@
 package com.stubbornjava.examples.undertow.exceptionhandling;
 
-import com.stubbornjava.common.server.Senders;
+import com.stubbornjava.common.undertow.Exchange;
 import com.stubbornjava.examples.undertow.exceptionhandling.ExceptionHandlingServer.ApiException;
 import com.stubbornjava.examples.undertow.exceptionhandling.ExceptionHandlingServer.WebException;
 
@@ -13,18 +13,18 @@ public class ExceptionHandlers {
     public static void handleWebException(HttpServerExchange exchange) {
         WebException ex = (WebException) exchange.getAttachment(ExceptionHandler.THROWABLE);
         exchange.setStatusCode(ex.getStatusCode());
-        Senders.send().html(exchange, "<h1>" + ex.getMessage() + "</h1>");
+        Exchange.body().sendHtml(exchange, "<h1>" + ex.getMessage() + "</h1>");
     }
 
     public static void handleApiException(HttpServerExchange exchange) {
         ApiException ex = (ApiException) exchange.getAttachment(ExceptionHandler.THROWABLE);
         exchange.setStatusCode(ex.getStatusCode());
-        Senders.send().json(exchange, "{\"message\": \"" + ex.getMessage() + "\"}");
+        Exchange.body().sendJson(exchange, "{\"message\": \"" + ex.getMessage() + "\"}");
     }
 
     public static void handleAllExceptions(HttpServerExchange exchange) {
         exchange.setStatusCode(500);
-        Senders.send().text(exchange, "Internal Server Error!");
+        Exchange.body().sendText(exchange, "Internal Server Error!");
     }
     // {{end:exceptionhandlers}}
 
@@ -42,7 +42,7 @@ public class ExceptionHandlers {
     }
 
     public static void ok(HttpServerExchange exchange) {
-        Senders.send().text(exchange, "ok");
+        Exchange.body().sendText(exchange, "ok");
     }
     // {{end:handlers}}
 }

@@ -1,6 +1,6 @@
 package com.stubbornjava.examples.undertow.contenttypes;
 
-import com.stubbornjava.common.server.SimpleServer;
+import com.stubbornjava.common.undertow.SimpleServer;
 
 import io.undertow.server.HttpHandler;
 import io.undertow.server.RoutingHandler;

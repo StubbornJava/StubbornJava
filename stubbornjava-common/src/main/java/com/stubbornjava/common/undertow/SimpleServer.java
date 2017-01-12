@@ -1,4 +1,4 @@
-package com.stubbornjava.common.server;
+package com.stubbornjava.common.undertow;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

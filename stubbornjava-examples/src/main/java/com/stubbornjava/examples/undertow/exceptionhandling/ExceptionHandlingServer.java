@@ -1,6 +1,6 @@
 package com.stubbornjava.examples.undertow.exceptionhandling;
 
-import com.stubbornjava.common.server.SimpleServer;
+import com.stubbornjava.common.undertow.SimpleServer;
 
 import io.undertow.Handlers;
 import io.undertow.server.HttpHandler;

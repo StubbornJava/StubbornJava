@@ -3,7 +3,7 @@ package com.stubbornjava.examples.undertow.routing;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.stubbornjava.common.server.SimpleServer;
+import com.stubbornjava.common.undertow.SimpleServer;
 
 import io.undertow.Undertow;
 import io.undertow.server.HttpHandler;
