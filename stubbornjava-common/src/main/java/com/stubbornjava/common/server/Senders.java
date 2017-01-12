@@ -1,6 +1,6 @@
 package com.stubbornjava.common.server;
 
-import com.stubbornjava.undertow.ContentTypeSenders;
+import com.stubbornjava.undertow.response.ContentTypeSenders;
 
 public class Senders implements ContentTypeSenders {
     private static final Senders DEFAULT = new Senders();

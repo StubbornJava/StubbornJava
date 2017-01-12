@@ -1,4 +1,4 @@
-package com.stubbornjava.undertow;
+package com.stubbornjava.undertow.response;
 
 import java.nio.ByteBuffer;
 
