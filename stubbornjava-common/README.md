@@ -1,0 +1,2 @@
+#Common Library
+This sub project is a stand in or seed for your own organizations common / utility library. I'm assuming most organizations already have or need most of this functionality. Since StubbornJava is not meant to be a framework there are almost no abstractions around frameworks. If you want to use GSON instead of Jackson just rip it out here and update some code. Yes you will have to update some code, but realistically most drop in replacement abstractions rarely work as intended. Learn your libraries and learn them well.
