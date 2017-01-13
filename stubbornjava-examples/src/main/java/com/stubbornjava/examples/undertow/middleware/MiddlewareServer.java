@@ -46,6 +46,9 @@ public class MiddlewareServer {
     // {{end:handlers}}
 
     // {{start:routes}}
+    /*
+     * Notice how we have route level middleware here with the timed HttpHandler.
+     */
     private static final HttpHandler ROUTES = new RoutingHandler()
         .get("/textFast", timed("textFast", MiddlewareServer::textFast))
         .get("/textSlow", timed("textSlow", MiddlewareServer::textSlow))
