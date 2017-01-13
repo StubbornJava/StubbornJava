@@ -9,7 +9,9 @@ import com.stubbornjava.undertow.exchange.RedirectSenders;
  * Using static globals for simplicity. Use your own DI method however you want.
  */
 public class Exchange {
-    public static interface BodyImpl extends ContentTypeSenders {};
+    public static interface BodyImpl extends
+        ContentTypeSenders
+        , JsonSender {};
     private static final BodyImpl BODY = new BodyImpl(){};
     public static BodyImpl body() {
         return BODY;
