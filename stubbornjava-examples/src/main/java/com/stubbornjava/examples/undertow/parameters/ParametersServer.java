@@ -18,8 +18,8 @@ public class ParametersServer {
     }
 
     private static void pathParam(HttpServerExchange exchange) {
-        String name = Exchange.pathParams().pathParam(exchange, "name");
-        int num = Exchange.pathParams().pathParamAsInteger(exchange, "num");
+        String name = Exchange.pathParams().pathParam(exchange, "name").orElse("world");
+        int num = Exchange.pathParams().pathParamAsInteger(exchange, "num").orElse(1);
         Exchange.body().sendText(exchange, "Hello " + name + Strings.repeat("!", num));
     }
     // {{end:handlers}}
@@ -27,7 +27,7 @@ public class ParametersServer {
     // {{start:routes}}
     private static final HttpHandler ROUTES = new RoutingHandler()
         .get("/hello", ParametersServer::queryParam)
-        .get("/hello/{name}/{age}", ParametersServer::pathParam)
+        .get("/hello/{name}/{num}", ParametersServer::pathParam)
     ;
     // {{end:routes}}
 

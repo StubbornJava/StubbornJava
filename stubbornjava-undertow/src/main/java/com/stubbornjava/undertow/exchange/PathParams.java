@@ -7,23 +7,20 @@ import io.undertow.server.HttpServerExchange;
 
 public interface PathParams {
 
-    default String pathParam(HttpServerExchange exchange, String name) {
-        return Optional.ofNullable(exchange.getPathParameters().get(name))
-                       .map(Deque::getFirst)
-                       .orElseThrow(() -> new RuntimeException("Missing required path param " + name));
+    default Optional<String> pathParam(HttpServerExchange exchange, String name) {
+        /*
+         *  I think there is a bug with path params in routing handler, will revisit.
+         *  Luckily RoutingHandler by default puts all path params into the query params.
+         */
+        return Optional.ofNullable(exchange.getQueryParameters().get(name))
+                       .map(Deque::getFirst);
     }
 
-    default Long pathParamAsLong(HttpServerExchange exchange, String name) {
-        return Optional.ofNullable(exchange.getPathParameters().get(name))
-                .map(Deque::getFirst)
-                .map(Long::parseLong)
-                .orElseThrow(() -> new RuntimeException("Missing required path param " + name));
+    default Optional<Long> pathParamAsLong(HttpServerExchange exchange, String name) {
+        return pathParam(exchange, name).map(Long::parseLong);
     }
 
-    default Integer pathParamAsInteger(HttpServerExchange exchange, String name) {
-        return Optional.ofNullable(exchange.getPathParameters().get(name))
-                .map(Deque::getFirst)
-                .map(Integer::parseInt)
-                .orElseThrow(() -> new RuntimeException("Missing required path param " + name));
+    default Optional<Integer> pathParamAsInteger(HttpServerExchange exchange, String name) {
+        return pathParam(exchange, name).map(Integer::parseInt);
     }
 }
