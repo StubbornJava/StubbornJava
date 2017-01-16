@@ -19,4 +19,8 @@ public interface QueryParams {
     default Optional<Integer> queryParamAsInteger(HttpServerExchange exchange, String name) {
         return queryParam(exchange, name).map(Integer::parseInt);
     }
+
+    default Optional<Boolean> queryParamAsBoolean(HttpServerExchange exchange, String name) {
+        return queryParam(exchange, name).map(Boolean::parseBoolean);
+    }
 }

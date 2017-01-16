@@ -11,7 +11,8 @@ import com.stubbornjava.undertow.exchange.RedirectSenders;
 public class Exchange {
     public static interface BodyImpl extends
         ContentTypeSenders
-        , JsonSender {};
+        , JsonSender
+        , JsonParser {};
     private static final BodyImpl BODY = new BodyImpl(){};
     public static BodyImpl body() {
         return BODY;
