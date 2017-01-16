@@ -18,6 +18,7 @@ public class UserRoutes {
             ApiHandlers.badRequest(exchange, String.format("User %s already exists.", userInput.getEmail()));
             return;
         }
+        exchange.setStatusCode(201);
         Exchange.body().sendJson(exchange, user);
     }
 
@@ -28,7 +29,6 @@ public class UserRoutes {
             ApiHandlers.notFound(exchange, String.format("User %s not found.", email));
             return;
         }
-        exchange.setStatusCode(201);
         Exchange.body().sendJson(exchange, user);
     }
 
