@@ -16,7 +16,6 @@ import io.undertow.server.RoutingHandler;
 public class RestServer {
 
     // {{start:routes}}
-    // For brevity just borrow the RoutingServer routes. Copy Pasta!
     private static final HttpHandler ROUTES = new RoutingHandler()
         .get("/users", timed("listUsers", UserRoutes::listUsers))
         .get("/users/{email}", timed("getUser", UserRoutes::getUser))
@@ -28,7 +27,11 @@ public class RestServer {
         .setFallbackHandler(timed("notFound", RoutingHandlers::notFoundHandler))
     ;
 
-    // Small wrapper to mimic throwing exceptions
+    /*
+     *  Small wrapper to mimic throwing exceptions. Just add &exception=true
+     *  to any route and this will throw an exception. Notice it throws a RuntimeException
+     *  not an API exception. This will be handled by the global ExceptionHandler.
+     */
     private static final HttpHandler EXCEPTION_THROWER = (HttpServerExchange exchange) -> {
         new UserRequests().exception(exchange);
         ROUTES.handleRequest(exchange);
