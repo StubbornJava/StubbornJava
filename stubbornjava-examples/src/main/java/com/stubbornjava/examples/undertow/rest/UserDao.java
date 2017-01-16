@@ -39,14 +39,14 @@ public class UserDao {
     public User getThrowNotFound(String email) {
         User user = userMap.get(email);
         if (null == user) {
-            throw Exceptions.notFound(String.format("User %s not found!", email));
+            throw Exceptions.notFound(String.format("User %s not found", email));
         }
         return user;
     }
 
     public User update(User user) {
         // This means no user existed so update failed. return null
-        if (null == userMap.replace(null, user)) {
+        if (null == userMap.replace(user.getEmail(), user)) {
             return null;
         }
         // Update succeeded return the user
