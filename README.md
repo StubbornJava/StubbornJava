@@ -5,4 +5,4 @@ This is very much a work in progress and in the early stages. No code will be pu
 
 ### Sites Built With This Method
 * [StubbornJava](https://www.stubbornjava.com/)
-* [QuickDraw Affiliate Reporting](https://quickdraw.onsightdigitalsolutions.com)
+* [QuickDraw Affiliate Reporting](https://quickdraw.onsightdigitalsolutions.com/about)
