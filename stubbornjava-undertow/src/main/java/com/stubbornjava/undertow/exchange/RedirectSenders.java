@@ -2,6 +2,7 @@ package com.stubbornjava.undertow.exchange;
 
 import io.undertow.server.HttpServerExchange;
 import io.undertow.util.Headers;
+import io.undertow.util.StatusCodes;
 
 public interface RedirectSenders {
 
@@ -9,7 +10,7 @@ public interface RedirectSenders {
      * Temporary redirect
      */
     default void temporary(HttpServerExchange exchange, String location) {
-        exchange.setStatusCode(302);
+        exchange.setStatusCode(StatusCodes.FOUND);
         exchange.getResponseHeaders().put(Headers.LOCATION, location);
         exchange.endExchange();
     }
@@ -18,7 +19,7 @@ public interface RedirectSenders {
      * Permanent redirect
      */
     default void permanent(HttpServerExchange exchange, String location) {
-        exchange.setStatusCode(301);
+        exchange.setStatusCode(StatusCodes.MOVED_PERMANENTLY);
         exchange.getResponseHeaders().put(Headers.LOCATION, location);
         exchange.endExchange();
     }
@@ -29,7 +30,7 @@ public interface RedirectSenders {
      * page after a form submission.
      */
     default void referer(HttpServerExchange exchange) {
-        exchange.setStatusCode(302);
+        exchange.setStatusCode(StatusCodes.FOUND);
         exchange.getResponseHeaders().put(Headers.LOCATION, exchange.getRequestHeaders().get(Headers.REFERER, 0));
         exchange.endExchange();
     }

@@ -6,6 +6,7 @@ import com.stubbornjava.common.undertow.Exchange;
 import com.stubbornjava.common.undertow.handlers.ApiHandlers;
 
 import io.undertow.server.HttpServerExchange;
+import io.undertow.util.StatusCodes;
 // {{start:routes}}
 public class UserRoutes {
     private static final UserRequests userRequests = new UserRequests();
@@ -18,7 +19,7 @@ public class UserRoutes {
             ApiHandlers.badRequest(exchange, String.format("User %s already exists.", userInput.getEmail()));
             return;
         }
-        exchange.setStatusCode(201);
+        exchange.setStatusCode(StatusCodes.CREATED);
         Exchange.body().sendJson(exchange, user);
     }
 
@@ -57,7 +58,7 @@ public class UserRoutes {
             ApiHandlers.notFound(exchange, String.format("User {} not found.", email));
             return;
         }
-        exchange.setStatusCode(204);
+        exchange.setStatusCode(StatusCodes.NO_CONTENT);
         exchange.endExchange();
     }
 
