@@ -4,3 +4,6 @@ A set of common utility methods for interacting with [HttpServerExchange](https:
 ## Content Types
 * [Handling common content types](https://www.stubbornjava.com/posts/handling-content-types-with-undertow)
 * [Query and Path Parameters](https://www.stubbornjava.com/posts/query-parameters-and-path-parameters-in-undertow) (`/demo/{path}?query=param`)
+
+## Redirects (301, 302)
+Simple 301 and 302 redirects in Undertow as well as a useful [Referral Redirect in Undertow](https://www.stubbornjava.com/posts/http-redirects-with-undertow#redirects)
