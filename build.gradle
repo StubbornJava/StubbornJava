@@ -33,6 +33,7 @@ ext {
         [group: 'io.dropwizard.metrics', name: 'metrics-core', version: metricsV]
         , [group: 'io.dropwizard.metrics', name: 'metrics-jvm', version: metricsV]
         , [group: 'io.dropwizard.metrics', name: 'metrics-json', version: metricsV]
+        , [group: 'io.dropwizard.metrics', name: 'metrics-logback', version: metricsV]
     ]
     undertowLib = [[group: 'io.undertow', name: 'undertow-core', version: undertowV]]
     loggingLib = [
