@@ -62,7 +62,7 @@ public class RoutingServer {
          */
         SimpleServer server = SimpleServer.simpleServer(ROUTES);
         // See we have access to it here!
-        Undertow undertow = server.getUndertow();
+        Undertow.Builder undertow = server.getUndertow();
         server.start();
     }
     // {{end:server}}

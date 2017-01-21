@@ -12,9 +12,9 @@ public class SimpleServer {
     private static final int DEFAULT_PORT = 8080;
     private static final String DEFAULT_HOST = "0.0.0.0";
 
-    private final Undertow undertow;
-    private SimpleServer(Undertow undertow) {
-        this.undertow = undertow;
+    private final Undertow.Builder undertowBuilder;
+    private SimpleServer(Undertow.Builder undertow) {
+        this.undertowBuilder = undertow;
     }
 
     /*
@@ -22,11 +22,12 @@ public class SimpleServer {
      * its goal is simply to have some common configurations. We expose Undertow
      * if a different service needs to modify it in any way before we call start.
      */
-    public Undertow getUndertow() {
-        return undertow;
+    public Undertow.Builder getUndertow() {
+        return undertowBuilder;
     }
 
     public void start() {
+        Undertow undertow = undertowBuilder.build();
         undertow.start();
         /*
          *  Undertow logs this on its own but we generally set 3rd party
@@ -39,14 +40,13 @@ public class SimpleServer {
     }
 
     public static SimpleServer simpleServer(HttpHandler handler) {
-        Undertow undertow = Undertow.builder()
+        Undertow.Builder undertow = Undertow.builder()
             /*
              * This setting is needed if you want to allow '=' as a value in a cookie.
              * If you base64 encode any cookie values you probably want it on.
              */
             .setServerOption(UndertowOptions.ALLOW_EQUALS_IN_COOKIE_VALUE, true)
             .addHttpListener(DEFAULT_PORT, DEFAULT_HOST, handler)
-            .build()
         ;
         return new SimpleServer(undertow);
     }
