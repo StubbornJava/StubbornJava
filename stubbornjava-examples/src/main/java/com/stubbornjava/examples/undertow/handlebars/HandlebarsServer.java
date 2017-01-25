@@ -9,10 +9,9 @@ public class HandlebarsServer {
 
     // {{start:routes}}
     private static final HttpHandler ROUTES = new RoutingHandler()
-        .get("/helloRawTemplate", HandlebarsHandlers::messageRawTemplate)
+        .get("/messageRawTemplate", HandlebarsHandlers::messageRawTemplate)
         .get("/messagesRawTemplate", HandlebarsHandlers::messagesRawTemplate)
         .get("/messagesTemplate", HandlebarsHandlers::messagesTemplate)
-
     ;
     // {{end:routes}}
 

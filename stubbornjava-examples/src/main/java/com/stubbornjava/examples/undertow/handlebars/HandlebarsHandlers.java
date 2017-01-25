@@ -12,7 +12,7 @@ import io.undertow.server.HttpServerExchange;
 public class HandlebarsHandlers {
 
     // {{start:message}}
-    private static final String messageTemplate = "hello {{message}}";
+    private static final String messageTemplate = "<p>hello {{message}}</p>";
     public static void messageRawTemplate(HttpServerExchange exchange) {
         String message = Exchange.queryParams().queryParam(exchange, "message").orElse("world");
         Map<String, Object> data = Maps.newHashMap();
