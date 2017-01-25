@@ -10,19 +10,19 @@ import com.stubbornjava.common.undertow.Exchange;
 import io.undertow.server.HttpServerExchange;
 
 public class HandlebarsHandlers {
-    private static final String messageTemplate = "hello {{message}}";
-    private static final String messagesTemplate = "{{#each messages}}<p>Hello {{.}}</p>{{/each}}";
 
     // {{start:message}}
+    private static final String messageTemplate = "hello {{message}}";
     public static void messageRawTemplate(HttpServerExchange exchange) {
         String message = Exchange.queryParams().queryParam(exchange, "message").orElse("world");
         Map<String, Object> data = Maps.newHashMap();
         data.put("message", message);
-        Exchange.body().sendRawHtmlTenplate(exchange, messageTemplate, data);
+        Exchange.body().sendRawHtmlTemplate(exchange, messageTemplate, data);
     }
     // {{end:message}}
 
     // {{start:messages}}
+    private static final String messagesTemplate = "{{#each messages}}<p>Hello {{.}}</p>{{/each}}";
     public static void messagesRawTemplate(HttpServerExchange exchange) {
         String message = Exchange.queryParams().queryParam(exchange, "message").orElse("world");
         int num = Exchange.queryParams().queryParamAsInteger(exchange, "num").orElse(5);
@@ -32,11 +32,11 @@ public class HandlebarsHandlers {
         }
         Map<String, Object> data = Maps.newHashMap();
         data.put("messages", messages);
-        Exchange.body().sendRawHtmlTenplate(exchange, messagesTemplate, data);
+        Exchange.body().sendRawHtmlTemplate(exchange, messagesTemplate, data);
     }
     // {{end:messages}}
 
- // {{start:messages}}
+    // {{start:messagesFull}}
     public static void messagesTemplate(HttpServerExchange exchange) {
         String message = Exchange.queryParams().queryParam(exchange, "message").orElse("world");
         int num = Exchange.queryParams().queryParamAsInteger(exchange, "num").orElse(5);
@@ -46,8 +46,8 @@ public class HandlebarsHandlers {
         }
         Map<String, Object> data = Maps.newHashMap();
         data.put("messages", messages);
-        Exchange.body().sendHtmlTenplate(exchange, "examples/handlebars/messages", data);
+        Exchange.body().sendHtmlTemplate(exchange, "examples/handlebars/messages", data);
     }
-    // {{end:messages}}
+    // {{end:messagesFull}}
 
 }

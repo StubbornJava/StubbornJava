@@ -8,12 +8,12 @@ import io.undertow.util.Headers;
 public interface HtmlTemplateSender {
 
     // {{start:sender}}
-    default void sendRawHtmlTenplate(HttpServerExchange exchange, String rawTemplate, Object data) {
+    default void sendRawHtmlTemplate(HttpServerExchange exchange, String rawTemplate, Object data) {
         exchange.getResponseHeaders().put(Headers.CONTENT_TYPE, "text/html");
         exchange.getResponseSender().send(Templating.instance().renderRawHtmlTemplate(rawTemplate, data));
     }
 
-    default void sendHtmlTenplate(HttpServerExchange exchange, String templateName, Object data) {
+    default void sendHtmlTemplate(HttpServerExchange exchange, String templateName, Object data) {
         exchange.getResponseHeaders().put(Headers.CONTENT_TYPE, "text/html");
         exchange.getResponseSender().send(Templating.instance().renderHtmlTemplate(templateName, data));
     }
