@@ -7,6 +7,7 @@ import io.undertow.util.Headers;
 
 public interface HtmlTemplateSender {
 
+    // {{start:sender}}
     default void sendRawHtmlTenplate(HttpServerExchange exchange, String rawTemplate, Object data) {
         exchange.getResponseHeaders().put(Headers.CONTENT_TYPE, "text/html");
         exchange.getResponseSender().send(Templating.instance().renderRawHtmlTemplate(rawTemplate, data));
@@ -16,4 +17,5 @@ public interface HtmlTemplateSender {
         exchange.getResponseHeaders().put(Headers.CONTENT_TYPE, "text/html");
         exchange.getResponseSender().send(Templating.instance().renderHtmlTemplate(templateName, data));
     }
+    // {{end:sender}}
 }
