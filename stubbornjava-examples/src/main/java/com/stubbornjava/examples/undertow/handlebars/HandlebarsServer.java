@@ -7,15 +7,13 @@ import io.undertow.server.RoutingHandler;
 
 public class HandlebarsServer {
 
-    // {{start:routes}}
+    // {{start:server}}
     private static final HttpHandler ROUTES = new RoutingHandler()
         .get("/messageRawTemplate", HandlebarsHandlers::messageRawTemplate)
         .get("/messagesRawTemplate", HandlebarsHandlers::messagesRawTemplate)
         .get("/messagesTemplate", HandlebarsHandlers::messagesTemplate)
     ;
-    // {{end:routes}}
 
-    // {{start:server}}
     public static void main(String[] args) {
         SimpleServer server = SimpleServer.simpleServer(ROUTES);
         server.start();
