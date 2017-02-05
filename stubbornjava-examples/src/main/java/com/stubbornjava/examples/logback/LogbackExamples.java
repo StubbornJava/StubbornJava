@@ -27,5 +27,5 @@ public class LogbackExamples {
         secretLogger.error("ERROR");
     }
 }
-// {{start:logback}}
+// {{end:logback}}
 
