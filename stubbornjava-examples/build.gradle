@@ -18,6 +18,8 @@ dependencies {
     compile typesafeConfigLib
     
     compile undertowLib
-
+    
+    compile hsqldbLib
+    
     testCompile junitLib
 }

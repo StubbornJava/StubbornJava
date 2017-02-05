@@ -18,5 +18,8 @@ dependencies {
 
     compile handlebarsLib
 
+    compile hikariCpLib
+    
     testCompile junitLib
+    testCompile hsqldbLib
 }
