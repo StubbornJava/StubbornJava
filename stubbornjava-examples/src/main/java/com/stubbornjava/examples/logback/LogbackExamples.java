@@ -7,7 +7,7 @@ import org.slf4j.LoggerFactory;
 public class LogbackExamples {
     /*
      *  Loggers are thread safe so it is okay to make them static.
-     *  Sometimes you may want to instances though, it's up to you.
+     *  Sometimes you may want to pass instances though, it's up to you.
      */
     private static final Logger logger = LoggerFactory.getLogger(LogbackExamples.class);
     private static final Logger secretLogger = LoggerFactory.getLogger("com.stubbornjava.secrets.MySecretPasswordClass");
