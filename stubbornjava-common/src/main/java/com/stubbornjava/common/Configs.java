@@ -58,6 +58,10 @@ public class Configs {
             for (String resource : configs) {
                 appConfig = appConfig.withFallback(ConfigFactory.parseResources(resource));
             }
+
+            // Resolve substitutions.
+            appConfig = appConfig.resolve();
+
             logger.debug("Logging properties. Make sure sensitive data such as passwords or secrets are not logged!");
             logger.debug(appConfig.root().render(ConfigRenderOptions.concise().setFormatted(true)));
             return appConfig;
