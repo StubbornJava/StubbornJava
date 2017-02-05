@@ -56,11 +56,12 @@
   
   <!--
   Assume we have a com.stubbornjava.secrets.MySecretPasswordClass.Java class.
-  This line will disable debug logging for only this class so we don't log
-  sensitive data. This is something we may want turned on in our logback-test.xml
-  file for local debugging but not in our production configuration file.
+  This line will disable debug logging for only this class and set it to warn
+  so we don't log sensitive data. This is something we may want turned on in
+  our logback-test.xml file for local debugging but not in our production
+  configuration file.
   -->
-  <logger name="com.stubbornjava.secrets.MySecretPasswordClass" level="DEBUG" />
+  <logger name="com.stubbornjava.secrets.MySecretPasswordClass" level="WARN" />
 
 </configuration>
 <!-- // {{end:logback}}  -->
