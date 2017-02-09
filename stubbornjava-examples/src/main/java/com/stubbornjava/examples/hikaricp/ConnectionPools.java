@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.stubbornjava.common.Configs;
+import com.stubbornjava.common.HealthChecks;
 import com.stubbornjava.common.Metrics;
 import com.stubbornjava.common.db.ConnectionPool;
 import com.typesafe.config.Config;
@@ -25,7 +26,7 @@ public class ConnectionPools {
      *  Using enum singleton pattern for lazy singletons
      */
     private enum Transactional {
-        INSTANCE(ConnectionPool.getDataSourceFromConfig(conf.getConfig("pools.transactional"), Metrics.registry(), null));
+        INSTANCE(ConnectionPool.getDataSourceFromConfig(conf.getConfig("pools.transactional"), Metrics.registry(), HealthChecks.getHealthCheckRegistry()));
         private final DataSource dataSource;
         private Transactional(DataSource dataSource) {
             this.dataSource = dataSource;
@@ -53,7 +54,7 @@ public class ConnectionPools {
      *  run while the other pool is backed up.
      */
     private enum Processing {
-        INSTANCE(ConnectionPool.getDataSourceFromConfig(conf.getConfig("pools.processing"), Metrics.registry(), null));
+        INSTANCE(ConnectionPool.getDataSourceFromConfig(conf.getConfig("pools.processing"), Metrics.registry(), HealthChecks.getHealthCheckRegistry()));
         private final DataSource dataSource;
         private Processing(DataSource dataSource) {
             this.dataSource = dataSource;
@@ -69,9 +70,10 @@ public class ConnectionPools {
 
     public static void main(String[] args) {
         logger.debug("starting");
+        DataSource processing = ConnectionPools.getProcessing();
+        logger.debug("processing started");
         DataSource transactional = ConnectionPools.getTransactional();
         logger.debug("transactional started");
-        DataSource processing = ConnectionPools.getProcessing();
         logger.debug("done");
     }
 }
