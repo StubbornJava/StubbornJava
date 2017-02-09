@@ -8,7 +8,9 @@ import com.zaxxer.hikari.HikariDataSource;
 
 // {{start:poolFactory}}
 public class ConnectionPool {
+    private ConnectionPool() {
 
+    }
     /*
      * Expects a config in the following format
      *
