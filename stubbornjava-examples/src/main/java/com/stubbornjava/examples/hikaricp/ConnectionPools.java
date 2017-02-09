@@ -13,6 +13,10 @@ import com.typesafe.config.Config;
 // {{start:pools}}
 public class ConnectionPools {
     private static final Logger logger = LoggerFactory.getLogger(ConnectionPools.class);
+    /*
+     * Normally we would be using the app config but since this is an example
+     * we will be using a localized example config.
+     */
     private static final Config conf = new Configs.Builder()
                                                   .withResource("examples/hikaricp/pools.conf")
                                                   .build();
