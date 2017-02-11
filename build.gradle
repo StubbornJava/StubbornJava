@@ -19,6 +19,7 @@ def handlebarsV = '4.0.5'
 def htmlcompressorV = '1.4'
 def hikariCpV = '2.6.0'
 def hsqldbV = '2.3.4'
+def joolV = '0.9.12'
 
 // Test
 def junitV = '4.12'
@@ -54,6 +55,7 @@ ext {
     hikariCpLib = [[group: 'com.zaxxer', name: 'HikariCP', version: hikariCpV]]
     junitLib = [[group: 'junit', name: 'junit', version: junitV]]
     hsqldbLib = [[group: 'org.hsqldb', name: 'hsqldb', version: hsqldbV]]
+    joolLib = [[group: 'org.jooq', name: 'jool', version: joolV]]
 }
 
 allprojects {
@@ -63,8 +65,9 @@ allprojects {
     apply plugin: 'eclipse'
     apply plugin: 'maven-publish'
 
-    group = 'com.stubbornjava'
-    version = '0.2.0-SNAPSHOT'
+    // Using Jitpack so I need the repo name in the group to match.
+    group = 'com.stubbornjava.StubbornJava'
+    version = '0.1.1-SNAPSHOT'
 
     repositories { 
         mavenLocal()

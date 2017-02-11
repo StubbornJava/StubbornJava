@@ -20,6 +20,8 @@ dependencies {
 
     compile hikariCpLib
     
+    compile joolLib
+    
     testCompile junitLib
     testCompile hsqldbLib
 }
