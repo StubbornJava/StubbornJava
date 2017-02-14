@@ -6,12 +6,15 @@ import java.util.concurrent.Executor;
 import java.util.function.Supplier;
 
 public class Futures {
+    private Futures() {
 
-    public <U> CompletionStage<U> supplyAsync(Supplier<U> supplier, Executor executor) {
+    }
+
+    public static <U> CompletionStage<U> supplyAsync(Supplier<U> supplier, Executor executor) {
         return new StickyCompletableFuture<>(CompletableFuture.supplyAsync(supplier, executor), executor);
     }
 
-    public CompletionStage<Void> runAsync(Runnable runnable, Executor executor) {
+    public static CompletionStage<Void> runAsync(Runnable runnable, Executor executor) {
         return new StickyCompletableFuture<>(CompletableFuture.runAsync(runnable, executor), executor);
     }
 }
