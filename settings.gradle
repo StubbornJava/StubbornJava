@@ -1,3 +1,5 @@
+// {{start:settings}}
 rootProject.name = 'stubbornjava-parent'
 
 include ':stubbornjava-undertow', ':stubbornjava-common', ':stubbornjava-examples'
+// {{end:settings}}
