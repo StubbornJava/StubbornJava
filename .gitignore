@@ -13,7 +13,6 @@ logback-test.xml
 config.local.properties
 
 .gradle/
-gradle/
 gradlew
 gradlew.bat
 
