@@ -1,62 +1,16 @@
+// {{start:build}}
 buildscript {
   repositories {
       jcenter()
   }
+  // buildscript dependencies can be used for build time plugins.
   dependencies {
     classpath "com.github.jengelman.gradle.plugins:shadow:1.2.3"
   }
 }
 
-def jacksonV = '2.8.5'
-def okhttpV = '3.4.1'
-def slf4jV = '1.7.21'
-def logbackV = '1.1.8'
-def undertowV = '1.4.8.Final'
-def metricsV = '3.1.2'
-def guavaV = '19.0'
-def typesafeConfigV = '1.3.1'
-def handlebarsV = '4.0.5'
-def htmlcompressorV = '1.4'
-def hikariCpV = '2.6.0'
-def hsqldbV = '2.3.4'
-def joolV = '0.9.12'
-
-// Test
-def junitV = '4.12'
-
-ext {
-    jacksonLib = [
-        [group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: jacksonV]
-        , [group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: jacksonV]
-        , [group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: jacksonV]
-        , [group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jdk8', version: jacksonV]
-        , [group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: jacksonV]
-    ]
-    metricsLib = [
-        [group: 'io.dropwizard.metrics', name: 'metrics-core', version: metricsV]
-        , [group: 'io.dropwizard.metrics', name: 'metrics-jvm', version: metricsV]
-        , [group: 'io.dropwizard.metrics', name: 'metrics-json', version: metricsV]
-        , [group: 'io.dropwizard.metrics', name: 'metrics-logback', version: metricsV]
-        , [group: 'io.dropwizard.metrics', name: 'metrics-healthchecks', version: metricsV]
-    ]
-    undertowLib = [[group: 'io.undertow', name: 'undertow-core', version: undertowV]]
-    loggingLib = [
-        [group: 'org.slf4j', name: 'slf4j-api', version: slf4jV]
-        , [group: 'ch.qos.logback', name: 'logback-classic', version: logbackV]
-        
-    ]
-    guavaLib = [[group: 'com.google.guava', name: 'guava', version: guavaV]]
-    typesafeConfigLib = [[group: 'com.typesafe', name: 'config', version: typesafeConfigV]]
-    handlebarsLib = [
-        [group: 'com.github.jknack', name: 'handlebars', version: handlebarsV]
-        , [group: 'com.github.jknack', name: 'handlebars-jackson2', version: handlebarsV]
-        , [group: 'com.googlecode.htmlcompressor', name: 'htmlcompressor', version: htmlcompressorV]
-    ]
-    hikariCpLib = [[group: 'com.zaxxer', name: 'HikariCP', version: hikariCpV]]
-    junitLib = [[group: 'junit', name: 'junit', version: junitV]]
-    hsqldbLib = [[group: 'org.hsqldb', name: 'hsqldb', version: hsqldbV]]
-    joolLib = [[group: 'org.jooq', name: 'jool', version: joolV]]
-}
+// Include a gradle script that has all of our dependencies split out.
+apply from: "gradle/dependencies.gradle"
 
 allprojects {
     // Apply the java plugin to add support for Java
@@ -67,26 +21,22 @@ allprojects {
 
     // Using Jitpack so I need the repo name in the group to match.
     group = 'com.stubbornjava.StubbornJava'
-    version = '0.1.1-SNAPSHOT'
+    version = '0.1.2-SNAPSHOT'
 
     repositories { 
         mavenLocal()
         mavenCentral()
-        maven { url 'https://jitpack.io' }
+        maven { url 'https://jitpack.io' } // This allows us to use jitpack projects
     }
 
     configurations.all {
         resolutionStrategy {
             // fail eagerly on version conflict (includes transitive dependencies)
             // e.g. multiple different versions of the same dependency (group and name are equal)
-            // Turn this on eventually
             failOnVersionConflict()
 
-            // prefer modules that are part of this build (multi-project or composite build) over external modules
-            //preferProjectModules()
-
             // Auto force all of our explicit dependencies.
-            this.ext.properties.findAll { k, v -> k.endsWith('Lib') }.each { k, v -> force(v) }
+            libs.each { k, v -> force(v) }
 
             // cache dynamic versions for 10 minutes
             cacheDynamicVersionsFor 10*60, 'seconds'
@@ -100,6 +50,7 @@ allprojects {
         from sourceSets.main.allJava
     }
 
+    // This publishes sources with our jars.
     publishing {
         publications {
             mavenJava(MavenPublication) {
@@ -120,3 +71,4 @@ subprojects {
        classifier = null
     }
 }
+// {{end:build}}

@@ -1,25 +1,8 @@
+// {{start:dependencies}}
 dependencies {
     compile project(':stubbornjava-undertow')
     compile project(':stubbornjava-common')
 
-    // The production code uses the SLF4J logging API at compile time
-    compile loggingLib
-
-    // Jackson libs
-    compile jacksonLib
-
-    // Metrics 
-    compile metricsLib
-
-    // Guava
-    compile guavaLib
-
-    // Configuration
-    compile typesafeConfigLib
-    
-    compile undertowLib
-    
-    compile hsqldbLib
-    
-    testCompile junitLib
+    testCompile libs.junit
 }
+// {{end:dependencies}}

@@ -1,27 +1,29 @@
+// {{start:dependencies}}
 dependencies {
+    // Project reference
     compile project(':stubbornjava-undertow')
+    compile libs.slf4j
+    compile libs.logback
+    compile libs.jacksonCore
+    compile libs.jacksonDatabind
+    compile libs.jacksonDatabind
+    compile libs.jacksonAnnotations
+    compile libs.jacksonDatatypeJdk8
+    compile libs.jacksonDatatypeJsr310
+    compile libs.jacksonDataformatCsv
+    compile libs.metricsCore
+    compile libs.metricsJvm
+    compile libs.metricsJson
+    compile libs.metricsLogback
+    compile libs.metricsHealthchecks
+    compile libs.guava
+    compile libs.typesafeConfig
+    compile libs.handlebars
+    compile libs.handlebarsJackson
+    compile libs.htmlCompressor
+    compile libs.hikaricp
+    compile libs.jool
 
-    // The production code uses the SLF4J logging API at compile time
-    compile loggingLib
-
-    // Jackson libs
-    compile jacksonLib
-
-    // Metrics 
-    compile metricsLib
-    
-    // Guava
-    compile guavaLib
-
-    // Configuration
-    compile typesafeConfigLib
-
-    compile handlebarsLib
-
-    compile hikariCpLib
-    
-    compile joolLib
-    
-    testCompile junitLib
-    testCompile hsqldbLib
+    testCompile libs.junit
 }
+// {{end:dependencies}}
