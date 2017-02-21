@@ -14,23 +14,34 @@ import com.github.jknack.handlebars.JsonNodeValueResolver;
 import com.github.jknack.handlebars.Template;
 import com.github.jknack.handlebars.cache.ConcurrentMapTemplateCache;
 import com.github.jknack.handlebars.io.ClassPathTemplateLoader;
+import com.github.jknack.handlebars.io.FileTemplateLoader;
 import com.github.jknack.handlebars.io.TemplateLoader;
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.googlecode.htmlcompressor.compressor.HtmlCompressor;
 // {{start:templating}}
 public class Templating {
-    private static final Logger logger = LoggerFactory.getLogger(Templating.class);
+    private static final Logger log = LoggerFactory.getLogger(Templating.class);
 
     // Once again using static for convenience use your own DI method.
     private static final Templating DEFAULT;
     static {
         Templating.Builder builder =
             new Templating.Builder()
-                          .withResourceLoaders()
                           .withHelper("dateFormat", TemplateHelpers::dateFormat);
         // Don't cache locally, makes development annoying
         if (Env.LOCAL != Env.get()) {
-           builder.withCaching();
+            builder.withCaching()
+                   .withResourceLoaders();
+        } else {
+            if (!Configs.properties().hasPath("assets.roots")) {
+                log.error("Configuration is missing required \"assets.roots\" config for dev mode. Did you forget to add it to application.local.conf?");
+                Preconditions.checkNotNull(null, "Missing required \"assets.roots\" config.");
+            }
+            List<String> roots = Configs.properties().getStringList("assets.roots");
+            for (String root : roots) {
+                builder.withLocalResourceLoaders(root);
+            }
         }
         DEFAULT = builder.build();
     }
@@ -80,8 +91,8 @@ public class Templating {
         try {
             JsonNode node = Json.serializer().nodeFromObject(data);
             // Very useful for debugging templates
-            if (logger.isDebugEnabled()) {
-                logger.debug("rendering template " + template.filename() + "\n" + Json.serializer().toPrettyString(node));
+            if (log.isDebugEnabled()) {
+                log.debug("rendering template " + template.filename() + "\n" + Json.serializer().toPrettyString(node));
             }
             context = Context.newBuilder(node)
                              .resolver(JsonNodeValueResolver.INSTANCE)
@@ -104,25 +115,33 @@ public class Templating {
         }
 
         public Builder withResourceLoaders() {
-            logger.debug("using resource loaders");
+            log.debug("using resource loaders");
             loaders.add(new ClassPathTemplateLoader());
             loaders.add(new ClassPathTemplateLoader(TemplateLoader.DEFAULT_PREFIX, ".sql"));
             return this;
         }
 
+        public Builder withLocalResourceLoaders(String root) {
+            log.debug("using local loaders");
+            loaders.add(new FileTemplateLoader(root));
+            loaders.add(new FileTemplateLoader(root, ".sql"));
+            return this;
+        }
+
         public Builder withCaching() {
-            logger.debug("Using caching handlebars");
+            log.debug("Using caching handlebars");
             handlebars.with(new ConcurrentMapTemplateCache());
             return this;
         }
 
         public <T> Builder withHelper(String helperName, Helper<T> helper) {
-            logger.debug("using template helper {}" , helperName);
+            log.debug("using template helper {}" , helperName);
             handlebars.registerHelper(helperName, helper);
             return this;
         }
 
         public Templating build() {
+            handlebars.with(loaders.toArray(new TemplateLoader[0]));
             return new Templating(handlebars);
         }
     }
