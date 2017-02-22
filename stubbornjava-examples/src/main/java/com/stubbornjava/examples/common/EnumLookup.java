@@ -69,7 +69,7 @@ public class EnumLookup {
          * Please don't do this! It is inefficient and it's
          * not very hard to use Guava or a static Map as an index.
          */
-        public static CardSuit crappyFindByName(String name) {
+        public static CardSuit iterationFindByName(String name) {
             for (CardSuit suit : CardSuit.values()) {
                 if (name.equals(suit.name())) {
                     return suit;
@@ -88,12 +88,13 @@ public class EnumLookup {
             try {
                 return CardSuit.valueOf(name);
             } catch (Exception ex) {
+                log.warn("Exception Thrown", ex);
                 return null;
             }
         }
         // {{end:trycatch}}
 
-        // {{start:map}}
+        // {{start:mapindex}}
         private static final Map<String, CardSuit> nameIndex =
                 Maps.newHashMapWithExpectedSize(CardSuit.values().length);
         static {
@@ -104,7 +105,7 @@ public class EnumLookup {
         public static CardSuit lookupByName(String name) {
             return nameIndex.get(name);
         }
-        // {{end:map}}
+        // {{end:mapindex}}
 
         // {{start:guava}}
         public static CardSuit getIfPresent(String name) {
@@ -134,7 +135,6 @@ public class EnumLookup {
         // {{end:mapDisplayNameUtil}}
     }
 
-    // {{start:main}}
     public static void main(String[] args) {
         List<String> names = Arrays.stream(CardSuit.values())
                                    .map(e -> e.name())
@@ -147,6 +147,7 @@ public class EnumLookup {
         displayNames.add("Missing");
 
 
+        // {{start:valueof-out}}
         log.debug("Running valueOf");
         for (String name : names) {
             try {
@@ -155,36 +156,48 @@ public class EnumLookup {
                 log.warn("Exception Thrown", ex);
             }
         }
+        // {{end:valueof-out}}
 
+        // {{start:iteration-out}}
         log.debug("Running crappyFindByName");
         for (String name : names) {
-            log.debug("looking up {} found {}", name, Json.serializer().toString(CardSuit.crappyFindByName(name)));
+            log.debug("looking up {} found {}", name, Json.serializer().toString(CardSuit.iterationFindByName(name)));
         }
+        // {{end:iteration-out}}
 
+        // {{start:trycatch-out}}
         log.debug("Running trycatchValueOf");
         for (String name : names) {
             log.debug("looking up {} found {}", name, Json.serializer().toString(CardSuit.trycatchValueOf(name)));
         }
+        // {{end:trycatch-out}}
 
+        // {{start:mapindex-out}}
         log.debug("Running lookupByName");
         for (String name : names) {
             log.debug("looking up {} found {}", name, Json.serializer().toString(CardSuit.lookupByName(name)));
         }
+        // {{end:mapindex-out}}
 
+        // {{start:guava-out}}
         log.debug("Running Guava getIfPresent");
         for (String name : names) {
             log.debug("looking up {} found {}", name, Json.serializer().toString(CardSuit.getIfPresent(name)));
         }
+        // {{end:guava-out}}
 
+        // {{start:mapDisplayName-out}}
         log.debug("Running lookupByDisplayName");
         for (String displayName : displayNames) {
             log.debug("looking up {} found {}", displayName, Json.serializer().toString(CardSuit.lookupByDisplayName(displayName)));
         }
+        // {{end:mapDisplayName-out}}
 
+        // {{start:mapDisplayNameUtil-out}}
         log.debug("Running lookupByDisplayNameUtil");
         for (String displayName : displayNames) {
             log.debug("looking up {} found {}", displayName, Json.serializer().toString(CardSuit.lookupByDisplayNameUtil(displayName)));
         }
+        // {{end:mapDisplayNameUtil-out}}
     }
-    // {{end:main}}
 }
