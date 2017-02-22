@@ -2,15 +2,13 @@ package com.stubbornjava.common;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.github.jknack.handlebars.Context;
 import com.github.jknack.handlebars.Handlebars;
 import com.github.jknack.handlebars.Helper;
-import com.github.jknack.handlebars.JsonNodeValueResolver;
 import com.github.jknack.handlebars.Template;
 import com.github.jknack.handlebars.cache.ConcurrentMapTemplateCache;
 import com.github.jknack.handlebars.io.ClassPathTemplateLoader;
@@ -87,23 +85,15 @@ public class Templating {
     }
 
     private String render(Template template, Object data) {
-        Context context = null;
         try {
-            JsonNode node = Json.serializer().nodeFromObject(data);
-            // Very useful for debugging templates
+            // Can't currently get the jackson module working not sure why.
+            Map<String, Object> jsonMap = Json.serializer().mapFromJson(Json.serializer().toString(data));
             if (log.isDebugEnabled()) {
-                log.debug("rendering template " + template.filename() + "\n" + Json.serializer().toPrettyString(node));
+                log.debug("rendering template " + template.filename() + "\n" + Json.serializer().toPrettyString(jsonMap));
             }
-            context = Context.newBuilder(node)
-                             .resolver(JsonNodeValueResolver.INSTANCE)
-                             .build();
-            return template.apply(context);
+            return template.apply(jsonMap);
         } catch (IOException e) {
             throw new RuntimeException(e);
-        } finally {
-            if (null != context) {
-                context.destroy();
-            }
         }
     }
 
