@@ -159,7 +159,7 @@ public class EnumLookup {
         // {{end:valueof-out}}
 
         // {{start:iteration-out}}
-        log.debug("Running crappyFindByName");
+        log.debug("Running iteration");
         for (String name : names) {
             log.debug("looking up {} found {}", name, Json.serializer().toString(CardSuit.iterationFindByName(name)));
         }
