@@ -30,7 +30,7 @@ public class EnumLookup {
     public enum CardSuit {
         // Unicode suits - https://en.wikipedia.org/wiki/Playing_cards_in_Unicode
         SPADE("Spade", String.valueOf((char) 0x2660), CardColor.BLACK),
-        HEART("HEART", String.valueOf((char) 0x2665), CardColor.RED),
+        HEART("Heart", String.valueOf((char) 0x2665), CardColor.RED),
         DIAMOND("Diamond", String.valueOf((char) 0x2666), CardColor.RED),
         CLUB("Club", String.valueOf((char) 0x2663), CardColor.BLACK),
         ;
@@ -118,11 +118,11 @@ public class EnumLookup {
                 Maps.newHashMapWithExpectedSize(CardSuit.values().length);
         static {
             for (CardSuit suit : CardSuit.values()) {
-                nameIndex.put(suit.getDisplayName(), suit);
+                displayNameIndex.put(suit.getDisplayName(), suit);
             }
         }
         public static CardSuit lookupByDisplayName(String name) {
-            return nameIndex.get(name);
+            return displayNameIndex.get(name);
         }
         // {{end:mapDisplayName}}
 
