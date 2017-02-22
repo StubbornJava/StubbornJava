@@ -79,6 +79,20 @@ public class EnumLookup {
         }
         // {{end:iteration}}
 
+        // {{start:trycatch}}
+        /*
+         * Please don't do this! Using try / catch for
+         * control flow is a bad practice.
+         */
+        public static CardSuit trycatchValueOf(String name) {
+            try {
+                return CardSuit.valueOf(name);
+            } catch (Exception ex) {
+                return null;
+            }
+        }
+        // {{end:trycatch}}
+
         // {{start:map}}
         private static final Map<String, CardSuit> nameIndex =
                 Maps.newHashMapWithExpectedSize(CardSuit.values().length);
@@ -145,6 +159,11 @@ public class EnumLookup {
         log.debug("Running crappyFindByName");
         for (String name : names) {
             log.debug("looking up {} found {}", name, Json.serializer().toString(CardSuit.crappyFindByName(name)));
+        }
+
+        log.debug("Running trycatchValueOf");
+        for (String name : names) {
+            log.debug("looking up {} found {}", name, Json.serializer().toString(CardSuit.trycatchValueOf(name)));
         }
 
         log.debug("Running lookupByName");
