@@ -3,6 +3,9 @@ https://www.stubbornjava.com/
 
 This is very much a work in progress and in the early stages. No code will be pushed to maven or supported in any way currently. Feel free to clone and install locally. Currently the website itself is not open souced but that is the eventual plan. The website is built using all the methods described on the site and in the examples. There is no backing blog framework.
 
+#Suggest a Topic
+Check out [issues](https://github.com/StubbornJava/StubbornJava/issues) to suggest topics, bug fixes, errors, or vote on issues. Reactions / comments may influence the order topics are added but no guarantees. Several topics will not be accepted here such as larger frameworks (Spring, Play, Jersey ...) as well as dependency injection. We will be more focused on rolling things yourself and solving practical problems. The coding style here may not fit with the norm but it should be very easy to convert any of the classes to be DI friendly.
+
 #Libraries
 ##[SLF4J and Logback for Logging](https://www.stubbornjava.com/posts/logging-in-java-with-slf4j-and-logback)
 SLF4J is fairly standard and we chose to use Logback as our underlying implementation.
