@@ -2,7 +2,7 @@
 ext {
     versions = [
         jackson           : '2.8.5',       // Json Serializer / Deserializer
-        okhttp            : '3.4.1',       // HTTP Client
+        okhttp            : '3.6.0',       // HTTP Client
         slf4j             : '1.7.21',      // Logging 
         logback           : '1.1.8',       // Logging
         undertow          : '1.4.8.Final', // Webserver
@@ -17,6 +17,9 @@ ext {
         junit             : '4.12',        // Unit Testing
     ]
     libs = [
+        okhttp                    : "com.squareup.okhttp3:okhttp:$versions.okhttp",
+        okhttpUrlConnection       : "com.squareup.okhttp3:okhttp-urlconnection:$versions.okhttp",
+        loggingInterceptor        : "com.squareup.okhttp3:logging-interceptor:$versions.okhttp",
         jacksonCore               : "com.fasterxml.jackson.core:jackson-core:$versions.jackson",
         jacksonDatabind           : "com.fasterxml.jackson.core:jackson-databind:$versions.jackson",
         jacksonAnnotations        : "com.fasterxml.jackson.core:jackson-annotations:$versions.jackson",
