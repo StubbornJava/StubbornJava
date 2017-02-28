@@ -142,6 +142,14 @@ public class Json {
         }
     }
 
+    public byte[] toByteArray(Object obj) {
+        try {
+            return prettyWriter.writeValueAsBytes(obj);
+        } catch (IOException e) {
+            throw new JsonException(e);
+        }
+    }
+
     public Map<String, Object> mapFromJson(byte[] bytes) {
         try {
             return mapper.readValue(bytes, new TypeReference<Map<String, Object>>() {
