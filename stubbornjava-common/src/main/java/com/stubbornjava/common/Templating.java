@@ -14,7 +14,6 @@ import com.github.jknack.handlebars.cache.ConcurrentMapTemplateCache;
 import com.github.jknack.handlebars.io.ClassPathTemplateLoader;
 import com.github.jknack.handlebars.io.FileTemplateLoader;
 import com.github.jknack.handlebars.io.TemplateLoader;
-import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.googlecode.htmlcompressor.compressor.HtmlCompressor;
 // {{start:templating}}
@@ -32,14 +31,8 @@ public class Templating {
             builder.withCaching()
                    .withResourceLoaders();
         } else {
-            if (!Configs.properties().hasPath("assets.roots")) {
-                log.error("Configuration is missing required \"assets.roots\" config for dev mode. Did you forget to add it to application.local.conf?");
-                Preconditions.checkNotNull(null, "Missing required \"assets.roots\" config.");
-            }
-            List<String> roots = Configs.properties().getStringList("assets.roots");
-            for (String root : roots) {
-                builder.withLocalResourceLoaders(root);
-            }
+            String root = AssetsConfig.assetsRoot();
+            builder.withLocalResourceLoaders(root);
         }
         DEFAULT = builder.build();
     }

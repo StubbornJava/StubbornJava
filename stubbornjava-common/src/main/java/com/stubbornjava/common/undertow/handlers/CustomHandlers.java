@@ -1,9 +1,14 @@
 package com.stubbornjava.common.undertow.handlers;
 
 
+import java.io.File;
+import java.util.concurrent.TimeUnit;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.stubbornjava.common.AssetsConfig;
+import com.stubbornjava.common.Env;
 import com.stubbornjava.common.Metrics;
 import com.stubbornjava.common.undertow.Exchange;
 import com.stubbornjava.undertow.handlers.accesslog.Slf4jAccessLogReceiver;
@@ -17,9 +22,13 @@ import io.undertow.server.handlers.accesslog.AccessLogHandler;
 import io.undertow.server.handlers.encoding.ContentEncodingRepository;
 import io.undertow.server.handlers.encoding.EncodingHandler;
 import io.undertow.server.handlers.encoding.GzipEncodingProvider;
+import io.undertow.server.handlers.resource.ClassPathResourceManager;
+import io.undertow.server.handlers.resource.FileResourceManager;
+import io.undertow.server.handlers.resource.ResourceHandler;
+import io.undertow.server.handlers.resource.ResourceManager;
 
 public class CustomHandlers {
-    private static final Logger logger = LoggerFactory.getLogger(CustomHandlers.class);
+    private static final Logger log = LoggerFactory.getLogger(CustomHandlers.class);
 
     public static AccessLogHandler accessLog(HttpHandler next, Logger logger) {
         return new AccessLogHandler(next, new Slf4jAccessLogReceiver(logger), "combined", CustomHandlers.class.getClassLoader());
@@ -40,6 +49,20 @@ public class CustomHandlers {
                   .setNext(next);
     }
 
+    public static HttpHandler resource(String prefix) {
+        ResourceManager resourceManager = null;
+        if (Env.LOCAL == Env.get()) {
+            log.debug("using local file resource manager {}", AssetsConfig.assetsRoot());
+            resourceManager = new FileResourceManager(new File(AssetsConfig.assetsRoot()), 1024 * 1024);
+        } else {
+            log.debug("using classpath file resource manager");
+            resourceManager = new ClassPathResourceManager(CustomHandlers.class.getClassLoader(), prefix);
+        }
+        ResourceHandler handler = new ResourceHandler(resourceManager);
+        handler.setCacheTime((int)TimeUnit.HOURS.toSeconds(4));
+        return handler;
+    }
+
     public static StatusCodeHandler statusCodeMetrics(HttpHandler next) {
         return new StatusCodeHandler(next, "status.code");
     }
@@ -57,7 +80,7 @@ public class CustomHandlers {
             try {
                 handler.handleRequest(exchange);
             } catch (Throwable th) {
-                logger.error("exception thrown at " + exchange.getRequestURI(), th);
+                log.error("exception thrown at " + exchange.getRequestURI(), th);
                 throw th;
             }
         });
