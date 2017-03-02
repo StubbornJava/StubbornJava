@@ -52,8 +52,9 @@ public class CustomHandlers {
     public static HttpHandler resource(String prefix) {
         ResourceManager resourceManager = null;
         if (Env.LOCAL == Env.get()) {
-            log.debug("using local file resource manager {}", AssetsConfig.assetsRoot() + prefix);
-            resourceManager = new FileResourceManager(new File(AssetsConfig.assetsRoot() + prefix), 1024 * 1024);
+            String path = AssetsConfig.assetsRoot() + "/" + prefix;
+            log.debug("using local file resource manager {}", path);
+            resourceManager = new FileResourceManager(new File(path), 1024 * 1024);
         } else {
             log.debug("using classpath file resource manager");
             resourceManager = new ClassPathResourceManager(CustomHandlers.class.getClassLoader(), prefix);
