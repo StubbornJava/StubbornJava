@@ -14,7 +14,7 @@ ext {
         hikaricp          : '2.6.0',       // JDBC connection pool
         jool              : '0.9.12',      // Functional Utils
         hsqldb            : '2.3.4',       // In memory SQL db
-        aws               : '1.11.98'      // AWS Java SDK
+        aws               : '1.11.98',     // AWS Java SDK
         junit             : '4.12',        // Unit Testing
     ]
     libs = [
