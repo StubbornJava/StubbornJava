@@ -23,6 +23,7 @@ dependencies {
     compile libs.htmlCompressor
     compile libs.hikaricp
     compile libs.jool
+    compile libs.okhttp
 
     testCompile libs.junit
 }

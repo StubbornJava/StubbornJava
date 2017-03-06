@@ -2,13 +2,16 @@ package com.stubbornjava.common.undertow.handlers;
 
 
 import java.io.File;
+import java.util.SortedMap;
 import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.codahale.metrics.health.HealthCheck.Result;
 import com.stubbornjava.common.AssetsConfig;
 import com.stubbornjava.common.Env;
+import com.stubbornjava.common.HealthChecks;
 import com.stubbornjava.common.Metrics;
 import com.stubbornjava.common.undertow.Exchange;
 import com.stubbornjava.undertow.handlers.accesslog.Slf4jAccessLogReceiver;
@@ -75,6 +78,23 @@ public class CustomHandlers {
     public static void metrics(HttpServerExchange exchange) {
         Exchange.body().sendJson(exchange, Metrics.registry());
     }
+
+    // {{start:health}}
+    public static void health(HttpServerExchange exchange) {
+        SortedMap<String, Result> results = HealthChecks.getHealthCheckRegistry().runHealthChecks();
+        boolean unhealthy = results.values().stream().anyMatch(result -> !result.isHealthy());
+
+        if (unhealthy) {
+            /*
+             *  Set a bad status code also. Lots of systems tools can
+             *  easily test status codes but are not set up to parse json.
+             *  Let's keep it simple for everyone.
+             */
+            exchange.setStatusCode(500);
+        }
+        Exchange.body().sendJson(exchange, results);
+    }
+    // {{end:health}}
 
     public static ExceptionHandler exception(HttpHandler handler) {
         return Handlers.exceptionHandler((HttpServerExchange exchange) -> {

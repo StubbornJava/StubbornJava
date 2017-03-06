@@ -24,6 +24,7 @@ public class RestServer {
         .put("/users", timed("updateUser", UserRoutes::updateUser))
         .delete("/users/{email}", timed("deleteUser", UserRoutes::deleteUser))
         .get("/metrics", timed("metrics", CustomHandlers::metrics))
+        .get("/health", timed("health", CustomHandlers::health))
         .setFallbackHandler(timed("notFound", RoutingHandlers::notFoundHandler))
     ;
 
