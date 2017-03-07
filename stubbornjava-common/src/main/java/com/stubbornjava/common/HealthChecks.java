@@ -2,6 +2,7 @@ package com.stubbornjava.common;
 
 import com.codahale.metrics.health.HealthCheckRegistry;
 
+// {{start:registry}}
 public class HealthChecks {
     private HealthChecks() {}
 
@@ -14,3 +15,4 @@ public class HealthChecks {
         return healthCheckRegistry;
     }
 }
+// {{end:registry}}
