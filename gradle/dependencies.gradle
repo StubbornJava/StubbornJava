@@ -44,7 +44,7 @@ ext {
         hikaricp                  : "com.zaxxer:HikariCP:$versions.hikaricp",
         jool                      : "org.jooq:jool:$versions.jool",
         hsqldb                    : "org.hsqldb:hsqldb:$versions.hsqldb",
-        aws                       : "com.amazonaws:aws-java-sdk:$versions.aws",
+        s3                        : "com.amazonaws:aws-java-sdk-s3:$versions.aws",
 
         junit                     : "junit:junit:$versions.junit",
     ]
