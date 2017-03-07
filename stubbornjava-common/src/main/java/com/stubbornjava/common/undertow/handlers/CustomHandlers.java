@@ -86,8 +86,8 @@ public class CustomHandlers {
 
         if (unhealthy) {
             /*
-             *  Set a bad status code also. Lots of systems tools can
-             *  easily test status codes but are not set up to parse json.
+             *  Set a 500 status code also. A lot of systems / dev ops tools can
+             *  easily test status codes but are not set up to parse JSON.
              *  Let's keep it simple for everyone.
              */
             exchange.setStatusCode(500);
