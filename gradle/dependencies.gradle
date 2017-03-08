@@ -15,6 +15,8 @@ ext {
         jool              : '0.9.12',      // Functional Utils
         hsqldb            : '2.3.4',       // In memory SQL db
         aws               : '1.11.98',     // AWS Java SDK
+        contentful        : '7.4.0',       // Contentful java sdk
+
         junit             : '4.12',        // Unit Testing
     ]
     libs = [
@@ -45,6 +47,7 @@ ext {
         jool                      : "org.jooq:jool:$versions.jool",
         hsqldb                    : "org.hsqldb:hsqldb:$versions.hsqldb",
         s3                        : "com.amazonaws:aws-java-sdk-s3:$versions.aws",
+        contentful                : "com.contentful.java:java-sdk:$versions.contentful",
 
         junit                     : "junit:junit:$versions.junit",
     ]
