@@ -24,6 +24,8 @@ dependencies {
     compile libs.hikaricp
     compile libs.jool
     compile libs.okhttp
+    compile libs.okhttpUrlConnection
+    compile libs.loggingInterceptor
 
     testCompile libs.junit
 }
