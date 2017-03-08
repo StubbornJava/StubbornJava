@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 
 import com.github.jknack.handlebars.Handlebars;
 import com.github.jknack.handlebars.Helper;
+import com.github.jknack.handlebars.MarkdownHelper;
 import com.github.jknack.handlebars.Template;
 import com.github.jknack.handlebars.cache.ConcurrentMapTemplateCache;
 import com.github.jknack.handlebars.io.ClassPathTemplateLoader;
@@ -25,7 +26,8 @@ public class Templating {
     static {
         Templating.Builder builder =
             new Templating.Builder()
-                          .withHelper("dateFormat", TemplateHelpers::dateFormat);
+                          .withHelper("dateFormat", TemplateHelpers::dateFormat)
+                          .withHelper("md", new MarkdownHelper());
         // Don't cache locally, makes development annoying
         if (Env.LOCAL != Env.get()) {
             builder.withCaching()
@@ -63,11 +65,11 @@ public class Templating {
     }
 
     public String renderRawHtmlTemplate(String rawTemplate, Object data) {
-        String response = rednerRawTemplate(rawTemplate, data);
+        String response = renderRawTemplate(rawTemplate, data);
         return compressor.compress(response);
     }
 
-    public String rednerRawTemplate(String rawTemplate, Object data) {
+    public String renderRawTemplate(String rawTemplate, Object data) {
         Template template;
         try {
             template = handlebars.compileInline(rawTemplate);
