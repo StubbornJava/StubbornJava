@@ -42,6 +42,7 @@ ext {
         typesafeConfig            : "com.typesafe:config:$versions.typesafeConfig",
         handlebars                : "com.github.jknack:handlebars:$versions.handlebars",
         handlebarsJackson         : "com.github.jknack:handlebars-jackson2:$versions.handlebars",
+        handlebarsMarkdown        : "com.github.jknack:handlebars-markdown:$versions.handlebars",
         htmlCompressor            : "com.googlecode.htmlcompressor:htmlcompressor:$versions.htmlCompressor",
         hikaricp                  : "com.zaxxer:HikariCP:$versions.hikaricp",
         jool                      : "org.jooq:jool:$versions.jool",
