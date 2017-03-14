@@ -18,6 +18,7 @@ ext {
         contentful        : '7.4.0',       // Contentful java sdk
         flyway            : '4.1.2',       // DB migrations
         connectorj        : '6.0.6',       // JDBC MYSQL driver
+        jooq              : '3.9.1',       // jOOQ
 
         junit             : '4.12',        // Unit Testing
     ]
@@ -53,6 +54,8 @@ ext {
         contentful                : "com.contentful.java:java-sdk:$versions.contentful",
         flyway                    : "org.flywaydb:flyway-core:$versions.flyway",
         connectorj                : "mysql:mysql-connector-java:$versions.connectorj",
+        jooq                      : "org.jooq:jooq:$versions.jooq",
+        jooqCodegen               : "org.jooq:jooq-codegen:$versions.jooq",
 
         junit                     : "junit:junit:$versions.junit",
     ]
