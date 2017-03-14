@@ -17,6 +17,7 @@ ext {
         aws               : '1.11.98',     // AWS Java SDK
         contentful        : '7.4.0',       // Contentful java sdk
         flyway            : '4.1.2',       // DB migrations
+        connectorj        : '6.0.6',       // JDBC MYSQL driver
 
         junit             : '4.12',        // Unit Testing
     ]
@@ -51,6 +52,7 @@ ext {
         s3                        : "com.amazonaws:aws-java-sdk-s3:$versions.aws",
         contentful                : "com.contentful.java:java-sdk:$versions.contentful",
         flyway                    : "org.flywaydb:flyway-core:$versions.flyway",
+        connectorj                : "mysql:mysql-connector-java:$versions.connectorj",
 
         junit                     : "junit:junit:$versions.junit",
     ]
