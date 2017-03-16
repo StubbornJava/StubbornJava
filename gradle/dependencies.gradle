@@ -19,6 +19,7 @@ ext {
         flyway            : '4.1.2',       // DB migrations
         connectorj        : '6.0.6',       // JDBC MYSQL driver
         jooq              : '3.9.1',       // jOOQ
+        hashids           : '1.0.1',       // Id hashing
 
         junit             : '4.12',        // Unit Testing
     ]
@@ -56,7 +57,8 @@ ext {
         connectorj                : "mysql:mysql-connector-java:$versions.connectorj",
         jooq                      : "org.jooq:jooq:$versions.jooq",
         jooqCodegen               : "org.jooq:jooq-codegen:$versions.jooq",
-
+        hashids                   : "org.hashids:hashids:$versions.hashids",
+        
         junit                     : "junit:junit:$versions.junit",
     ]
 }
