@@ -129,6 +129,7 @@ public class Json {
     }
     // {{end:writeJson}}
 
+    // {{start:toPrettyString}}
     public String toPrettyString(Object obj) {
         try {
             return prettyWriter.writeValueAsString(obj);
@@ -136,6 +137,7 @@ public class Json {
             throw new JsonException(e);
         }
     }
+    // {{end:toPrettyString}}
 
     // {{start:toByteArray}}
     public byte[] toByteArray(Object obj) {
