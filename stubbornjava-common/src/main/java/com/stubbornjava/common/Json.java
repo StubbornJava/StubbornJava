@@ -111,6 +111,7 @@ public class Json {
         }
     }
 
+    // {{start:fromInputStream}}
     public <T> T fromInputStream(InputStream is, TypeReference<T> typeRef) {
         try {
             return mapper.readValue(is, typeRef);
@@ -118,6 +119,7 @@ public class Json {
             throw new JsonException(e);
         }
     }
+    // {{end:fromInputStream}}
 
     // {{start:writeJson}}
     public String toString(Object obj) {
