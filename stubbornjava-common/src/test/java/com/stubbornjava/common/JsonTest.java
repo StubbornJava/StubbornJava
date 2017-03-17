@@ -59,6 +59,20 @@ public class JsonTest {
         assertEquals(message, Json.serializer().fromJson(actualJson, new TypeReference<Message>() {}));
     }
 
+    @Test
+    public void parseShouldNotFailOnExtraFields() {
+        // {{start:fromJsonExtraFields}}
+        String rawJson = Resources.asString("json-test/extra-fields.json");
+        Message message = Json.serializer().fromJson(rawJson, new TypeReference<Message>() {});
+        // {{end:fromJsonExtraFields}}
+
+        assertEquals("Happy New Year!", message.getMessage());
+        assertEquals(LocalDate.of(2017, 1, 1), message.getDate());
+
+        String actualJson = Json.serializer().toString(message);
+        assertEquals(message, Json.serializer().fromJson(actualJson, new TypeReference<Message>() {}));
+    }
+
     @Test(expected=JsonException.class)
     public void parseShouldFailOnInvalidType() {
         String rawJson = Resources.asString("json-test/invalid-message.json");
@@ -70,6 +84,7 @@ public class JsonTest {
      */
     @Test
     public void parseShouldNotFailOnJsonNode() {
+        // {{start:fromJsonNode}}
         String rawJson = Resources.asString("json-test/nested.json");
         JsonNode node = Json.serializer()
                             .nodeFromJson(rawJson)
@@ -77,6 +92,7 @@ public class JsonTest {
                             .path("nested2")
                             .path("nested3");
         Message message = Json.serializer().fromNode(node, new TypeReference<Message>() {});
+        // {{end:fromJsonNode}}
 
         assertEquals("Nested!", message.getMessage());
         assertEquals(null, message.getDate());

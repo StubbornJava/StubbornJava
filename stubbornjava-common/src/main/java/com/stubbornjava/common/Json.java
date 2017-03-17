@@ -10,7 +10,6 @@ import org.slf4j.LoggerFactory;
 
 import com.codahale.metrics.json.MetricsModule;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -74,6 +73,7 @@ public class Json {
         return prettyWriter;
     }
 
+    // {{start:fromBytes}}
     public <T> T fromJson(byte[] bytes, TypeReference<T> typeRef) {
         try {
             return mapper.readValue(bytes, typeRef);
@@ -81,6 +81,7 @@ public class Json {
             throw new JsonException(e);
         }
     }
+    // {{end:fromBytes}}
 
     // {{start:readJson}}
     public <T> T fromJson(String json, TypeReference<T> typeRef) {
@@ -92,6 +93,7 @@ public class Json {
     }
     // {{end:readJson}}
 
+    // {{start:fromNode}}
     public <T> T fromNode(JsonNode node, TypeReference<T> typeRef) {
         try {
             return mapper.readValue(node.toString(), typeRef);
@@ -99,14 +101,7 @@ public class Json {
             throw new JsonException(e);
         }
     }
-
-    public byte[] writeValueAsBytes(Object obj) {
-        try {
-            return writer.writeValueAsBytes(obj);
-        } catch (JsonProcessingException e) {
-            throw new JsonException(e);
-        }
-    }
+    // {{end:fromNode}}
 
     public <T> T fromObject(Object obj, TypeReference<T> typeRef) {
         try {
@@ -142,6 +137,7 @@ public class Json {
         }
     }
 
+    // {{start:toByteArray}}
     public byte[] toByteArray(Object obj) {
         try {
             return prettyWriter.writeValueAsBytes(obj);
@@ -149,6 +145,7 @@ public class Json {
             throw new JsonException(e);
         }
     }
+    // {{end:toByteArray}}
 
     public Map<String, Object> mapFromJson(byte[] bytes) {
         try {
