@@ -2,6 +2,7 @@ package com.stubbornjava.examples.common;
 
 import org.hashids.Hashids;
 
+// {{start:hashids}}
 public class HashIds {
     /*
      *  The salt is important so that your ids cannot be guessed.
@@ -22,3 +23,4 @@ public class HashIds {
         return hashids.decode(hash)[0];
     }
 }
+// {{end:hashids}}
