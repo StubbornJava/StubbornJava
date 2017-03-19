@@ -3,6 +3,7 @@ dependencies {
     compile project(':stubbornjava-undertow')
     compile project(':stubbornjava-common')
     compile libs.hsqldb
+    compile libs.hashids
     testCompile libs.junit
 }
 // {{end:dependencies}}
