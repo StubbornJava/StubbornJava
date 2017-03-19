@@ -32,7 +32,7 @@ public class ParametersServer {
     // {{end:handlers}}
 
     // {{start:obfuscatedRoute}}
-    private static void obfuscatedId(HttpServerExchange exchange) {
+    private static void obfuscatedIdRoute(HttpServerExchange exchange) {
         // Using the above helper
         Long userId = ParametersServer.userId(exchange);
         // This is just to show the raw value.
@@ -61,7 +61,7 @@ public class ParametersServer {
     private static final HttpHandler ROUTES = new RoutingHandler()
         .get("/hello", ParametersServer::queryParam)
         .get("/hello/{name}/{num}", ParametersServer::pathParam)
-        .get("/users/{userId}", ParametersServer::obfuscatedId)
+        .get("/users/{userId}", ParametersServer::obfuscatedIdRoute)
     ;
     // {{end:routes}}
 
