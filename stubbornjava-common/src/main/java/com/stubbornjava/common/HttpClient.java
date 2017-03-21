@@ -1,5 +1,6 @@
 package com.stubbornjava.common;
 
+import java.io.IOException;
 import java.net.CookieManager;
 import java.net.CookiePolicy;
 import java.util.concurrent.TimeUnit;
@@ -9,6 +10,7 @@ import org.slf4j.LoggerFactory;
 
 import okhttp3.JavaNetCookieJar;
 import okhttp3.OkHttpClient;
+import okhttp3.Response;
 import okhttp3.logging.HttpLoggingInterceptor;
 import okhttp3.logging.HttpLoggingInterceptor.Level;
 
@@ -62,4 +64,8 @@ public class HttpClient {
         return client.newBuilder().cookieJar(cookieJar).build();
     }
     // {{end:cookieJar}}
+
+    public static RuntimeException unknownException(Response response) throws IOException {
+        return new RuntimeException(String.format("code: %s, body: %s", response.code(), response.body().string()));
+    }
 }

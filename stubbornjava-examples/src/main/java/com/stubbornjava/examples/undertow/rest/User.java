@@ -1,6 +1,7 @@
 package com.stubbornjava.examples.undertow.rest;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -41,6 +42,10 @@ public class User {
     private static final TypeReference<User> typeRef = new TypeReference<User>() {};
     public static TypeReference<User> typeRef() {
         return typeRef;
+    }
+    private static final TypeReference<List<User>> listTypeRef = new TypeReference<List<User>>() {};
+    public static TypeReference<List<User>> listTypeRef() {
+        return listTypeRef;
     }
 }
 // {{end:user}}
