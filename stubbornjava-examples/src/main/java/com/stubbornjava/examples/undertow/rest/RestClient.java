@@ -182,5 +182,5 @@ public class RestClient {
         log.debug("**** Exception ****");
         log.debug(Json.serializer().toString(client.createUser(null)));
     }
-    // {{start:main}}
+    // {{end:main}}
 }
