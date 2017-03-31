@@ -21,6 +21,8 @@ dependencies {
     compile libs.handlebars
     compile libs.handlebarsJackson
     compile libs.handlebarsMarkdown
+    compile libs.handlebarsHelpers
+    compile libs.handlebarsHumanize
     compile libs.htmlCompressor
     compile libs.hikaricp
     compile libs.jool

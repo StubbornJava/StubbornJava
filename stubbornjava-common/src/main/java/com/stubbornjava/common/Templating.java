@@ -3,15 +3,18 @@ package com.stubbornjava.common;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.jknack.handlebars.Handlebars;
 import com.github.jknack.handlebars.Helper;
+import com.github.jknack.handlebars.HumanizeHelper;
 import com.github.jknack.handlebars.MarkdownHelper;
 import com.github.jknack.handlebars.Template;
 import com.github.jknack.handlebars.cache.ConcurrentMapTemplateCache;
+import com.github.jknack.handlebars.helper.AssignHelper;
 import com.github.jknack.handlebars.io.ClassPathTemplateLoader;
 import com.github.jknack.handlebars.io.FileTemplateLoader;
 import com.github.jknack.handlebars.io.TemplateLoader;
@@ -27,7 +30,9 @@ public class Templating {
         Templating.Builder builder =
             new Templating.Builder()
                           .withHelper("dateFormat", TemplateHelpers::dateFormat)
-                          .withHelper("md", new MarkdownHelper());
+                          .withHelper("md", new MarkdownHelper())
+                          .withHelper(AssignHelper.NAME, AssignHelper.INSTANCE)
+                          .register(HumanizeHelper::register);
         // Don't cache locally, makes development annoying
         if (Env.LOCAL != Env.get()) {
             builder.withCaching()
@@ -122,6 +127,12 @@ public class Templating {
         public <T> Builder withHelper(String helperName, Helper<T> helper) {
             log.debug("using template helper {}" , helperName);
             handlebars.registerHelper(helperName, helper);
+            return this;
+        }
+
+        public <T> Builder register(Consumer<Handlebars> consumer) {
+            log.debug("registering helpers");
+            consumer.accept(handlebars);
             return this;
         }
 
