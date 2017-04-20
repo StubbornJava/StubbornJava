@@ -36,4 +36,10 @@ public class Exchange {
     public static PathParamImpl pathParams() {
         return PATHPARAMS;
     }
+
+    public static interface UrlImpl extends Urls {};
+    private static final UrlImpl URLS = new UrlImpl(){};
+    public static UrlImpl urls() {
+        return URLS;
+    }
 }
