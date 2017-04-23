@@ -17,7 +17,7 @@ ext {
         aws               : '1.11.98',     // AWS Java SDK
         contentful        : '7.4.0',       // Contentful java sdk
         flyway            : '4.1.2',       // DB migrations
-        connectorj        : '6.0.6',       // JDBC MYSQL driver
+        connectorj        : '5.1.41',       // JDBC MYSQL driver
         jooq              : '3.9.1',       // jOOQ
         hashids           : '1.0.1',       // Id hashing
 
