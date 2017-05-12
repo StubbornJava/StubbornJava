@@ -16,5 +16,5 @@ config.local.properties
 gradlew
 gradlew.bat
 
-ui/node_modules
-ui/assets
+**/ui/node_modules
+**/ui/assets

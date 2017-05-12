@@ -1,0 +1,15 @@
+<p>You don't need a framework for configuration. There are plenty of configuration libraries that the frameworks use directly.</p>
+
+<h2 class="anchored">Typesafe Config</h2>
+<p>A common use case for configs is to have defaults (application.conf) and overrides (application.{env}.conf) per environment. Typesafe Config is great for this use case. Here is a mini wrapper for building Typesafe Config objects.</p>
+{{> templates/src/widgets/code/code-snippet file=config section=config.sections.config}}
+<p>From this code you have two global configurations set up.</p>
+<ul>
+  <li>System - This has tons of useful JVM properties as well as any -D params you pass to the JVM.</li>
+  <li>Properties - All of your application.{env}.conf and application.conf properties merged.</li>
+    <ul>
+      <li>application.conf - All general configs and defaults.</li>
+      <li>application.local.conf - Overrides for local env. .gitignore this file so each developer can have their own version.</li>
+      <li>application.prod.conf - Prod config, to use it just pass -Denv=prod to the JVM.
+    </ul>
+</ul>

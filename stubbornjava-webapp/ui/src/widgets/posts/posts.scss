@@ -1,0 +1,106 @@
+@import '../../common/skin.scss';
+@import '../card/card.scss';
+
+// Posts
+.post {
+  @extend .card;
+
+  .post-content {
+    margin-top: 10px;
+  }
+
+  .post-meta-block {
+    margin: 5px 0px;
+  }
+}
+
+.post-meta {
+  margin: 10px 0px;
+  padding: 5px 10px;
+  border-top: 1px solid $title-bg-border;
+  border-bottom: 1px solid $title-bg-border;
+  background: $title-bg;
+
+  i {
+    margin-right: 5px;
+  }
+  a {
+    color: $gray-light;
+  }
+}
+
+// Posts collections
+.posts {
+  a {
+    color: $gray-light;
+  }
+
+  .post {
+    h3 {
+      margin-top: 0px;
+    }
+
+    &:not(:last-child) {
+      border-bottom: 1px solid $title-bg-border;
+      margin-bottom: 20px;
+    }
+  }
+  margin-bottom: 10px;
+}
+
+// Library badge things
+.btn.btn-default.lib {
+  margin-bottom: 3px;
+  padding: 3px;
+  color: $white;
+  background-color: $gray-light;
+  border-color: darken($gray-light, 10%);
+
+  .badge {
+    background-color: $white;
+    color: $gray-light;
+    padding: 2px 6px;
+    margin-left: 5px;
+  }
+}
+
+// Library badge things
+.btn.btn-default.tag {
+  margin-bottom: 3px;
+  padding: 3px;
+  color: $white;
+  background-color: $theme;
+  border-color: darken($theme, 5%);
+
+  .badge {
+    background-color: $white;
+    color: $theme;
+    padding: 2px 6px;
+    margin-left: 5px;
+  }
+}
+
+// tag cloud
+.tag-cloud {
+  @extend .card;
+  margin: 0px 0px 15px 0px;
+
+  h1, h2, h3, h4, h5, h6 {
+    padding: 0px 0px 4px 0px;
+    border-bottom: 1px solid #eee;
+  }
+
+  ul {
+    margin: 0px;
+    li {
+      font-size: 14px;
+      &:not(:last-child) {
+        margin-bottom: 4px;
+      }
+    }
+  }
+  
+  .date {
+    font-size: .85rem;
+  }
+}

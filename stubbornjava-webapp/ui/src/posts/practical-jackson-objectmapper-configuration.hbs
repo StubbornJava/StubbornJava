@@ -1,0 +1,68 @@
+<p>The purpose of this post is to show a relatively standard Jackson ObjectMapper configuration and show various ways to read / write json.</p>
+
+<h2 class="anchored">Configuration</h2>
+<p>Keep in mind it is a best practice to use ObjectMappers as a signleton. Shown is a static global using static methods for reading / writing json. Feel free to use Dependency Injection to manage your ObjectMapper singleton or write a wapper class that contains it. In rare cases you may wan't more than one ObjectMapper. For instance if an external API follows different standards than you it might be best to have two ObjectMappers. The anti-pattern is creating a new ObjectMapper every serialization request (Don't do that!).</p>
+{{> templates/src/widgets/code/code-snippet file=jackson section=jackson.sections.setup}}
+
+<h2 class="anchored">Serializing</h2>
+<p>Assume we want to write the following json.</p>
+<pre class="line-numbers"><code class="language-json">{
+  "date": "2017-01-01",
+  "message": "Happy New Year!"
+}</code></pre>
+
+<p>We have a POJO to represent this data mode.</p>
+{{> templates/src/widgets/code/code-snippet file=test section=test.sections.pojo}}
+
+<p>We can serialize by calling the following.</p>
+{{> templates/src/widgets/code/code-snippet file=test section=test.sections.toJson}}
+<p>This is achieved in the Json class by delegating to Jackson.</p>
+{{> templates/src/widgets/code/code-snippet file=jackson section=jackson.sections.writeJson}}
+<p>Serializing to Pretty String using the PrettyWrtier</p>
+{{> templates/src/widgets/code/code-snippet file=jackson section=jackson.sections.toPrettyString}}
+<p>Serializing to byte[]</p>
+{{> templates/src/widgets/code/code-snippet file=jackson section=jackson.sections.toByteArray}}
+
+
+<h2 class="anchored">Deserializing</h2>
+<p>Using the same model from above we can deserialze with the following lines.</p>
+{{> templates/src/widgets/code/code-snippet file=test section=test.sections.fromJson}}
+
+<p>This is achieved in the Json class by delegating to Jackson.</p>
+{{> templates/src/widgets/code/code-snippet file=jackson section=jackson.sections.readJson}}
+<p>Deserialize from byte[]</p>
+{{> templates/src/widgets/code/code-snippet file=jackson section=jackson.sections.fromBytes}}
+<p>Deserialize from InputStream</p>
+{{> templates/src/widgets/code/code-snippet file=jackson section=jackson.sections.fromInputStream}}
+
+<h2 class="anchored">DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES</h2>
+<p>Often times you may only need a certian portion of the JSON, or maybe you want to plan for the future where you may add new JSON fields on some objects. In these cases you should add the <code>DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES</code> and set it to false as shown above.. This will make sure Jackson doesn't crash when there are extra json fields.</p>
+<pre class="line-numbers"><code class="language-json">{
+  "date": "2017-01-01",
+  "message": "Happy New Year!",
+  "extra": []
+}</code></pre>
+<p>We can use the same code above to parse this JSON object that has an additional field</p>
+{{> templates/src/widgets/code/code-snippet file=test section=test.sections.fromJsonExtraFields}}
+
+<h2 class="anchored">JsonNode's and Nested Objects</h2>
+<p>If you are working with a large / complex / deep nested JSON object and don't feel like creating a POJO to match it exactly you can use <code>JsonNode</code>.</p>
+<pre class="line-numbers"><code class="language-json">{
+  "foo": "test",
+  "nested1": {
+    "bar": "test",
+    "nested2": {
+      "baz": "test",
+      "nested3": {
+        "message": "Nested!"
+      }
+    }
+  }
+}</code></pre>
+<p>Here we are interested in the <code>nested3</code> object. We can quikcly grab it utilizing <code>JsonNode.path</code>.</p>
+{{> templates/src/widgets/code/code-snippet file=test section=test.sections.fromJsonNode}}
+
+<h2 class="anchored">Ignoring Null values</h2>
+<p>Jackson will write null fields by default for both Maps and POJOs. Use <code>mapper.setSerializationInclusion(Include.NON_NULL)</code> to ignore null values for POJOs and <code>SerializationFeature.WRITE_NULL_MAP_VALUES</code> set to false for Maps.</p>
+
+

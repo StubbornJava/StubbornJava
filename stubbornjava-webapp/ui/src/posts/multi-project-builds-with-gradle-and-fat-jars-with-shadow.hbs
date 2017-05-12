@@ -1,0 +1,75 @@
+<p>When deciding on your dependency manager in Java you have two main choices Maven and Gradle (or something more complex like Google's <a href="https://bazel.build/">Bazel</a>). Both manage dependencies well, have robust plugin systems, support checkstyles, run tests and build / publish JARs and sources. Pick whatever you are comfortable with. Gradle is a little less verbose and what we will be using.</p>
+
+<h2 class="anchored">Multi-project Builds</h2>
+<p>Multi-project builds are very useful for splitting a project into separate dependencies. For example you may have a REST service that is split into 3 projects core for common models / logic, client for the HTTP client that interacts with the server and the server. You wouldn't want database dependencies in the client library so this is a clean separation of concerns. We will be using the StubbornJava projects in the example but the separation of logic still holds.</p>
+
+<h3 class="anchored">Parent Project</h3>
+<p>The root project for StubbornJava is the root on the <a href="https://github.com/StubbornJava/StubbornJava">StubbornJava GitHub Repository</a>. Parent projects generally only have a few gradle files and no source code.</p>
+
+<h4 class="anchored">settings.gradle</h4>
+<p>This file is responsible for setting the root project name and including all child projects.</p>
+{{> templates/src/widgets/code/code-snippet file=parent-settings section=parent-settings.sections.settings}}
+
+<h4 class="anchored">gradle/</h4>
+<p>The <code>gradle/</code> directory is the default location for including gradle scripts. This is a convienent location to split out our dependencies. The <code>build.gradle</code> file tends to get a bit cluttered, since dependencies are one of the most updated sections and self contained its a great idea to split into its own file <code>gradle/dependencies.gradle</code>. We will be using Gradle's <code>ext</code> tag that is used for extra properties. This is a good spot for shared variables. Normally projects only store the version numbers here but we also store the full dependency strings so they can be reused.</p>
+{{> templates/src/widgets/code/code-snippet file=parent-dependencies section=parent-dependencies.sections.dependencies}}
+
+<h4 class="anchored">build.gradle</h4>
+<p>The <code>build.gradle</code> file is where we will load all plugins and include our previous <code>gradle/dependencies.gradle</code> file. This is also where we handle building our fat JAR using the Shadow JAR plugin. Ever run into issues where maven / gradle have multiple versions of the same library from different transitive dependencies? Turning on <code>failOnVersionConflict()</code> will help track down and resolve all these issues. Since we also stored all of our dependency strings in a variable we can iterate them and force their versions to always be used <code>libs.each { k, v -> force(v) }</code>. This means we only need to override library versions if multiple transitive dependencies share a same library with different versions.</p>
+{{> templates/src/widgets/code/code-snippet file=parent-build section=parent-build.sections.build}}
+
+<h3 class="anchored">stubbornjava-undertow/build.gradle</h3>
+<p>This project is for StubbornJava specific undertow helper classes. We only need to reference the libs.{library name} because we stored all the dependency strings in the <code>ext</code> tag in the parent project.</p>
+{{> templates/src/widgets/code/code-snippet file=undertow-build section=undertow-build.sections.dependencies}}
+
+<h3 class="anchored">stubbornjava-common/build.gradle</h3>
+<p>This project is for StubbornJava specific common code. Notice <code>stubbornjava-undertow</code> is a dependency.</p>
+{{> templates/src/widgets/code/code-snippet file=common-build section=common-build.sections.dependencies}}
+
+<h3 class="anchored">stubbornjava-examples/build.gradle</h3>
+<p>This project is for StubbornJava specific examples.</p>
+{{> templates/src/widgets/code/code-snippet file=examples-build section=examples-build.sections.dependencies}}
+
+<h2 class="anchored">Building a Fat JAR with Shadow</h2>
+<p>Now that we have a working multi-project build lets create an executable JAR. For our <a href="/posts/lightweight-embedded-java-rest-server-without-a-framework">example embedded REST service</a>. (Assume we are in the root gradle directory)</p>
+
+<pre class="line-numbers"><code class="language-bash">gradle shadowJar
+Configuration on demand is an incubating feature.
+:stubbornjava-undertow:compileJava UP-TO-DATE
+:stubbornjava-undertow:processResources UP-TO-DATE
+:stubbornjava-undertow:classes UP-TO-DATE
+:stubbornjava-undertow:jar
+:stubbornjava-common:compileJava
+:stubbornjava-common:processResources UP-TO-DATE
+:stubbornjava-common:classes
+:stubbornjava-common:shadowJar
+:stubbornjava-common:jar
+:stubbornjava-examples:compileJava
+:stubbornjava-examples:processResources UP-TO-DATE
+:stubbornjava-examples:classes
+:stubbornjava-examples:shadowJar
+:stubbornjava-undertow:shadowJar
+
+BUILD SUCCESSFUL
+
+Total time: 6.638 secs</code></pre>
+
+<p>You should now be able to run the self contained JAR <code>java -Denv={env} -Xmx{max-heap} -cp '{path-to-jar}' {fully-qualified-class-with-main}</code>. What is very nice about this style of passing the main class instead of using a manifest is the same JAR can be used to run any main method. In this case any of the example servers can be run with this JAR.</p>
+<pre class="line-numbers"><code class="language-bash">java -Denv=local -Xmx640m -cp 'stubbornjava-examples/build/libs/stubbornjava-examples-0.1.2-SNAHOT.jar' com.stubbornjava.examples.undertow.rest.RestServer
+2017-02-20 15:37:54.760 [main] DEBUG c.s.common.undertow.SimpleServer - ListenerInfo{protcol='http', address=/0:0:0:0:0:0:0:0:8080, sslContext=null}</code></pre>
+
+<pre class="line-numbers"><code class="language-bash">curl -X POST "localhost:8080/users" -d '
+{
+  "email": "user1@test.com",
+  "roles": ["USER"]
+}
+';
+{"email":"user1@test.com","roles":["USER"],"dateCreated":"2017-01-16"}
+
+curl -X POST "localhost:8080/users" -d '
+{
+  "email": "user2@test.com",
+  "roles": ["ADMIN"]
+}
+';
+{"email":"user2@test.com","roles":["ADMIN"],"dateCreated":"2017-01-16"}</code></pre>

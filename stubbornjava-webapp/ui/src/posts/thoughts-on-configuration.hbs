@@ -1,0 +1,14 @@
+<p>Configuration is a place for things that are configurable. Constants may belong inside of configuration but often times they do not. Configuration files often get flooded with tons of constants which can make it difficult to read code when abused.</p>
+
+<h2 class="anchored">Simple Rules of Thumb</h2>
+<div>Belongs in configuration</div>
+<ul class="no-bullet">
+  <li><i class="fa fa-check success-text" aria-hidden="true"></i> The value is different across environments (database config, API keys, secrets / tokens)</li>
+  <li><i class="fa fa-check success-text" aria-hidden="true"></i> Live reloading is required</li>
+  <li><i class="fa fa-check success-text" aria-hidden="true"></i> Passwords / secrets that don't belong in source control</li>
+</ul>
+<div>Doesn't belong in configuration</div>
+<ul class="no-bullet">
+  <li><i class="fa fa-times danger-text" aria-hidden="true"></i> String constants (Email subject lines, Error Messages, ...)</li>
+  <li><i class="fa fa-times danger-text" aria-hidden="true"></i> Attribute lists or sets of constants</li>
+</ul>

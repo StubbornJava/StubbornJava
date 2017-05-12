@@ -1,0 +1,17 @@
+{{#> templates/src/common/_error-layout}}
+  {{#*inline "title"}}Internal Server Error{{/inline}}
+  {{#*inline "content"}}
+    <div class="error">
+      <!-- Heading -->
+      <h1><strong>500<span class="color">!</span></strong> Internal Server Error<span class="color">!</span></h1>
+
+      <!-- Paragraph -->
+      <h4>There was a problem with the page you are trying to view. An engineer has been notified.</h4>
+
+      <ul class="list-inline">
+        <!-- List -->
+        <li><a href="/">Home</a><li>
+      </ul>
+    </div>
+  {{/inline}}
+{{/ templates/src/common/_error-layout}}

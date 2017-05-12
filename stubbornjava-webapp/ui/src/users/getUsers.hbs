@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    {{> templates/head}}
+    <title>Users</title>
+  </head>
+  <body>
+    {{> templates/header}}
+    <div class="container">
+      <div class="row show-grid">
+        <div class="col-sm-12">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Email</th>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Active</th>
+                <th>Date Created</th>
+              </tr>
+            </thead>
+            <tbody>
+              {{#each users}}
+              <tr>
+                <td><a href="/user/{{ userId }}">{{ userId }}</a></td>
+                <td>{{ email }}</td>
+                <td>{{ firstName }}</td>
+                <td>{{ lastName }}</td>
+                <td>{{ active }}</td>
+                <td>{{ tsCreated }}</td>
+              </tr>
+              {{/each}}
+            </tbody>
+          </table>
+        </div>
+      </div>
+      {{> templates/footer}}
+    </div>
+  </body>

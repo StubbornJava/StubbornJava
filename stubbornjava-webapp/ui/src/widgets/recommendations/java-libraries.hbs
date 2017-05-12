@@ -1,0 +1,18 @@
+{{#> templates/src/common/_base-layout metaDesc="Recommended 3rd party Java libraries for creating your own web server framework."}}
+  {{#*inline "title"}}Java Library Recommendations{{/inline}}
+  {{#*inline "content"}}
+
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12 col-lg-9">
+          <h1>Java Library Recommendations</h1>
+          {{> templates/src/widgets/recommendations/all-libraries}}
+        </div>
+        <div class="col-lg-3 hidden-md-down">
+          {{> templates/src/widgets/posts/tagCloud title="Libraries" items=libraries icon="cogs"}}
+          {{> templates/src/widgets/posts/recent-posts-sidebar recentPosts=recentPosts}}
+        </div>
+      </div>
+    </div>
+  {{/inline}}
+{{/ templates/src/common/_base-layout}}

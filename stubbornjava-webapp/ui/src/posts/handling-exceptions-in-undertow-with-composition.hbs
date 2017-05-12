@@ -1,0 +1,89 @@
+<p>Time for an introduction to Undertow's ExceptionHandler interfaces and models. Oh wait, the ExceptionHandler is just a HttpHandler and it accepts HttpHandlers for each Exception type. Alright let's just jump right into to it then.</p>
+
+<h2 class="anchored">Custom Exceptions</h2>
+<p>Assuming we have the following custom exception classes.</p>
+{{> templates/src/widgets/code/code-snippet file=server section=server.sections.exceptions}}
+
+
+<h2 class="anchored">HttpHandlers</h2>
+<p>Implementations of each route.</p>
+{{> templates/src/widgets/code/code-snippet file=handlers section=handlers.sections.handlers}}
+
+<h2 class="anchored">Routing</h2>
+<p>Assign a route to each of the above HttpHandlers.</p>
+{{> templates/src/widgets/code/code-snippet file=server section=server.sections.routes}}
+
+<h2 class="anchored">Exception Handlers</h2>
+<p>This should be straightforward, notice an ExceptionHandler is no different than a HttpHandler. We utilize undertows attachment system to grab the Exception.</p>
+{{> templates/src/widgets/code/code-snippet file=handlers section=handlers.sections.exceptionhandlers}}
+
+
+<h2 class="anchored">Exception Handler</h2>
+<p>Exception handling is easy in undertow. Just create an ExceptionHandler instance and add a HttpHandler for each Exception type you wish to handle. Make sure you main route is passed into the ExceptionHandler. This is how we compose more complex routes.</p>
+{{> templates/src/widgets/code/code-snippet file=server section=server.sections.exceptionhandler}}
+
+<h2 class="anchored">Finally the Server</h2>
+{{> templates/src/widgets/code/code-snippet file=server section=server.sections.server}}
+
+<h2 class="anchored">Results</h2>
+<pre class="line-numbers"><code class="language-bash">curl -v localhost:8080/ok
+* Connected to localhost (127.0.0.1) port 8080 (#0)
+> GET /ok HTTP/1.1
+> Host: localhost:8080
+> User-Agent: curl/7.49.1
+> Accept: */*
+>
+< HTTP/1.1 200 OK
+< Connection: keep-alive
+< Content-Type: text/plain
+< Content-Length: 2
+< Date: Wed, 11 Jan 2017 01:37:47 GMT
+<
+* Connection #0 to host localhost left intact
+ok</code></pre>
+<pre class="line-numbers"><code class="language-bash">curl -v localhost:8080/throwWebException
+* Connected to localhost (127.0.0.1) port 8080 (#0)
+> GET /throwWebException HTTP/1.1
+> Host: localhost:8080
+> User-Agent: curl/7.49.1
+> Accept: */*
+>
+< HTTP/1.1 500 Internal Server Error
+< Connection: keep-alive
+< Content-Type: text/html
+< Content-Length: 25
+< Date: Wed, 11 Jan 2017 01:38:34 GMT
+<
+* Connection #0 to host localhost left intact
+&lt;h1&gt;Web Server Error&lt;/h1&gt;</code></pre>
+<pre class="line-numbers"><code class="language-bash">curl -v localhost:8080/throwApiException
+* Connected to localhost (127.0.0.1) port 8080 (#0)
+> GET /throwApiException HTTP/1.1
+> Host: localhost:8080
+> User-Agent: curl/7.49.1
+> Accept: */*
+>
+< HTTP/1.1 503 Service Unavailable
+< Connection: keep-alive
+< Content-Type: application/json
+< Content-Length: 31
+< Date: Wed, 11 Jan 2017 01:38:58 GMT
+<
+* Connection #0 to host localhost left intact
+{"message": "API Server Error"}</code></pre>
+<pre class="line-numbers"><code class="language-bash">curl -v localhost:8080/throwException
+* Connected to localhost (127.0.0.1) port 8080 (#0)
+> GET /throwException HTTP/1.1
+> Host: localhost:8080
+> User-Agent: curl/7.49.1
+> Accept: */*
+>
+< HTTP/1.1 500 Internal Server Error
+< Connection: keep-alive
+< Content-Type: text/plain
+< Content-Length: 22
+< Date: Wed, 11 Jan 2017 01:40:20 GMT
+<
+* Connection #0 to host localhost left intact
+Internal Server Error!</code></pre>
+<p>Notice all status codes and content types are correct! No magic involved, no injecting state. An added benefit to this approach is how manageable the stack traces are. For more info read up on <a href="/posts/managing-your-stack-traces">managing your stack traces</a></p>

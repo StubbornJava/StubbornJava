@@ -1,0 +1,99 @@
+<p>Simple HTTP redirecting with the Undertow web server. Using the convience class <a href="https://github.com/StubbornJava/StubbornJava/blob/master/stubbornjava-undertow/src/main/java/com/stubbornjava/undertow/exchange/RedirectSenders.java">RedirectSenders.java</a></p>
+
+<h2 class="anchored">Redirects</h2>
+{{> templates/src/widgets/code/code-snippet file=server section=server.sections.redirects}}
+
+<h2 class="anchored">Hello Handler</h2>
+<pre class="line-numbers"><code class="language-bash">curl 127.0.0.1:8080/hello
+Hello</code></pre>
+
+<h2 class="anchored">Temporary Redirect</h2>
+<pre class="line-numbers"><code class="language-bash">curl -v -L 127.0.0.1:8080/temporaryRedirect
+*   Trying 127.0.0.1...
+* Connected to 127.0.0.1 (127.0.0.1) port 8080 (#0)
+> GET /temporaryRedirect HTTP/1.1
+> Host: 127.0.0.1:8080
+> User-Agent: curl/7.49.1
+> Accept: */*
+>
+< HTTP/1.1 302 Found
+< Connection: keep-alive
+< Location: /hello
+< Content-Length: 0
+< Date: Tue, 17 Jan 2017 02:22:02 GMT
+<
+* Connection #0 to host 127.0.0.1 left intact
+* Issue another request to this URL: 'http://127.0.0.1:8080/hello'
+* Found bundle for host 127.0.0.1: 0x7fb928d0c260 [can pipeline]
+* Re-using existing connection! (#0) with host 127.0.0.1
+* Connected to 127.0.0.1 (127.0.0.1) port 8080 (#0)
+> GET /hello HTTP/1.1
+> Host: 127.0.0.1:8080
+> User-Agent: curl/7.49.1
+> Accept: */*
+>
+< HTTP/1.1 200 OK
+< Connection: keep-alive
+< Content-Type: text/plain
+< Content-Length: 5
+< Date: Tue, 17 Jan 2017 02:22:02 GMT</code></pre>
+<p>A good use of a temporary redirect is to redirect unauthenticated users to a login page.</p>
+<h2 class="anchored">Permanent Redirect</h2>
+<pre class="line-numbers"><code class="language-bash">curl -v -L 127.0.0.1:8080/permanentRedirect
+*   Trying 127.0.0.1...
+* Connected to 127.0.0.1 (127.0.0.1) port 8080 (#0)
+> GET /permanentRedirect HTTP/1.1
+> Host: 127.0.0.1:8080
+> User-Agent: curl/7.49.1
+> Accept: */*
+>
+< HTTP/1.1 301 Moved Permanently
+< Connection: keep-alive
+< Location: /hello
+< Content-Length: 0
+< Date: Tue, 17 Jan 2017 02:22:23 GMT
+<
+* Connection #0 to host 127.0.0.1 left intact
+* Issue another request to this URL: 'http://127.0.0.1:8080/hello'
+* Found bundle for host 127.0.0.1: 0x7ff89940c370 [can pipeline]
+* Re-using existing connection! (#0) with host 127.0.0.1
+* Connected to 127.0.0.1 (127.0.0.1) port 8080 (#0)
+> GET /hello HTTP/1.1
+> Host: 127.0.0.1:8080
+> User-Agent: curl/7.49.1
+> Accept: */*
+>
+< HTTP/1.1 200 OK
+< Connection: keep-alive
+< Content-Type: text/plain
+< Content-Length: 5
+< Date: Tue, 17 Jan 2017 02:22:23 GMT</code></pre>
+
+<h2 class="anchored">Referrer Redirect</h2>
+<pre class="line-numbers"><code class="language-bash">curl -v -L --referer 'http://www.google.com' 127.0.0.1:8080/referrerRedirect
+*   Trying 127.0.0.1...
+* Connected to 127.0.0.1 (127.0.0.1) port 8080 (#0)
+> GET /referrerRedirect HTTP/1.1
+> Host: 127.0.0.1:8080
+> User-Agent: curl/7.49.1
+> Accept: */*
+> Referer: http://www.google.com
+>
+< HTTP/1.1 302 Found
+< Connection: keep-alive
+< Location: http://www.google.com
+< Content-Length: 0
+< Date: Tue, 17 Jan 2017 02:23:35 GMT
+<
+* Connection #0 to host 127.0.0.1 left intact
+* Issue another request to this URL: 'http://www.google.com'
+* Rebuilt URL to: http://www.google.com/
+*   Trying 216.58.193.132...
+* Connected to www.google.com (216.58.193.132) port 80 (#1)
+> GET / HTTP/1.1
+> Host: www.google.com
+> User-Agent: curl/7.49.1
+> Accept: */*
+> Referer: http://www.google.com
+>
+< HTTP/1.1 200 OK</code></pre>

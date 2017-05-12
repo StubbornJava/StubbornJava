@@ -1,0 +1,28 @@
+// {{start:dependencies}}
+dependencies {
+    // Project reference
+    compile project(':stubbornjava-undertow')
+    compile project(':stubbornjava-common')
+    compile project(':stubbornjava-private')
+
+    testCompile libs.junit
+}
+
+shadowJar {
+   baseName = 'stubbornjava-all'
+   classifier = null
+   version = null
+}
+
+sourceSets {
+    main {
+        java {
+            srcDirs = ["src/main/java"]
+        }
+        resources {
+            srcDirs = ["src/main/resources", "ui/assets"]
+        }
+    }
+}
+
+// {{end:dependencies}}

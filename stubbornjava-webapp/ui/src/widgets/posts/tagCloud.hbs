@@ -1,0 +1,8 @@
+<div class="tag-cloud">
+  <h6><span><i class="fa fa-{{icon}} theme-color" aria-hidden="true"></i> {{title}}</span></h6>
+  <ul class="list-unstyled">
+    {{#each items}}
+    <li><a href="{{path}}">{{name}}{{#if count}} ({{count}}){{/if}}</a></li>
+    {{/each}}
+  </ul>
+</div>

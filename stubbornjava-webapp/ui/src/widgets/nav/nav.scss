@@ -1,0 +1,53 @@
+@import '../../common/skin.scss';
+@import '../common/depth.scss';
+
+.navbar-inverse {
+  background-color: $theme;
+
+  .navbar-brand {
+    padding: 0;
+  }
+
+  .java {
+    color: $gold;
+  }
+
+  .navbar-nav {
+    .nav-link {
+      color: $white;
+    }
+  }
+
+  .header-social {
+    display: flex;
+    a {
+      font-size: 2rem;
+      margin-left: 0.5rem;
+    }
+  }
+
+  @extend .z-depth-1;
+  // a {
+  //   padding: 10px 15px;
+  //   font-size: 13px;
+  //   line-height: 28px;
+  //   color: #fff;
+  //   font-weight: 600;
+
+  //   &:hover, &:focus {
+  //     background-color: inherit;
+  //   }
+  // }
+
+  // .nav li a:hover {
+  //   background-color: inherit;
+  // }
+
+  // .navbar-toggle {
+  //   border-color: #fff;
+  //   .icon-bar {
+  //     background-color: #fff;
+  //   }
+  // }
+  
+}

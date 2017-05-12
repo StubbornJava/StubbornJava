@@ -1,0 +1,37 @@
+<p>Sequential ids are extremely beneficial behind the scenes. RDMS generally offer a auto incremented numerical primary key. The RDMS handles uniqueness and all locking involved in allocating ids. It also stores keys in a very compact data format which saves disk space and keeps indices small.</p>
+
+
+<h2 class="anchored">Why Obfuscate?</h2>
+<p>Using sequential ids can give away some information about your applications.</p>
+<ul>
+  <li>Estimated counts - If all of your entities are auto incrementing a competitor could estimate how many users or how much content you have. This isn't a huge deal and could be negated by setting an arbitrary initial auto increment value.</li>
+  <li>Parameter Injection - If all of your urls are formatted <code>/user/{userId}</code> anyone can easily just change the id in the url. Ideally you have authorization in place to prevent sensitive data from being accessed. This is just an extra precation.</li>
+  <li>Automated Scraping - Using parameter injection it would be easy to write a script from 0 to some max id and scrape all data from your website without obfuscated ids. Obuscated ids won't prevent this if all ids are public somehow but will make them work a little harder.</li>
+</ul>
+<p>For more information take a look at <a href="https://philsturgeon.uk/http/2015/09/03/auto-incrementing-to-destruction/">Auto-Incrementing IDs: Giving your Data Away</a>. As mentioned in the blog post Hashids is not meant to be secure (see <a href="http://carnage.github.io/2015/08/cryptanalysis-of-hashids">Cryptanalysis of hashids</a>). It just adds some extra layers of obfuscation. If security is your biggest concern don't use HashIds.</p>
+
+<h2 class="anchored">HashIds</h2>
+<p>Hashids is a small open-source library that generates short, unique, non-sequential ids from numbers. We will be using the <a href="https://github.com/jiecao-fm/hashids-java">Java implementation</a>. <code>Hashids</code> is very small so you can use it directly or write your own wrapper class.</p>
+{{> templates/src/widgets/code/code-snippet file=hashids section=hashids.sections.hashids}}
+
+<h2 class="anchored">HashIds with Undertow</h2>
+<p>Let's look at an example reusing some code from our <a href="/posts/query-parameters-and-path-parameters-in-undertow">Query and Path Parameters in Undertow</a> post.</p>
+{{> templates/src/widgets/code/code-snippet file=server section=server.sections.obfuscated}}
+{{> templates/src/widgets/code/code-snippet file=server section=server.sections.obfuscatedRoute}}
+{{> templates/src/widgets/code/code-snippet file=server section=server.sections.routes}}
+{{> templates/src/widgets/code/code-snippet file=server section=server.sections.server}}
+
+<pre class="line-numbers"><code class="language-bash">2017-03-19 14:05:18.587 [main] DEBUG c.s.e.u.parameters.ParametersServer - id: 100000000 hashed: EQejyW
+2017-03-19 14:05:18.594 [main] DEBUG c.s.e.u.parameters.ParametersServer - id: 100000001 hashed: oYa86m
+2017-03-19 14:05:18.594 [main] DEBUG c.s.e.u.parameters.ParametersServer - id: 100000002 hashed: KQzREN
+2017-03-19 14:05:18.872 [main] DEBUG c.s.common.undertow.SimpleServer - ListenerInfo{protcol='http', address=/0:0:0:0:0:0:0:0:8080, sslContext=null}
+</code></pre>
+<pre class="line-numbers"><code class="language-bash">curl localhost:8080/users/EQejyW
+UserId: 100000000 hashed: EQejyW
+
+curl localhost:8080/users/oYa86m
+UserId: 100000001 hashed: oYa86m
+
+curl localhost:8080/users/KQzREN
+UserId: 100000002 hashed: KQzREN</code></pre>
+<p>Success! We can now obfuscate our ids fairly well and keep them shorter without much effort.</p>

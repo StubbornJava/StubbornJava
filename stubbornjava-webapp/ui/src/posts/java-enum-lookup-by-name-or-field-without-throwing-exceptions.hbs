@@ -1,0 +1,108 @@
+<p>Java Enums are an incredibly useful feature and often under utilized because some libraries don't treat them as first class citizens. They are also often used properly but there is a recurring issue that plagues many code bases which has inspired this post. The problem is simple, how should you get an Enum by its name or value and ignore non existant values?</p>
+
+<h2 class="anchored">The Enum</h2>
+<p>The enum we will be using in our examples. Let's pick a more complex enum to also showcase looking an enum up by another field.</p>
+{{> templates/src/widgets/code/code-snippet file=example section=example.sections.enums}}
+
+<h2 class="anchored">The Problem</h2>
+<p>Using <code>Enum.valueOf</code> is great when you know the input is valid. However if you pass in an invalid name an exception will be thrown. In some cases this is fine. Often times we would prefer to just ignore it and return null.</p>
+{{> templates/src/widgets/code/code-snippet file=example section=example.sections.valueof-out}}
+<pre class="line-numbers"><code class="language-bash">2017-02-22 14:46:38.556 [main] DEBUG c.s.examples.common.EnumLookup - Running valueOf
+2017-02-22 14:46:38.804 [main] DEBUG c.s.examples.common.EnumLookup - looking up SPADE found {"displayName":"Spade","symbol":"♠","color":"BLACK"}
+2017-02-22 14:46:38.806 [main] DEBUG c.s.examples.common.EnumLookup - looking up HEART found {"displayName":"Heart","symbol":"♥","color":"RED"}
+2017-02-22 14:46:38.806 [main] DEBUG c.s.examples.common.EnumLookup - looking up DIAMOND found {"displayName":"Diamond","symbol":"♦","color":"RED"}
+2017-02-22 14:46:38.806 [main] DEBUG c.s.examples.common.EnumLookup - looking up CLUB found {"displayName":"Club","symbol":"♣","color":"BLACK"}
+2017-02-22 14:46:38.808 [main] WARN  c.s.examples.common.EnumLookup - Exception Thrown
+java.lang.IllegalArgumentException: No enum constant com.stubbornjava.examples.common.EnumLookup.CardSuit.Missing
+  at java.lang.Enum.valueOf(Enum.java:238)
+  at com.stubbornjava.examples.common.EnumLookup$CardSuit.valueOf(EnumLookup.java:1)
+  at com.stubbornjava.examples.common.EnumLookup.main(EnumLookup.java:154)</code></pre>
+
+<h2 class="anchored">Poor Implementations</h2>
+<p>It's unfortunate how often the following two approaches appear in code bases. Please don't do this.</p>
+
+<h3 class="anchored">Enum.valueOf with Try Catch (Poor)</h3>
+<p>This bad practice is most commonly made by beginners. Exceptions shouldn't be used for control flow and could have some performance implications. Don't be lazy do it the right way.</p>
+{{> templates/src/widgets/code/code-snippet file=example section=example.sections.trycatch}}
+{{> templates/src/widgets/code/code-snippet file=example section=example.sections.trycatch-out}}
+<pre class="line-numbers"><code class="language-bash">2017-02-22 14:46:38.809 [main] DEBUG c.s.examples.common.EnumLookup - Running trycatchValueOf
+2017-02-22 14:46:38.809 [main] DEBUG c.s.examples.common.EnumLookup - looking up SPADE found {"displayName":"Spade","symbol":"♠","color":"BLACK"}
+2017-02-22 14:46:38.809 [main] DEBUG c.s.examples.common.EnumLookup - looking up HEART found {"displayName":"Heart","symbol":"♥","color":"RED"}
+2017-02-22 14:46:38.809 [main] DEBUG c.s.examples.common.EnumLookup - looking up DIAMOND found {"displayName":"Diamond","symbol":"♦","color":"RED"}
+2017-02-22 14:46:38.809 [main] DEBUG c.s.examples.common.EnumLookup - looking up CLUB found {"displayName":"Club","symbol":"♣","color":"BLACK"}
+2017-02-22 14:46:38.809 [main] WARN  c.s.examples.common.EnumLookup - Exception Thrown
+java.lang.IllegalArgumentException: No enum constant com.stubbornjava.examples.common.EnumLookup.CardSuit.Missing
+  at java.lang.Enum.valueOf(Enum.java:238)
+  at com.stubbornjava.examples.common.EnumLookup$CardSuit.valueOf(EnumLookup.java:1)
+  at com.stubbornjava.examples.common.EnumLookup$CardSuit.trycatchValueOf(EnumLookup.java:89)
+  at com.stubbornjava.examples.common.EnumLookup.main(EnumLookup.java:171)
+2017-02-22 14:46:38.809 [main] DEBUG c.s.examples.common.EnumLookup - looking up Missing found null</code></pre>
+
+<h3 class="anchored">Find By Iteration (Poor)</h3>
+<p>This approach is also quite common (see <a rel="nofollow" href="http://www.devglan.com/faq/enums-as-request-parameters-in-spring-boot-rest">here</a>), at least the authors know not to try / catch the exceptions. What is wrong with this approach? It's iterating over all enums until it finds the matching enum or returning null with a worst case of N where N is the number of enum values. Some may argue this is being nitpicky and its premature optimization. However, data structures and algorithms are CS fundamentals it's not that much effort to use a Map instead of iterating a collection. Will it drastically improve performance? No, but it is a good habbit. When interviewing a candidate for a job would you be happy with a linear complexity search algorithm? You shouldn't let this code review pass in that case.</p>
+{{> templates/src/widgets/code/code-snippet file=example section=example.sections.iteration}}
+{{> templates/src/widgets/code/code-snippet file=example section=example.sections.iteration-out}}
+<pre class="line-numbers"><code class="language-bash">2017-02-22 14:46:38.808 [main] DEBUG c.s.examples.common.EnumLookup - Running iteration
+2017-02-22 14:46:38.809 [main] DEBUG c.s.examples.common.EnumLookup - looking up SPADE found {"displayName":"Spade","symbol":"♠","color":"BLACK"}
+2017-02-22 14:46:38.809 [main] DEBUG c.s.examples.common.EnumLookup - looking up HEART found {"displayName":"Heart","symbol":"♥","color":"RED"}
+2017-02-22 14:46:38.809 [main] DEBUG c.s.examples.common.EnumLookup - looking up DIAMOND found {"displayName":"Diamond","symbol":"♦","color":"RED"}
+2017-02-22 14:46:38.809 [main] DEBUG c.s.examples.common.EnumLookup - looking up CLUB found {"displayName":"Club","symbol":"♣","color":"BLACK"}
+2017-02-22 14:46:38.809 [main] DEBUG c.s.examples.common.EnumLookup - looking up Missing found null</code></pre>
+
+<h2 class="anchored">Better Implementations</h2>
+<p>The following all work by using an index in the form of a Map. There are some minor differences as well as boilerplate concerns.</p>
+
+<h3 class="anchored">Static Map Index (Better)</h3>
+<p>What is the correct data structure to use for quick lookups of fixed size? A HashMap. Now with a little extra boiler plate we have a much more efficient lookup as long as we have a good hash function. A bit more verbose, it would be nice if there was a way to reduce the boilerplate.</p>
+{{> templates/src/widgets/code/code-snippet file=example section=example.sections.mapindex}}
+{{> templates/src/widgets/code/code-snippet file=example section=example.sections.mapindex-out}}
+<pre class="line-numbers"><code class="language-bash">2017-02-22 14:46:38.809 [main] DEBUG c.s.examples.common.EnumLookup - Running lookupByName
+2017-02-22 14:46:38.809 [main] DEBUG c.s.examples.common.EnumLookup - looking up SPADE found {"displayName":"Spade","symbol":"♠","color":"BLACK"}
+2017-02-22 14:46:38.810 [main] DEBUG c.s.examples.common.EnumLookup - looking up HEART found {"displayName":"Heart","symbol":"♥","color":"RED"}
+2017-02-22 14:46:38.810 [main] DEBUG c.s.examples.common.EnumLookup - looking up DIAMOND found {"displayName":"Diamond","symbol":"♦","color":"RED"}
+2017-02-22 14:46:38.813 [main] DEBUG c.s.examples.common.EnumLookup - looking up CLUB found {"displayName":"Club","symbol":"♣","color":"BLACK"}
+2017-02-22 14:46:38.813 [main] DEBUG c.s.examples.common.EnumLookup - looking up Missing found null</code></pre>
+
+<h3 class="anchored">Guava Enums.getIfPresent (Recommended)</h3>
+<p>This is such a common use case our friends over at Google made a very clean and boiler plate free solution for us. Under the hood it even uses WeakReferences and WeakHashMaps. Basically this code will create a global static map keyed on the Enum's class name and use it for lookups.</p>
+{{> templates/src/widgets/code/code-snippet file=example section=example.sections.guava}}
+{{> templates/src/widgets/code/code-snippet file=example section=example.sections.guava-out}}
+<pre class="line-numbers"><code class="language-bash">2017-02-22 14:46:38.813 [main] DEBUG c.s.examples.common.EnumLookup - Running Guava getIfPresent
+2017-02-22 14:46:38.814 [main] DEBUG c.s.examples.common.EnumLookup - looking up SPADE found {"displayName":"Spade","symbol":"♠","color":"BLACK"}
+2017-02-22 14:46:38.814 [main] DEBUG c.s.examples.common.EnumLookup - looking up HEART found {"displayName":"Heart","symbol":"♥","color":"RED"}
+2017-02-22 14:46:38.815 [main] DEBUG c.s.examples.common.EnumLookup - looking up DIAMOND found {"displayName":"Diamond","symbol":"♦","color":"RED"}
+2017-02-22 14:46:38.815 [main] DEBUG c.s.examples.common.EnumLookup - looking up CLUB found {"displayName":"Club","symbol":"♣","color":"BLACK"}
+2017-02-22 14:46:38.815 [main] DEBUG c.s.examples.common.EnumLookup - looking up Missing found null</code></pre>
+
+<h2 class="anchored">One Step Further Indexing by Field</h2>
+<p>This exact same approach can be used for additional fields of the enum. It's not uncommon to want to look up an enum by its display name or some other property.</p>
+
+<h3 class="anchored">Static Map Indexed by Field (Better)</h3>
+<p>Same approach as above but indexed on the display name instead of the enum name.</p>
+{{> templates/src/widgets/code/code-snippet file=example section=example.sections.mapDisplayName}}
+{{> templates/src/widgets/code/code-snippet file=example section=example.sections.mapDisplayName-out}}
+<pre class="line-numbers"><code class="language-bash">2017-02-22 14:46:38.815 [main] DEBUG c.s.examples.common.EnumLookup - Running lookupByDisplayName
+2017-02-22 14:46:38.815 [main] DEBUG c.s.examples.common.EnumLookup - looking up Spade found {"displayName":"Spade","symbol":"♠","color":"BLACK"}
+2017-02-22 14:46:38.815 [main] DEBUG c.s.examples.common.EnumLookup - looking up Heart found {"displayName":"Heart","symbol":"♥","color":"RED"}
+2017-02-22 14:46:38.815 [main] DEBUG c.s.examples.common.EnumLookup - looking up Diamond found {"displayName":"Diamond","symbol":"♦","color":"RED"}
+2017-02-22 14:46:38.816 [main] DEBUG c.s.examples.common.EnumLookup - looking up Club found {"displayName":"Club","symbol":"♣","color":"BLACK"}
+2017-02-22 14:46:38.816 [main] DEBUG c.s.examples.common.EnumLookup - looking up Missing found null</code></pre>
+
+<h3 class="anchored">Static Map Indexed by Field Utility (Better)</h3>
+<p>We can't leverage Guava here since it would be difficult to create unique global keys for the static index. However that doesn't mean we can't make our own helpers!</p>
+{{> templates/src/widgets/code/code-snippet file=enum-utils section=enum-utils.sections.enumUtils}}
+<p>Now we have a fairly boilerplate free generic solution.</p>
+{{> templates/src/widgets/code/code-snippet file=example section=example.sections.mapDisplayNameUtil}}
+{{> templates/src/widgets/code/code-snippet file=example section=example.sections.mapDisplayNameUtil-out}}
+<pre class="line-numbers"><code class="language-bash">2017-02-22 14:46:38.816 [main] DEBUG c.s.examples.common.EnumLookup - Running lookupByDisplayNameUtil
+2017-02-22 14:46:38.816 [main] DEBUG c.s.examples.common.EnumLookup - looking up Spade found {"displayName":"Spade","symbol":"♠","color":"BLACK"}
+2017-02-22 14:46:38.816 [main] DEBUG c.s.examples.common.EnumLookup - looking up Heart found {"displayName":"Heart","symbol":"♥","color":"RED"}
+2017-02-22 14:46:38.816 [main] DEBUG c.s.examples.common.EnumLookup - looking up Diamond found {"displayName":"Diamond","symbol":"♦","color":"RED"}
+2017-02-22 14:46:38.816 [main] DEBUG c.s.examples.common.EnumLookup - looking up Club found {"displayName":"Club","symbol":"♣","color":"BLACK"}
+2017-02-22 14:46:38.816 [main] DEBUG c.s.examples.common.EnumLookup - looking up Missing found null</code></pre>
+
+<h2 class="anchored">Conclusion</h2>
+<p>There are several ways to solve the same problem. Some are better than others.</p>
+
+<h2 class="anchored">BONUS - Serializing an Enum as an Object with Jackson</h2>
+<p>If you happened to notice our json output is a full object not just the enum name the magic comes from the Jackson annotation <code>@JsonFormat(shape = JsonFormat.Shape.OBJECT)</code></p>

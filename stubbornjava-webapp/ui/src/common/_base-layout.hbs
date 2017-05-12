@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+      {{> templates/src/common/head metaDesc=metaDesc}}
+      {{#if twitterSummaryCard}}{{> templates/src/widgets/social/twitter/summary-card title=title desc=metaDesc}}{{/if}}
+      <title>{{> title}}</title>
+  </head>
+  <body>
+    {{> templates/src/widgets/nav/header}}
+    {{> content}}
+    {{> templates/src/widgets/footer/footer}}
+    {{> templates/src/common/scripts}}
+    {{> templates/src/common/google-analytics}}
+  </body>
+</html>

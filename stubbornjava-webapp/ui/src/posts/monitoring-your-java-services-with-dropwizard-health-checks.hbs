@@ -1,0 +1,59 @@
+<p>Troubleshooting applications can be tedious and time consuming. It generally involves checking application logs, networking, firewalls, databases, database logs, third party services, internal service logs... you get the idea. When service is interrupted every second can count. Let your application help you track down issues faster. Your application already has configurations set up for connecting to each external service you need. Why not spend a few extra minutes and make your life a little easier.</p>
+
+<h2 class="anchored">What is a Health Check?</h2>
+<p>Health checks are generally very simple binary checks. A check can be as simple as a ping command. This covers two troubleshooting use cases. Can we connect to the service and is that service operational. A failing check won't tell you what is wrong but it can quickly point you in the right direction. Health checks can also be used for preventing and automatically resolving some issues. If you have auto scaling or load balancers that montior application's health, they can quickly add/remove servers when there are issues. As with all fully automated systems this could backfire and accidentally remove all servers when minor hiccups occur. This is one reason health checks are recommended to be used for simple up/down checks and not for variable / metric related checks.</p>
+
+<h2 class="anchored">Dropwizard Health Checks</h2>
+<p>Once again Dropwizard Metrics comes through with a great addition to its <a href="/posts/monitoring-your-jvm-with-dropwizard-metrics">jvm metrics</a>. Simply create a class that extends <code>HealthCheck</code> and overrides the <code>check()</code> method and register it to the <code>HealthCheckRegistry</code>. You can now easily call all health checks and see if the application is having any issues. Here is a sample health check that assumes we have an external service as a dependency. All it does is requst a url and expect a 20x response code. <code>HealthCheck</code> also exposes a way to add a little context to health checks for some additional debugging info.</p>
+{{> templates/src/widgets/code/code-snippet file=check section=check.sections.health}}
+<p>What should you add health checks for? As much as you can or that makes sense. (Databases, third party services, internal services, caches, and maybe even critial files). Some third parties already implement health checks for you. <a href="/posts/database-connection-pooling-in-java-with-hikaricp">HikariCP connection pooling</a> provides an out of the box SQL database health check.</p>
+
+<h2 class="anchored">HealthCheckRegistry</h2>
+<p>Simple static singleton <code>HealthCheckRegistry</code>. Feel free to use DI if your heart desires.</p>
+{{> templates/src/widgets/code/code-snippet file=registry section=registry.sections.registry}}
+
+<h2 class="anchored">HttpHandler for the HealthCheckRegistry</h2>
+<p>Since we are making a web service let's expose our health checks via HTTP as JSON. Notice how we also change the status code if any of the checks are unhealthy.</p>
+{{> templates/src/widgets/code/code-snippet file=handlers section=handlers.sections.health}}
+
+<h2 class="anchored">Example Routes</h2>
+<p>Adding a few quick example routes.</p>
+{{> templates/src/widgets/code/code-snippet file=server section=server.sections.routes}}
+
+<h2 class="anchored">Wiring up the Health Checks</h2>
+<p>Let's reuse our connection pools from our previous post <a href="/posts/database-connection-pooling-in-java-with-hikaricp">HikariCP connection pooling</a> which will automatically add themselves as health checks. We will also add two of our custom <code>HealthCheck</code>s (Let's pretend they are actually hitting an external service and not itself). One will be set to always fail just as an example.</p>
+{{> templates/src/widgets/code/code-snippet file=server section=server.sections.server}}
+
+<h2 class="anchored">See it in action</h2>
+<pre class="line-numbers"><code class="language-json">curl -v localhost:8080/health
+*   Trying ::1...
+* Connected to localhost (::1) port 8080 (#0)
+> GET /health HTTP/1.1
+> Host: localhost:8080
+> User-Agent: curl/7.49.1
+> Accept: */*
+>
+< HTTP/1.1 500 Internal Server Error
+< Connection: keep-alive
+< Content-Type: application/json
+< Content-Length: 212
+< Date: Tue, 07 Mar 2017 00:55:17 GMT
+<
+* Connection #0 to host localhost left intact
+{
+  "ping": {
+    "healthy": true
+  },
+  "processing.pool.ConnectivityCheck": {
+    "healthy": true
+  },
+  "shouldFail": {
+    "healthy": false,
+    "message": "code: 404 - body: Page Not Found!!"
+  },
+  "transactional.pool.ConnectivityCheck": {
+    "healthy": true
+  }
+}
+</code></pre>
+<p>Once again notice the status code is 500 since one of the checks was unhealthy.</p>

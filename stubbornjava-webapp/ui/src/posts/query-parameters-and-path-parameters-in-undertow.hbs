@@ -1,0 +1,28 @@
+<p>Query Parameters and Path Parameters are also fairly straight forward in Undertow. There is some slight boilerplate because technically query and path params can have multiple values. We are using some helper functions (<a href="https://github.com/StubbornJava/StubbornJava/blob/master/stubbornjava-undertow/src/main/java/com/stubbornjava/undertow/exchange/PathParams.java">PathParameters.java</a> and <a href="https://github.com/StubbornJava/StubbornJava/blob/master/stubbornjava-undertow/src/main/java/com/stubbornjava/undertow/exchange/QueryParams.java">QueryParameters.java</a></p>
+
+<h2 class="anchored">Path Parameter and Query Parameter RoutingHandler</h2>
+<p>Fairly standard path param syntax. Undertow uses {param} you may be used to :param from other frameworks.</p>
+{{> templates/src/widgets/code/code-snippet file=server section=server.sections.routes}}
+
+<h2 class="anchored">Path Parameter and Query Parameter HttpHandlers</h2>
+<p>These should be straight forward. Once again we are using the following helpers <a href="https://github.com/StubbornJava/StubbornJava/blob/master/stubbornjava-undertow/src/main/java/com/stubbornjava/undertow/exchange/PathParams.java">PathParameters.java</a> and <a href="https://github.com/StubbornJava/StubbornJava/blob/master/stubbornjava-undertow/src/main/java/com/stubbornjava/undertow/exchange/QueryParams.java">QueryParameters.java</a></p>
+{{> templates/src/widgets/code/code-snippet file=server section=server.sections.handlers}}
+
+<h2 class="anchored">Server</h2>
+{{> templates/src/widgets/code/code-snippet file=server section=server.sections.server}}
+
+<h2 class="anchored">Output</h2>
+<pre class="line-numbers"><code class="language-bash">curl localhost:8080/hello
+Hello world!</code></pre>
+<pre class="line-numbers"><code class="language-bash">curl localhost:8080/hello?name=bill
+Hello bill!</code></pre>
+<pre class="line-numbers"><code class="language-bash">curl 'localhost:8080/hello?name=bill&amp;num=5'
+Hello bill!!!!!</code></pre>
+<pre class="line-numbers"><code class="language-bash">curl 'localhost:8080/hello/bill/5'
+Hello bill!!!!!</code></pre>
+
+<h2 class="anchored">Best Practices</h2>
+<p>Although it's not very hard calling params in this way we recommend extracting the logic out even further. Take a look at <a href="/posts/lightweight-embedded-java-rest-server-without-a-framework#request-utilities">Request Utilities</a> in the REST post. Here you define the string literals and defaults once and only once. Everywhere else in the code that references this param is called just like UserRequests.email(exchange). This way if you change the param name or even the type of param it updates all of your code at once. Sharing defaults is also incredibly useful. Another feature of this is you can cache values on the HttpServerExchange so you can use expensive calls in multiple routes with the cached values.
+
+<h2 class="anchored">Obfuscating Sequential Ids</h2>
+<p>Sometimes you may want to obfuscate sequential ids to reduce the possibility of giving away some information. A quick example on <a href="/posts/obfuscating-and-shortening-sequential-ids-with-hashids"> Obfuscating and Shortening Sequential ids with HashIds</a>.</p>

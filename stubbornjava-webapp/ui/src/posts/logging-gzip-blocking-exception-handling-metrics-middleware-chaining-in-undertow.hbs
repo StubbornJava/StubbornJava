@@ -1,0 +1,172 @@
+<p>There comes a time when you want some form of functionality to run for every single request to your webserver. You might also want some more fine grained control and possibly run some slightly different logic for each individual route. This can be called middleware, filtering, interceptors, decorators, whatever you want to call it. Undertows composition gives you total control over how you handle this. You can build simple or complex route trees, deep trees or shallow trees. Some examples would be <a href="/posts/http-access-logging-with-undertow">Access Logging</a>, <a href="/posts/handling-exceptions-in-undertow-with-composition">Exception Handling</a>, gzipping, blocking, authorization, authentication, metrics / timing, rate limiting, caching and many more. Undertow supplies many of these out of the box.</p>
+
+<h2 class="anchored">Routes</h2>
+{{> templates/src/widgets/code/code-snippet file=server section=server.sections.routes}}
+
+<h2 class="anchored">Handlers</h2>
+{{> templates/src/widgets/code/code-snippet file=server section=server.sections.handlers}}
+
+<h2 class="anchored">Middleware</h2>
+<p>This is where the magic happens! We added a few new classes feel free to follow the code in github its all there.</p>
+{{> templates/src/widgets/code/code-snippet file=server section=server.sections.middleware}}
+
+<h2 class="anchored">Server</h2>
+{{> templates/src/widgets/code/code-snippet file=server section=server.sections.server}}
+
+
+<h3 class="anchored">Logs</h3>
+<pre class="line-numbers"><code class="language-bash">23:41:12.022 [XNIO-1 task-30] INFO com.stubbornjava.accesslog - 127.0.0.1 - - [12/Jan/2017:23:41:12 -0500] "GET /throwException HTTP/1.1" 500 42 "-" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.95 Safari/537.36"
+23:41:12.221 [XNIO-1 task-31] INFO com.stubbornjava.accesslog - 127.0.0.1 - - [12/Jan/2017:23:41:12 -0500] "GET /throwException HTTP/1.1" 500 42 "-" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.95 Safari/537.36"
+23:41:15.086 [XNIO-1 task-21] INFO com.stubbornjava.accesslog - 127.0.0.1 - - [12/Jan/2017:23:41:15 -0500] "GET /favicon.ico HTTP/1.1" 404 9 "http://localhost:8080/throwException" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.95 Safari/537.36"
+23:41:52.880 [XNIO-1 task-31] INFO com.stubbornjava.accesslog - 127.0.0.1 - - [12/Jan/2017:23:41:52 -0500] "GET /metrics HTTP/1.1" 200 1004 "-" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.95 Safari/537.36"
+</code></pre>
+<h3 class="anchored">gzip</h3>
+<pre class="line-numbers"><code class="language-bash">curl -v --compressed localhost:8080/metrics
+*   Trying ::1...
+* connect to ::1 port 8080 failed: Connection refused
+*   Trying 127.0.0.1...
+* Connected to localhost (127.0.0.1) port 8080 (#0)
+> GET /metrics HTTP/1.1
+> Host: localhost:8080
+> User-Agent: curl/7.49.1
+> Accept: */*
+> Accept-Encoding: deflate, gzip
+>
+< HTTP/1.1 200 OK
+< Content-Encoding: gzip
+< Connection: keep-alive
+< Content-Type: application/json
+< Content-Length: 1012
+< Date: Fri, 13 Jan 2017 04:56:20 GMT</code></pre>
+
+<h3 class="anchored">Metrics</h3>
+<p>Hit GET /metrics and woah! Push this data to statsd or cloudwatch and make some useful graphs or alarms. DropwizardMetrics probably even has a reporter already built for you. We can monitor fluctuations in status code rates or stats for individual routes.</p>
+<pre class="line-numbers"><code class="language-json">{
+  "version": "3.0.0",
+  "gauges": {},
+  "counters": {},
+  "histograms": {},
+  "meters": {
+    "status.code.200": {
+      "count": 92,
+      "m15_rate": 25.747115560734112,
+      "m1_rate": 28.062428714932278,
+      "m5_rate": 28.256280991640015,
+      "mean_rate": 39.9843206826378,
+      "units": "events/minute"
+    },
+    "status.code.404": {
+      "count": 49,
+      "m15_rate": 33.32440534815085,
+      "m1_rate": 16.92221744365673,
+      "m5_rate": 28.960821933949145,
+      "mean_rate": 20.288716297062063,
+      "units": "events/minute"
+    },
+    "status.code.500": {
+      "count": 32,
+      "m15_rate": 76.34270318747376,
+      "m1_rate": 27.26465224526377,
+      "m5_rate": 63.55688467693468,
+      "mean_rate": 17.258731172178305,
+      "units": "events/minute"
+    }
+  },
+  "timers": {
+    "metrics": {
+      "count": 11,
+      "max": 306.412497,
+      "mean": 9.846115333732579,
+      "min": 1.879319,
+      "p50": 2.1016,
+      "p75": 2.783833,
+      "p95": 6.784892999999999,
+      "p98": 306.412497,
+      "p99": 306.412497,
+      "p999": 306.412497,
+      "stddev": 45.87752194251882,
+      "m15_rate": 0.32356973506686026,
+      "m1_rate": 3.6573158975635676,
+      "m5_rate": 0.9190025702482435,
+      "mean_rate": 4.355696619792746,
+      "duration_units": "milliseconds",
+      "rate_units": "calls/minute"
+    },
+    "notFound": {
+      "count": 49,
+      "max": 52.264905999999996,
+      "mean": 1.0456300019306812,
+      "min": 0.369432,
+      "p50": 0.584043,
+      "p75": 0.736752,
+      "p95": 1.273145,
+      "p98": 1.620323,
+      "p99": 14.762761999999999,
+      "p999": 52.264905999999996,
+      "stddev": 3.9050701815418183,
+      "m15_rate": 2.632731129701274,
+      "m1_rate": 14.557189323028163,
+      "m5_rate": 6.7008561229401815,
+      "mean_rate": 19.402677037911392,
+      "duration_units": "milliseconds",
+      "rate_units": "calls/minute"
+    },
+    "textFast": {
+      "count": 33,
+      "max": 3.3543689999999997,
+      "mean": 0.8341323532906185,
+      "min": 0.387693,
+      "p50": 0.6643049999999999,
+      "p75": 0.982436,
+      "p95": 2.3764309999999997,
+      "p98": 2.3764309999999997,
+      "p99": 3.3543689999999997,
+      "p999": 3.3543689999999997,
+      "stddev": 0.5411243129002735,
+      "m15_rate": 1.9944095414062617,
+      "m1_rate": 7.989583466347278,
+      "m5_rate": 4.925595501107286,
+      "mean_rate": 13.06637838616076,
+      "duration_units": "milliseconds",
+      "rate_units": "calls/minute"
+    },
+    "textSlow": {
+      "count": 48,
+      "max": 308.47148,
+      "mean": 303.76731141857067,
+      "min": 300.7573,
+      "p50": 303.578967,
+      "p75": 305.30724599999996,
+      "p95": 306.281167,
+      "p98": 308.47148,
+      "p99": 308.47148,
+      "p999": 308.47148,
+      "stddev": 1.8166335597552041,
+      "m15_rate": 2.9604080623559144,
+      "m1_rate": 15.975594713032923,
+      "m5_rate": 7.619162286729776,
+      "mean_rate": 19.006476987571602,
+      "duration_units": "milliseconds",
+      "rate_units": "calls/minute"
+    },
+    "throwException": {
+      "count": 32,
+      "max": 0.12914599999999998,
+      "mean": 0.060840682082171124,
+      "min": 0.028107999999999998,
+      "p50": 0.0545,
+      "p75": 0.074738,
+      "p95": 0.114078,
+      "p98": 0.114078,
+      "p99": 0.12914599999999998,
+      "p999": 0.12914599999999998,
+      "stddev": 0.024935798577304682,
+      "m15_rate": 2.007469708700337,
+      "m1_rate": 13.92037262527053,
+      "m5_rate": 5.347307213526083,
+      "mean_rate": 12.671015244967208,
+      "duration_units": "milliseconds",
+      "rate_units": "calls/minute"
+    }
+  }
+}</code></pre>

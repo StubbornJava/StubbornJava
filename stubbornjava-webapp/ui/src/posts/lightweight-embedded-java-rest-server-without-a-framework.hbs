@@ -1,0 +1,295 @@
+<p>A quick Google search of Java REST frameworks will lead you to tons of existing frameworks. For example you can easily find tons of Spring Boot REST examples which have very few lines of code. However, what they do have is lots of annotations and lots of magic. Also, most of them don't do very much, they tend leave out exception handling, logging and metrics. Here is an example of a lightweight REST server with a lot of the appropriate middleware, no magic and not that many lines of custom code. This example does not include validation or databases, we will save that for a later date.</p>
+
+<h2 class="anchored">Model / Pojo</h2>
+<p>Our service will be very simple and only handle CRUD operations for a User class.
+{{> templates/src/widgets/code/code-snippet file=pojo section=pojo.sections.user}}
+
+<h2 class="anchored">In Memory Dao</h2>
+<p>Simple in memory dao just for an example.</p>
+{{> templates/src/widgets/code/code-snippet file=dao section=dao.sections.dao}}
+
+<h2 class="anchored">Request Utilities</h2>
+<p>Simple helpers to reduce boilerplate and reuse defaults / string literals across routes. In Spring its not uncommon to see something like @PathParam("userId") littered all over the code, or worse some say userId some say id and it can be inconsistent. Of course its possible to write your own custom annotations in Spring for reuse but who wants to do that for every single param? (There are other and better approaches out there but they don't seem to be followed very often).</p>
+{{> templates/src/widgets/code/code-snippet file=requests section=requests.sections.requests}}
+
+<h2 class="anchored">Handlers</h2>
+{{> templates/src/widgets/code/code-snippet file=routes section=routes.sections.routes}}
+<p>Notice how there are two options for handling NotFound in the server. You can throw / handle exceptions or handle it directy in the route since we already know its not found. Spring and most frameworks tend to push for the throw / handle exception model. It is easy to do that, just remember throwing and catching exceptions can be expensive, in these cases it is easily avoidable so pick what makes sense for your business domain.</p>
+
+<h2 class="anchored">Routing / Server</h2>
+<p>Notice we have all the rest routes as well as <a href="/posts/logging-gzip-blocking-exception-handling-metrics-middleware-chaining-in-undertow">exception handling / logging / metrics middleware</a>.</p>
+{{> templates/src/widgets/code/code-snippet file=server section=server.sections.routes}}
+{{> templates/src/widgets/code/code-snippet file=server section=server.sections.server}}
+
+
+<h2 class="anchored">Examples</h2>
+
+<h3 class="anchored">Create User</h3>
+<pre class="line-numbers"><code class="language-bash">curl -X POST "localhost:8080/users" -d '
+{
+  "email": "user1@test.com",
+  "roles": ["USER"]
+}
+';
+{"email":"user1@test.com","roles":["USER"],"dateCreated":"2017-01-16"}
+
+curl -X POST "localhost:8080/users" -d '
+{
+  "email": "user2@test.com",
+  "roles": ["ADMIN"]
+}
+';
+{"email":"user2@test.com","roles":["ADMIN"],"dateCreated":"2017-01-16"}</code></pre>
+
+
+<h3 class="anchored">Update User</h3>
+<pre class="line-numbers"><code class="language-bash">curl -X PUT "localhost:8080/users" -d '
+{
+  "email": "user2@test.com",
+  "roles": ["USER", "ADMIN"]
+}
+';
+{"email":"user2@test.com","roles":["ADMIN","USER"]}</code></pre>
+
+
+<h3 class="anchored">List Users</h3>
+<pre class="line-numbers"><code class="language-bash">curl -X GET "localhost:8080/users"
+[{"email":"user1@test.com","roles":["USER"],"dateCreated":"2017-01-16"},{"email":"user2@test.com","roles":["ADMIN","USER"]}]</code></pre>
+
+<h3 class="anchored">Get User</h3>
+<p>We are using both styles of get user here.
+<pre class="line-numbers"><code class="language-bash">curl -X GET "localhost:8080/users/user1@test.com"
+{"email":"user1@test.com","roles":["USER"],"dateCreated":"2017-01-16"}
+
+curl -X GET "localhost:8080/users/user1@test.com/exception"
+{"email":"user1@test.com","roles":["USER"],"dateCreated":"2017-01-16"}</code></pre>
+
+
+<h3 class="anchored">Delete User</h3>
+<pre class="line-numbers"><code class="language-bash">curl -v -X DELETE "localhost:8080/users/user1@test.com"
+* Connected to localhost (127.0.0.1) port 8080 (#0)
+> DELETE /users/user1@test.com HTTP/1.1
+> Host: localhost:8080
+> User-Agent: curl/7.49.1
+> Accept: */*
+>
+< HTTP/1.1 204 No Content
+< Date: Mon, 16 Jan 2017 18:45:52 GMT</code></pre>
+
+
+<h3 class="anchored">Get User 404</h3>
+<p>Both approaches respond in the same way however the exception handling version will be more expensive. It has to unroll the stack trace and whatnot. If that is acceptable by all means go for it. If you need maxiumim performance don't throw exceptions when you don't need to.</p>
+<pre class="line-numbers"><code class="language-bash">curl -X GET "localhost:8080/users/user1@test.com"
+{"statusCode":404,"message":"User user1@test.com not found."}
+
+curl -X GET "localhost:8080/users/user1@test.com/exception"
+{"statusCode":404,"message":"User user1@test.com not found"}</code></pre>
+
+<h3 class="anchored">List Users Again</h3>
+<pre class="line-numbers"><code class="language-bash">curl -X GET "localhost:8080/users"
+[{"email":"user2@test.com","roles":["ADMIN","USER"]}]</code></pre>
+
+<h3 class="anchored">Handle Unknown Exception</h3>
+<p>Adding exception=true to any route will throw a RuntimeException. Notice this exception is handled with the fallback handler that handles any Throwable.class.</p>
+<pre class="line-numbers"><code class="language-bash">curl -X GET "localhost:8080/users?exception=true"
+{"statusCode":500,"message":"Internal Server Error"}</code></pre>
+
+<h3 class="anchored">Metrics</h3>
+<p>Once again we have all of our metrics from our middleware logic.</p>
+<pre class="line-numbers"><code class="language-json">{
+  "version": "3.0.0",
+  "gauges": {},
+  "counters": {},
+  "histograms": {},
+  "meters": {
+    "status.code.200": {
+      "count": 6,
+      "m15_rate": 17.219082651255942,
+      "m1_rate": 0.5436625964502019,
+      "m5_rate": 8.9579872747367,
+      "mean_rate": 1.1273159803060255,
+      "units": "events/minute"
+    },
+    "status.code.201": {
+      "count": 1,
+      "m15_rate": 9.397673938878663,
+      "m1_rate": 0.3067383984780894,
+      "m5_rate": 5.7636636130775925,
+      "mean_rate": 0.2625854307076081,
+      "units": "events/minute"
+    },
+    "status.code.204": {
+      "count": 1,
+      "m15_rate": 10.101505049683713,
+      "m1_rate": 0.9062621341052866,
+      "m5_rate": 7.158067076339619,
+      "mean_rate": 0.3709252334705832,
+      "units": "events/minute"
+    },
+    "status.code.400": {
+      "count": 1,
+      "m15_rate": 10.858049016431512,
+      "m1_rate": 2.6775619217811597,
+      "m5_rate": 8.889818648180613,
+      "mean_rate": 0.6165310747609489,
+      "units": "events/minute"
+    },
+    "status.code.404": {
+      "count": 2,
+      "m15_rate": 10.68590211257018,
+      "m1_rate": 2.878023977404449,
+      "m5_rate": 8.514829995177887,
+      "mean_rate": 1.033923244541407,
+      "units": "events/minute"
+    },
+    "status.code.500": {
+      "count": 1,
+      "m15_rate": 11.542290915278693,
+      "m1_rate": 6.696421749240567,
+      "m5_rate": 10.678581251856285,
+      "mean_rate": 1.3928552880390135,
+      "units": "events/minute"
+    }
+  },
+  "timers": {
+    "createUser": {
+      "count": 2,
+      "max": 468.563385,
+      "mean": 230.19748354543808,
+      "min": 2.3202819999999997,
+      "p50": 2.3202819999999997,
+      "p75": 468.563385,
+      "p95": 468.563385,
+      "p98": 468.563385,
+      "p99": 468.563385,
+      "p999": 468.563385,
+      "stddev": 233.06255505190282,
+      "m15_rate": 0.0939588952884057,
+      "m1_rate": 0.010507188050111582,
+      "m5_rate": 0.13998158006315464,
+      "mean_rate": 0.36653143968815943,
+      "duration_units": "milliseconds",
+      "rate_units": "calls/minute"
+    },
+    "deleteUser": {
+      "count": 1,
+      "max": 4.8252109999999995,
+      "mean": 4.8252109999999995,
+      "min": 4.8252109999999995,
+      "p50": 4.8252109999999995,
+      "p75": 4.8252109999999995,
+      "p95": 4.8252109999999995,
+      "p98": 4.8252109999999995,
+      "p99": 4.8252109999999995,
+      "p999": 4.8252109999999995,
+      "stddev": 0,
+      "m15_rate": 0.055963873354550935,
+      "m1_rate": 0.0724607194316669,
+      "m5_rate": 0.11831244221923884,
+      "mean_rate": 0.18326783459947024,
+      "duration_units": "milliseconds",
+      "rate_units": "calls/minute"
+    },
+    "getUser": {
+      "count": 4,
+      "max": 10.177731,
+      "mean": 4.490080459374723,
+      "min": 1.042088,
+      "p50": 1.575589,
+      "p75": 10.177731,
+      "p95": 10.177731,
+      "p98": 10.177731,
+      "p99": 10.177731,
+      "p999": 10.177731,
+      "stddev": 4.276904527854368,
+      "m15_rate": 0.22399902400953256,
+      "m1_rate": 0.42427789694811446,
+      "m5_rate": 0.47991807604468867,
+      "mean_rate": 0.7330560454806502,
+      "duration_units": "milliseconds",
+      "rate_units": "calls/minute"
+    },
+    "listUsers": {
+      "count": 2,
+      "max": 18.343650999999998,
+      "mean": 1.9680702759999467,
+      "min": 1.244971,
+      "p50": 1.244971,
+      "p75": 1.244971,
+      "p95": 1.244971,
+      "p98": 18.343650999999998,
+      "p99": 18.343650999999998,
+      "p999": 18.343650999999998,
+      "stddev": 3.441100196972346,
+      "m15_rate": 0.1111005918141424,
+      "m1_rate": 0.3354051301588863,
+      "m5_rate": 0.2403451569244876,
+      "mean_rate": 0.3665140477638753,
+      "duration_units": "milliseconds",
+      "rate_units": "calls/minute"
+    },
+    "metrics": {
+      "count": 0,
+      "max": 0,
+      "mean": 0,
+      "min": 0,
+      "p50": 0,
+      "p75": 0,
+      "p95": 0,
+      "p98": 0,
+      "p99": 0,
+      "p999": 0,
+      "stddev": 0,
+      "m15_rate": 0,
+      "m1_rate": 0,
+      "m5_rate": 0,
+      "mean_rate": 0,
+      "duration_units": "milliseconds",
+      "rate_units": "calls/minute"
+    },
+    "notFound": {
+      "count": 1,
+      "max": 6.1470899999999995,
+      "mean": 6.1470899999999995,
+      "min": 6.1470899999999995,
+      "p50": 6.1470899999999995,
+      "p75": 6.1470899999999995,
+      "p95": 6.1470899999999995,
+      "p98": 6.1470899999999995,
+      "p99": 6.1470899999999995,
+      "p999": 6.1470899999999995,
+      "stddev": 0,
+      "m15_rate": 0.06648182394123926,
+      "m1_rate": 0.9594670244481206,
+      "m5_rate": 0.1983425541405901,
+      "mean_rate": 0.18326906627298534,
+      "duration_units": "milliseconds",
+      "rate_units": "calls/minute"
+    },
+    "updateUser": {
+      "count": 1,
+      "max": 2.389231,
+      "mean": 2.389231,
+      "min": 2.389231,
+      "p50": 2.389231,
+      "p75": 2.389231,
+      "p95": 2.389231,
+      "p98": 2.389231,
+      "p99": 2.389231,
+      "p999": 2.389231,
+      "stddev": 0,
+      "m15_rate": 0.04710994577423798,
+      "m1_rate": 0.005472367185912239,
+      "m5_rate": 0.07057403311423895,
+      "mean_rate": 0.18326677583386106,
+      "duration_units": "milliseconds",
+      "rate_units": "calls/minute"
+    }
+  }
+}</code></pre>
+
+<h3 class="anchored">Building an Executable Fat JAR</h3>
+<p>Check out our post on <a href="/posts/multi-project-builds-with-gradle-and-fat-jars-with-shadow">Multi-project builds with Gradle and Fat Jars with Shadow</a></p>
+
+<h3 class="anchored">Java Client with OkHttp</h3>
+<p><code>cURL</code> is great for debugging and testing, however, you will probably want programatic access to your API with a <a href="/posts/okhttp-example-rest-client">Java HTTP Client (OkHttp)</a></p>

@@ -1,0 +1,31 @@
+<p>Utilizing logging properly is one of the quickest ways to diagnose and debug issues locally or in production. It's not uncommon to find developers or even entire teams / organizations who blatantly ignore or misuse such a fundamental feature. Interactive debuggers are incredibly powerful but can also be very time consuming. Ever try step through debugging a HTTP request that follows several redirects? You better have very solid concentration and a lot of time on your hands to inspect each and every header. Or you can just edit one line in your logging file of choice and make sure logging middleware is enabled on your HTTP client and get the full request / response chain with all redirects dumped to your logging file.</p>
+
+<h2 class="anchored">SLF4J</h2>
+<p><a href="https://www.slf4j.org/">SLF4J</a> is a set of common logging interfaces that has been widely adopted by the Java community and is used by most third party libraries. If by chance it is not used you can always find a bridge implementation to help. Two main implementations are <a href="https://logback.qos.ch/">Logback</a> and <a href="https://logging.apache.org/log4j">Log4j</a>. Use whatever you are more comfortable with, we will primarily be using Logback.</p>
+
+<h2 class="anchored">Enter Logback</h2>
+<p>The simplest and most common way to configure logback is through the logback.xml configuration file. By default logback checks the classpath for the following resources <code>logback.groovy</code>, <code>logback-test.xml</code>, and <code>logback.xml</code> (<a href="https://logback.qos.ch/manual/configuration.html#auto_configuration">more configuration options</a>). Your configuration should only be stored in projects that execute. Putting a <code>logback.xml</code> file in a thrid party library can cause issues with all library conusmers logging configuration.</p>
+
+<h3 class="anchored">Simple logback.xml Configuration</h3>
+<p>A simple <code>logback.xml</code> file we will be using for our examples.</p>
+{{> templates/src/widgets/code/code-snippet file=logback-xml section=logback-xml.sections.logback language="xml"}}
+
+<h3 class="anchored">Simple logback-test.xml Configuration for Local Development</h3>
+<p>A common use case is to keep <code>src/main/resources/logback.xml</code> as the projects production logging configuration. You can also use <code>src/test/resources/logback-test.xml</code> for local configuration. The <code>logback-test.xml</code> file will be read first and override the main config file locally. If you keep the <code>logback-test.xml</code> file ignored from source control each developer can keep their own local configurations.</p>
+
+<h3 class="anchored">What if I need more configurations?</h3>
+<p>Logback gives you some additional options for passing in the configurations. Let's say we have a single Jar that has many main methods inside of it. Maybe one or more services and potentially some mains that are run as cron jobs. In this case <code>src/main/resources/logback.xml</code> works for our services but we want a different config file for the cron jobs. Simply make a <code>src/main/resources/cron-logback.xml</code> and when you start the java process add the system property flag <nobr><code>-Dlogback.configurationFile=logback-crons.xml</code></nobr>. This will force logback to use that specific file instead of the default.</p>
+
+<h3 class="anchored">Usage</h3>
+{{> templates/src/widgets/code/code-snippet file=logback section=logback.sections.logback}}
+
+<pre class="line-numbers"><code class="language-bash">2017-02-05 12:05:06.488 [main] INFO  c.s.examples.logback.LogbackExamples - INFO
+2017-02-05 12:05:06.492 [main] DEBUG c.s.examples.logback.LogbackExamples - DEBUG
+2017-02-05 12:05:06.492 [main] WARN  c.s.examples.logback.LogbackExamples - WARN
+2017-02-05 12:05:06.492 [main] ERROR c.s.examples.logback.LogbackExamples - ERROR
+2017-02-05 12:05:06.492 [main] WARN  c.s.secrets.MySecretPasswordClass - WARN
+2017-02-05 12:05:06.492 [main] ERROR c.s.secrets.MySecretPasswordClass - ERROR</code></pre>
+<p>Notice how neither logger logged at Trace level and MySecretPasswordClass only traced Warn and above.</p>
+
+<h3 class="anchored">Monitoring</h3>
+<p>Often times even with proper logging your application can be spewing errors / exceptions in production and no one will notice for extended periods of time. Utilizing <a href="/posts/monitoring-your-jvm-with-dropwizard-metrics#logging-level-hit-counts">Dropwizard Metrics SLF4J Instrumented Appender</a> you can easiy set up graphs or alerts on warn / error rates.

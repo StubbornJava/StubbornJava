@@ -1,0 +1,25 @@
+<p>Routing is a fundamental concept for any web server. Undertow has several ways to handle routing PathHandler, PathTemplateHandler, and RoutingHandler (You can always make your own as well!). RoutingHandler makes routes from HTTP Verb and url / url template pairs. Let's make some simple routes utilizing a handler we created in <a href="/posts/undertow-writing-custom-httphandlers">Writing Custom Handlers</a>. The best part is no annotations!</p>
+
+<h2 class="anchored">Undertow's RoutingHandler</h2>
+<p>Setting up a few simple routes</p>
+{{> templates/src/widgets/code/code-snippet file=routing section=routing.sections.routing}}
+
+<h2 class="anchored">Running the Server with the RoutingHandler</h2>
+<p>Simple embedded server that uses the RoutingHandler defined above as the root handler</p>
+{{> templates/src/widgets/code/code-snippet file=routing section=routing.sections.server}}
+
+<h2 class="anchored">Output</h2>
+<pre class="line-numbers"><code class="language-bash">curl -X GET localhost:8080
+GET - My Homepage</code></pre>
+<pre class="line-numbers"><code class="language-bash">curl -X GET localhost:8080/myRoute
+GET - My Route</code></pre>
+<pre class="line-numbers"><code class="language-bash">curl -X POST localhost:8080/myRoute
+POST - My Route</code></pre>
+<pre class="line-numbers"><code class="language-bash">curl -X GET localhost:8080/myOtherRoute
+GET - My Other Route</code></pre>
+<pre class="line-numbers"><code class="language-bash">curl -X GET localhost:8080/myRoutePrefix
+GET - My Prefixed Route</code></pre>
+<pre class="line-numbers"><code class="language-bash">curl -X GET localhost:8080/myRoutePrefixTest
+GET - My Prefixed Route</code></pre>
+<pre class="line-numbers"><code class="language-bash">curl -X GET localhost:8080/123
+Page Not Found!!</code></pre>

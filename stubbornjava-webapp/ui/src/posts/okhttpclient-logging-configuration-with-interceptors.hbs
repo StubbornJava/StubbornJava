@@ -1,0 +1,73 @@
+<p>Debugging HTTP can be very tricky. You have methods, headers, cookies, sessions, ssl, redirects, status codes and many other considerations. Making sure you set up proper logging for debugging purposes will allow you to track down issues much faster. The number one debugging tool for any HTTP client should without question be <code>cURL</code>. Once you are comfortable with <code>cURL</code> you can have absolute confidence you know a request should be working. Now you just need to track down the differences from <code>cURL</code> and your Java HTTP client of choice. Let's take a look at logging with <code>OkHttp</code>.</p>
+
+<h2 class="anchored">OkHttp Interceptors</h2>
+<p>Interceptors are a powerful mechanism that can monitor, rewrite, and retry calls. Basically interceptors are equivalent to our <a href="/posts/logging-gzip-blocking-exception-handling-metrics-middleware-chaining-in-undertow">Undertow Middleware</a>. An interceptor is the perfect place for request / response logging in OkHttp. They even provide an excellent <code>HttpLoggingInterceptor</code> as an extra library. Simply set the level you want and provide your own logging mechanism to log the provided messages. We will be using <a href="/posts/logging-in-java-with-slf4j-and-logback">SLF4J with Logback</a> to create a static singleton <code>HttpLoggingInterceptor</code>.</p>
+{{> templates/src/widgets/code/code-snippet file=client section=client.sections.logging}}
+<p>The <code>HttpLoggingInterceptor.setLevel</code> has a few modes. <code>Level.NONE</code> - no logs, <code>Level.BASIC</code> - Logs request and response lines, <code>Level.HEADERS</code> - Logs request and response lines and their respective headers, and <code>Level.BODY</code> - Logs request and response lines and their respective headers and bodies (if present). Use <code>Level.BODY</code> with caution, running it in production may unintentionally log passwords or secrets to your log files since it dumps the full request / response body.</p>
+
+<h3 class="anchored">OkHttp Interceptor Types</h3>
+<p>OkHttp has two types of interceptors that both use the exact same interface. Application interceptors are higher level and tend to deal with the final request / response. Application interceptors are great for high level logging or adding headers / query parameters to every HTTP request. Network interceptors operate at a lower level and follow all network bounces / redirects as well as caching. Network interceptors are much more in depth and a great spot for detailed logging. For more information on interceptors check out the <a href="https://github.com/square/okhttp/wiki/Interceptors">official wiki</a></p>
+
+<h2 class="anchored">Example Routes</h2>
+<p>To show differences between application interceptors and network interceptors types let's add a route that redirects to an another route.</p>
+{{> templates/src/widgets/code/code-snippet file=server section=server.sections.routes}}
+
+<h2 class="anchored">Request Helper</h2>
+<p>Simple helper method for sending the HTTP request with a given <code>OkHttpClient</code></p>
+{{> templates/src/widgets/code/code-snippet file=example section=example.sections.request}}
+
+<h2 class="anchored">OkHttp Without A Logging Interceptor</h2>
+<p>We are not using any logging interceptors here so we should expect no logging info.</p>
+{{> templates/src/widgets/code/code-snippet file=example section=example.sections.noLogging}}
+<pre class="line-numbers"><code class="language-bash">2017-03-08 14:18:39.984 [main] DEBUG c.s.examples.okhttp.OkHttpLogging - noLogging
+2017-03-08 14:18:40.354 [main] DEBUG c.s.examples.okhttp.OkHttpLogging - 200 - ok</code></pre>
+
+<h2 class="anchored">OkHttp With an Application Logging Interceptor</h2>
+<p>Here we are passing in the logging interceptor at the higher level application interceptor.</p>
+{{> templates/src/widgets/code/code-snippet file=example section=example.sections.interceptor}}
+<pre class="line-numbers"><code class="language-bash">2017-03-08 14:18:40.356 [main] DEBUG c.s.examples.okhttp.OkHttpLogging - interceptor
+2017-03-08 14:18:40.367 [main] DEBUG com.stubbornjava.common.HttpClient - --> GET http://localhost:8080/redirectToPing http/1.1
+2017-03-08 14:18:40.367 [main] DEBUG com.stubbornjava.common.HttpClient - --> END GET
+2017-03-08 14:18:40.371 [main] DEBUG com.stubbornjava.common.HttpClient - <-- 200 OK http://localhost:8080/ping (3ms)
+2017-03-08 14:18:40.371 [main] DEBUG com.stubbornjava.common.HttpClient - Connection: keep-alive
+2017-03-08 14:18:40.371 [main] DEBUG com.stubbornjava.common.HttpClient - Content-Type: text/plain
+2017-03-08 14:18:40.371 [main] DEBUG com.stubbornjava.common.HttpClient - Content-Length: 2
+2017-03-08 14:18:40.372 [main] DEBUG com.stubbornjava.common.HttpClient - Date: Wed, 08 Mar 2017 19:18:40 GMT
+2017-03-08 14:18:40.372 [main] DEBUG com.stubbornjava.common.HttpClient - 
+2017-03-08 14:18:40.372 [main] DEBUG com.stubbornjava.common.HttpClient - ok
+2017-03-08 14:18:40.372 [main] DEBUG com.stubbornjava.common.HttpClient - <-- END HTTP (2-byte body)
+2017-03-08 14:18:40.372 [main] DEBUG c.s.examples.okhttp.OkHttpLogging - 200 - ok</code></pre>
+<p>Notice how we were redirected as expected but there is no indication any redirecting occured.</p>
+
+<h2 class="anchored">OkHttp With A Network Logging Interceptor</h2>
+<p>Here we are passing in the logging interceptor at the lower level network interceptor.</p>
+{{> templates/src/widgets/code/code-snippet file=example section=example.sections.networkInterceptor}}
+<pre class="line-numbers"><code class="language-bash">2017-03-08 14:18:40.373 [main] DEBUG c.s.examples.okhttp.OkHttpLogging - networkInterceptor
+2017-03-08 14:18:40.377 [main] DEBUG com.stubbornjava.common.HttpClient - --> GET http://localhost:8080/redirectToPing http/1.1
+2017-03-08 14:18:40.377 [main] DEBUG com.stubbornjava.common.HttpClient - Host: localhost:8080
+2017-03-08 14:18:40.377 [main] DEBUG com.stubbornjava.common.HttpClient - Connection: Keep-Alive
+2017-03-08 14:18:40.377 [main] DEBUG com.stubbornjava.common.HttpClient - Accept-Encoding: gzip
+2017-03-08 14:18:40.377 [main] DEBUG com.stubbornjava.common.HttpClient - User-Agent: okhttp/3.6.0
+2017-03-08 14:18:40.377 [main] DEBUG com.stubbornjava.common.HttpClient - --> END GET
+2017-03-08 14:18:40.379 [main] DEBUG com.stubbornjava.common.HttpClient - <-- 302 Found http://localhost:8080/redirectToPing (1ms)
+2017-03-08 14:18:40.379 [main] DEBUG com.stubbornjava.common.HttpClient - Connection: keep-alive
+2017-03-08 14:18:40.379 [main] DEBUG com.stubbornjava.common.HttpClient - Location: /ping
+2017-03-08 14:18:40.379 [main] DEBUG com.stubbornjava.common.HttpClient - Content-Length: 0
+2017-03-08 14:18:40.379 [main] DEBUG com.stubbornjava.common.HttpClient - Date: Wed, 08 Mar 2017 19:18:40 GMT
+2017-03-08 14:18:40.379 [main] DEBUG com.stubbornjava.common.HttpClient - <-- END HTTP (0-byte body)
+2017-03-08 14:18:40.380 [main] DEBUG com.stubbornjava.common.HttpClient - --> GET http://localhost:8080/ping http/1.1
+2017-03-08 14:18:40.380 [main] DEBUG com.stubbornjava.common.HttpClient - Host: localhost:8080
+2017-03-08 14:18:40.380 [main] DEBUG com.stubbornjava.common.HttpClient - Connection: Keep-Alive
+2017-03-08 14:18:40.380 [main] DEBUG com.stubbornjava.common.HttpClient - Accept-Encoding: gzip
+2017-03-08 14:18:40.380 [main] DEBUG com.stubbornjava.common.HttpClient - User-Agent: okhttp/3.6.0
+2017-03-08 14:18:40.380 [main] DEBUG com.stubbornjava.common.HttpClient - --> END GET
+2017-03-08 14:18:40.382 [main] DEBUG com.stubbornjava.common.HttpClient - <-- 200 OK http://localhost:8080/ping (1ms)
+2017-03-08 14:18:40.382 [main] DEBUG com.stubbornjava.common.HttpClient - Connection: keep-alive
+2017-03-08 14:18:40.382 [main] DEBUG com.stubbornjava.common.HttpClient - Content-Type: text/plain
+2017-03-08 14:18:40.382 [main] DEBUG com.stubbornjava.common.HttpClient - Content-Length: 2
+2017-03-08 14:18:40.382 [main] DEBUG com.stubbornjava.common.HttpClient - Date: Wed, 08 Mar 2017 19:18:40 GMT
+2017-03-08 14:18:40.382 [main] DEBUG com.stubbornjava.common.HttpClient - 
+2017-03-08 14:18:40.382 [main] DEBUG com.stubbornjava.common.HttpClient - ok
+2017-03-08 14:18:40.383 [main] DEBUG com.stubbornjava.common.HttpClient - <-- END HTTP (2-byte body)
+2017-03-08 14:18:40.383 [main] DEBUG c.s.examples.okhttp.OkHttpLogging - 200 - ok</code></pre>
+<p>Notice how we were redirected as expected and the log clearly shows all the network hops.</p>

@@ -37,7 +37,10 @@ allprojects {
 
             // Auto force all of our explicit dependencies.
             libs.each { k, v -> force(v) }
-
+            force('io.reactivex:rxjava:1.1.2')
+            force('com.google.code.gson:gson:2.6.2')
+            force('commons-logging:commons-logging:1.2')
+            
             // cache dynamic versions for 10 minutes
             cacheDynamicVersionsFor 10*60, 'seconds'
             // don't cache changing modules at all

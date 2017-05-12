@@ -1,0 +1,7 @@
+@import '../common/depth.scss';
+
+.card {
+  @extend .z-depth-1;
+  padding: 1rem;
+
+}

@@ -1,0 +1,23 @@
+{{#> templates/src/common/_base-layout}}
+  {{#*inline "title"}}Stubborn Java{{/inline}}
+  {{#*inline "content"}}
+    <div class="page-heading">
+      <div class="container center-text">
+        <h1>Unconventional guides, examples, and blog utilizing modern Java.</h1>
+      </div>
+    </div>
+
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12 col-lg-9">
+          {{> templates/src/widgets/posts/recent-posts}}
+        </div>
+        <div class="col-lg-3 hidden-md-down">
+          {{> templates/src/widgets/recommendations/recommendations-sidebar}}
+          {{> templates/src/widgets/posts/tagCloud title="Libraries" items=libraries icon="cogs"}}
+          {{> templates/src/widgets/posts/tagCloud title="Tags" items=tags icon="tags"}}
+        </div>
+      </div>
+    </div>
+  {{/inline}}
+{{/ templates/src/common/_base-layout}}

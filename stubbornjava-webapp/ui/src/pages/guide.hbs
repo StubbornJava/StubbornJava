@@ -1,0 +1,19 @@
+{{#> templates/src/common/_base-layout metaDesc=guide.metaDesc twitterSummaryCard=true title=guide.title}}
+  {{#*inline "title"}}{{guide.title}}{{/inline}}
+  {{#*inline "content"}}
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12 col-lg-9">
+          <h1>{{guide.title}}</h1>
+          <div class="post-meta-block">
+            <div class="post-content">{{{guide.content}}}</div>
+          </div>
+        </div>
+        <div class="col-lg-3 hidden-sm hidden-xs">
+          {{> templates/src/widgets/recommendations/recommendations-sidebar}}
+          {{> templates/src/widgets/posts/recent-posts-sidebar recentPosts=recentPosts}}
+        </div>
+      </div>
+    </div>
+  {{/inline}}
+{{/ templates/src/common/_base-layout}}

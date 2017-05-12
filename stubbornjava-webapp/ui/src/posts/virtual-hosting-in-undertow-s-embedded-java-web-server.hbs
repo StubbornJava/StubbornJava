@@ -1,0 +1,66 @@
+<p>Virtual hosting is a method which allows a single server (or multiple) to listen on a single port (most often the default port <code>80</code>) and serve different content based on the host / domain name. This is is commonly used in load balancers or web servers such as <a href="https://www.nginx.com/">NGINX</a> or <a href="https://httpd.apache.org/">apache</a> to serve several websites from a single server. In its simplest form virtual hosting is a pair of a port and hostname that map to a handler.</p>
+
+<h2 class="anchored">Virtual Hosting in Undertow</h2>
+<p>One of the most common virtual hosting use cases is redirecting a non www domain to a www domain. Creating <a href="/posts/undertow-writing-custom-httphandlers">custom HttpHandler's</a> in Undertow is easy. Undertow also has a built in virtual hosting handler called <code>NameVirtualHostHandler</code>.</p>
+
+<h2 class="anchored">Routes</h2>
+<p>A simple hello world route and a route to redirect to the given hostname. We are not just redirect blindly to the new host we are capturing the full path and any query params as well. This is made easy using some <code>OkHttp</code> classes.</p>
+
+{{> templates/src/widgets/code/code-snippet file=server section=server.sections.routes}}
+
+<h2 class="anchored">Get Current URL</h2>
+<p>Here is our simple util method to grab the current <code>HttpUrl</code>. We use <code>OkHttp's</code> library here because they have a very nice api for working with urls.</p>
+
+{{> templates/src/widgets/code/code-snippet file=server section=url.sections.currentUrl}}
+
+<h2 class="anchored">Adding Handlers to NameVirtualHostHandler</h2>
+<p>Here we add two virtual hosting handlers. One on localhost which should redirect to www.localhost just as an example (This will work in some browsers but not with <code>cURL</code>). The second handler is our actual web content.</p>
+
+{{> templates/src/widgets/code/code-snippet file=server section=server.sections.server}}
+
+<h2 class="anchored">Testing it out</h2>
+<pre class="line-numbers"><code class="language-bash">curl -v -L localhost:8080
+* Rebuilt URL to: localhost:8080/
+*   Trying ::1...
+* TCP_NODELAY set
+* Connected to localhost (::1) port 8080 (#0)
+> GET / HTTP/1.1
+> Host: localhost:8080
+> User-Agent: curl/7.51.0
+> Accept: */*
+>
+< HTTP/1.1 301 Moved Permanently
+< Connection: keep-alive
+< Location: http://www.localhost:8080/
+< Content-Length: 0
+< Date: Thu, 20 Apr 2017 12:05:02 GMT
+<
+* Curl_http_done: called premature == 0
+* Connection #0 to host localhost left intact
+* Issue another request to this URL: 'http://www.localhost:8080/'
+* Could not resolve host: www.localhost
+* Closing connection 1
+curl: (6) Could not resolve host: www.localhost</code></pre>
+
+<p>Now <code>cURL</code> won't resolve www.localhost unless we add it to our hosts file however Chrome and some other browsers will. This is just an example and would generally use a real domain instead of localhost. Let's also make sure we preserve the path and query params.</p>
+<pre class="line-numbers"><code class="language-bash">curl -v -L localhost:8080/hello?123
+*   Trying ::1...
+* TCP_NODELAY set
+* Connected to localhost (::1) port 8080 (#0)
+> GET /hello?123 HTTP/1.1
+> Host: localhost:8080
+> User-Agent: curl/7.51.0
+> Accept: */*
+>
+< HTTP/1.1 301 Moved Permanently
+< Connection: keep-alive
+< Location: http://www.localhost:8080/hello?123
+< Content-Length: 0
+< Date: Thu, 20 Apr 2017 12:07:16 GMT
+<
+* Curl_http_done: called premature == 0
+* Connection #0 to host localhost left intact
+* Issue another request to this URL: 'http://www.localhost:8080/hello?123'
+* Could not resolve host: www.localhost
+* Closing connection 1
+curl: (6) Could not resolve host: www.localhost</code></pre>

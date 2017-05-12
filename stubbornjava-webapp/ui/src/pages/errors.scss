@@ -1,0 +1,20 @@
+@import '../common/skin.scss';
+
+.error-bg {
+  background-color: $theme;
+
+  .error {
+    max-width: 600px;
+    margin: 0 auto;
+    margin-top: 100px;
+    background: $white;
+    text-align: center;
+    box-shadow: 0px 0px 10px rgba(0,0,0,0.2);
+    border-radius: 5px;
+    padding: 50px;
+
+    .color {
+      color: $theme;
+    }
+  }
+}

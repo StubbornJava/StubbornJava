@@ -1,0 +1,35 @@
+<p>Content types also known as MIME type or media types are a two part identifier for file formats. The HTTP header Content-Type is responsible for telling the HTTP client or server what type of data is being sent.
+<h2 class="anchored">Headers</h2>
+<p>Two main headers are involved when it comes to content types</p>
+<ul>
+  <li><strong>Accept</strong> - When a HTTP client requests data from a server it can send a comma separated list of media types. For example the headers value could be text/html, text/plain. This hints to the server what the client is looking for. Basically the client is asking the server to respond with text/html and if it cannot handle that try responding with text/plain. Whether or not the server can handle or will honor this is up to the server.</li>
+  <li><strong>Content-Type</strong> - The content type header tells the client or server what format the data is being transferred in. If the client asked for text/html and the server handled it properly the data should come back with the Content-Type: text/html header. This header is how your browser knows when to render the html vs just displaying raw text. This is also used for images / files.</li>
+</ul>
+
+<pre class="line-numbers"><code class="language-bash">$ curl -v http://www.google.com
+* Rebuilt URL to: http://www.google.com/
+*   Trying 172.217.1.68...
+* Connected to www.google.com (172.217.1.68) port 80 (#0)
+> GET / HTTP/1.1
+> Host: www.google.com
+> User-Agent: curl/7.49.1
+> Accept: */*
+>
+< HTTP/1.1 200 OK
+< Date: Tue, 10 Jan 2017 02:42:41 GMT
+< Expires: -1
+< Cache-Control: private, max-age=0
+< Content-Type: text/html; charset=ISO-8859-1</code></pre>
+<p>Notice the Accept: */*, This means accept any format. The Content-Type: text/html header tells the client the server responded with HTML.</p>
+
+
+<h2 class="anchored">Media Types</h2>
+<ul>
+  <li><strong>text/plain</strong> - Simple Raw text</li>
+  <li><strong>text/html</strong> - Standard HTML, when a browser gets this media type it knows to render the page as HTML instead of raw text. This includes fetching external files such as javascript, css, and images.</li>
+  <li><strong>application/octet-stream</strong> - A binary file format often used to download files. If a browser gets this media type it automatically downloads the file instead of trying to display / render it.</li>
+  <li><strong>application/json</strong> - The JSON data format.</li>
+  <li><strong>application/pdf</strong> - PDF file.</li>
+  <li><strong>image/[png,jpeg,gif]</strong> - Standard image formats.</li>
+</ul>
+<p>These are only some of the formats. As you can see the difference between rendering html vs showing raw text vs downloading a file is all controlled with a simple header. <a href="/posts/handling-content-types-with-undertow">Handling content types with Undertow</a></p>

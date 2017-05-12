@@ -1,0 +1,22 @@
+{{#> templates/src/common/_base-layout metaDesc=library.description}}
+  {{#*inline "title"}}{{library.name}} Java Library{{/inline}}
+  {{#*inline "content"}}
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12 col-lg-9">
+          <h1>{{library.name}} Java Library</h1>
+          <div class="post-meta">
+            <span><a href="{{library.github}}"><i class="fa fa-github" aria-hidden="true"></i> GitHub</a></span>
+            <span><a href="{{library.url}}"><i class="fa fa-link" aria-hidden="true"></i> Website</a></span>
+          </div>
+          <p>{{library.description}}</p>
+          {{> templates/src/widgets/posts/recent-posts recentPosts=posts}}
+        </div>
+        <div class="col-lg-3 hidden-sm hidden-xs">
+          {{> templates/src/widgets/recommendations/recommendations-sidebar}}
+          {{> templates/src/widgets/posts/recent-posts-sidebar recentPosts=recentPosts}}
+        </div>
+      </div>
+    </div>
+  {{/inline}}
+{{/ templates/src/common/_base-layout}}

@@ -1,0 +1,13 @@
+<p>Reading files from the classpath is a fairly common use case. Configuration files, HTML templates, CSV files and many more are all common use cases. This has always been a bit convoluted. The Java8 <code>Paths</code> and <code>Files</code> APIs made this a little simpler. Guava also has a few helper classes that make this very easy to acomplish.</p>
+
+<h2 class="anchored">Read Resource as String</h2>
+<p>Simple helper to load any resource on the classpath and convert it to a <code>String</code>. Here we are lazy and rethrow <code>IOException</code>'s as unchecked exceptions.</p>
+{{> templates/src/widgets/code/code-snippet file=resources section=resources.sections.asString}}
+<p>Here it is in action usint a JUnit test.</p>
+{{> templates/src/widgets/code/code-snippet file=tests section=tests.sections.asString}}
+
+<h2 class="anchored">Read Resource as BufferedReader</h2>
+<p>Simple helper to load any resource on the classpath and convert it to a <code>BufferedReader</code>. <code>BufferedReader</code>'s are much better for large files. Ideally you won't have very large files included in your JAR and they will be loaded externally so this might not be extremely useful.</p>
+{{> templates/src/widgets/code/code-snippet file=resources section=resources.sections.asBufferedReader}}
+<p>Here it is in action usint a JUnit test.</p>
+{{> templates/src/widgets/code/code-snippet file=tests section=tests.sections.asBufferedReader}}

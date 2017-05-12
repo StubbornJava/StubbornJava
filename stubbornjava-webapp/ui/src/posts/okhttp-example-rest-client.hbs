@@ -1,0 +1,248 @@
+<p>Previously we created a <a href="/posts/lightweight-embedded-java-rest-server-without-a-framework">Lightweight Java REST server</a> using Undertow. It was only tested with <code>cURL</code> which is an exceptional tool for testing and debugging, however, we love Java! Let's get some programmatic access to our API in Java using OkHttp. We will be working with <a href="/posts/query-parameters-and-path-parameters-in-undertow">query parameters</a>, HTTP verbs (GET, POST, PUT, DELETE), status codes, as well as <a href="/posts/practical-jackson-objectmapper-configuration">serializing and deserializing JSON with Jackson</a>.</p>
+
+<h2 class="anchored">OkHttp's HttpUrl and Request</h2>
+<p>Two fundamental parts of making a request with an <code>OkHttpClient</code> are the <code>HttpUrl</code> and the <code>Request.Builder</code>. <code>HttpUrl</code> is a convenient way to build URLs in Java. It supports a simple <code>parse(String host)</code> method for parsing a String or you can build the URL manually. It allows easily adding query parameters, path parameters are less intuitive but still easy enough (Look into <a href="http://square.github.io/retrofit/">Retrofit</a> for better REST API support). The <code>Request.Builder</code> is responsible for most other aspects of the request including HTTP verb, headers, cookies, media types, ect.</p>
+
+<h2 class="anchored">RestClient</h2>
+<p><code>RestClient</code> will be our class responsible for interacting with the REST service. It's constructor is straight forward. Pass in a <code>OkHttpClient</code> and a hostname for the API.</p>
+{{> templates/src/widgets/code/code-snippet file=client section=client.sections.constructor}}
+
+<h2 class="anchored">Creating a User</h2>
+<p>According to our API we need to POST JSON to <code>/users</code>. Notice how we care about that status codes of the response. We know the API returns a <code>201</code> on successful creation so lets look for that. We prefer to return <code>null</code> instead of throwing an exception on a failure to create user due to a <code>400</code> status code. This means the user already exists.</p>
+{{> templates/src/widgets/code/code-snippet file=client section=client.sections.createUser}}
+
+<h2 class="anchored">Updating a User</h2>
+<p>For an update we need to send a PUT request to <code>/users</code> with the updated User object. On a <code>404</code> (not found) we return null instead of throwing an exception.</p>
+{{> templates/src/widgets/code/code-snippet file=client section=client.sections.updateUser}}
+
+
+<h2 class="anchored">Listing Users</h2>
+<p>Listing users requires sending a GET request to <code>/users</code>. Since this is a simple example it will just return all users with no filtering or paginations options available. <code>response.isSuccessful()</code> is a convenience method that checks if the response is any <code>20x</code> status code.</p>
+{{> templates/src/widgets/code/code-snippet file=client section=client.sections.listUsers}}
+
+
+<h2 class="anchored">Get User by Email</h2>
+<p>Since we are using email as our primary key in this example we can fetch users by sending a GET request to <code>/users/{email}</code>. Once again we handle <code>404</code>s by returning null.</p>
+{{> templates/src/widgets/code/code-snippet file=client section=client.sections.getUserByEmail}}
+
+
+<h2 class="anchored">Delete User by Email</h2>
+<p>Deleting a user can be accomplished by sending a DELETE request to <code>/users/{email}</code>.</p>
+{{> templates/src/widgets/code/code-snippet file=client section=client.sections.deleteUserByEmail}}
+
+<h2 class="anchored">Example Usage</h2>
+<p>If you want to test this locally make sure you also start up the example REST service.</p>
+{{> templates/src/widgets/code/code-snippet file=client section=client.sections.main}}
+
+<h3 class="anchored">Server Log</h3>
+<pre class="line-numbers"><code class="language-bash">2017-03-21 11:28:35.975 [main] DEBUG c.s.common.undertow.SimpleServer - ListenerInfo{protcol='http', address=/0:0:0:0:0:0:0:0:8080, sslContext=null}
+2017-03-21 11:33:15.388 [XNIO-1 task-1] INFO  com.stubbornjava.accesslog - 127.0.0.1 - - [21/Mar/2017:11:33:15 -0400] "POST /users HTTP/1.1" 201 96 "-" "okhttp/3.6.0"
+2017-03-21 11:33:15.466 [XNIO-1 task-2] INFO  com.stubbornjava.accesslog - 127.0.0.1 - - [21/Mar/2017:11:33:15 -0400] "POST /users HTTP/1.1" 201 97 "-" "okhttp/3.6.0"
+2017-03-21 11:33:15.478 [XNIO-1 task-3] INFO  com.stubbornjava.accesslog - 127.0.0.1 - - [21/Mar/2017:11:33:15 -0400] "PUT /users HTTP/1.1" 200 105 "-" "okhttp/3.6.0"
+2017-03-21 11:33:15.505 [XNIO-1 task-4] INFO  com.stubbornjava.accesslog - 127.0.0.1 - - [21/Mar/2017:11:33:15 -0400] "GET /users HTTP/1.1" 200 117 "-" "okhttp/3.6.0"
+2017-03-21 11:33:15.520 [XNIO-1 task-5] INFO  com.stubbornjava.accesslog - 127.0.0.1 - - [21/Mar/2017:11:33:15 -0400] "GET /users/user1@test.com HTTP/1.1" 200 96 "-" "okhttp/3.6.0"
+2017-03-21 11:33:15.527 [XNIO-1 task-6] INFO  com.stubbornjava.accesslog - 127.0.0.1 - - [21/Mar/2017:11:33:15 -0400] "GET /users/user2@test.com HTTP/1.1" 200 105 "-" "okhttp/3.6.0"
+2017-03-21 11:33:15.542 [XNIO-1 task-7] INFO  com.stubbornjava.accesslog - 127.0.0.1 - - [21/Mar/2017:11:33:15 -0400] "DELETE /users/user1@test.com HTTP/1.1" 204 - "-" "okhttp/3.6.0"
+2017-03-21 11:33:15.550 [XNIO-1 task-8] INFO  com.stubbornjava.accesslog - 127.0.0.1 - - [21/Mar/2017:11:33:15 -0400] "GET /users/user1@test.com HTTP/1.1" 404 85 "-" "okhttp/3.6.0"
+2017-03-21 11:33:15.559 [XNIO-1 task-9] ERROR c.s.c.u.handlers.CustomHandlers - exception thrown at /users
+java.lang.NullPointerException: null
+  at com.stubbornjava.examples.undertow.rest.UserRoutes.createUser(UserRoutes.java:17)
+  at com.stubbornjava.examples.undertow.rest.RestServer$$Lambda$5/1990160809.handleRequest(Unknown Source)
+  at com.stubbornjava.common.undertow.handlers.TimingHttpHandler.handleRequest(TimingHttpHandler.java:27)
+  at io.undertow.server.RoutingHandler.handleRequest(RoutingHandler.java:93)
+  at com.stubbornjava.examples.undertow.rest.RestServer.lambda$0(RestServer.java:38)
+  at com.stubbornjava.examples.undertow.rest.RestServer$$Lambda$11/76432244.handleRequest(Unknown Source)
+  at com.stubbornjava.common.undertow.handlers.CustomHandlers.lambda$1(CustomHandlers.java:102)
+  at com.stubbornjava.common.undertow.handlers.CustomHandlers$$Lambda$12/1030228826.handleRequest(Unknown Source)
+  at io.undertow.server.handlers.ExceptionHandler.handleRequest(ExceptionHandler.java:29)
+  at com.stubbornjava.common.undertow.handlers.StatusCodeHandler.handleRequest(StatusCodeHandler.java:27)
+  at io.undertow.server.handlers.accesslog.AccessLogHandler.handleRequest(AccessLogHandler.java:138)
+  at io.undertow.server.handlers.encoding.EncodingHandler.handleRequest(EncodingHandler.java:72)
+  at io.undertow.server.Connectors.executeRootHandler(Connectors.java:210)
+  at io.undertow.server.HttpServerExchange$1.run(HttpServerExchange.java:809)
+  at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1142)
+  at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:617)
+  at java.lang.Thread.run(Thread.java:745)
+2017-03-21 11:33:15.561 [XNIO-1 task-9] INFO  com.stubbornjava.accesslog - 127.0.0.1 - - [21/Mar/2017:11:33:15 -0400] "POST /users HTTP/1.1" 500 77 "-" "okhttp/3.6.0"</code></pre>
+
+<h3 class="anchored">Output</h3>
+<p>Since our <code>OkHttpClient</code> has been configured with a <a href="/posts/okhttpclient-logging-configuration-with-interceptors">Logging Interceptor</a> we get very detailed output. You would want this level of logging turned off in production.</p>
+<pre class="line-numbers"><code class="language-bash">2017-03-21 11:33:14.584 [main] DEBUG c.s.e.undertow.rest.RestClient - **** Creating Users ****
+2017-03-21 11:33:14.925 [main] DEBUG com.stubbornjava.common.HttpClient - --> POST http://localhost:8080/users http/1.1
+2017-03-21 11:33:14.925 [main] DEBUG com.stubbornjava.common.HttpClient - Content-Type: application/json; charset=utf-8
+2017-03-21 11:33:14.925 [main] DEBUG com.stubbornjava.common.HttpClient - Content-Length: 70
+2017-03-21 11:33:14.925 [main] DEBUG com.stubbornjava.common.HttpClient - Host: localhost:8080
+2017-03-21 11:33:14.925 [main] DEBUG com.stubbornjava.common.HttpClient - Connection: Keep-Alive
+2017-03-21 11:33:14.925 [main] DEBUG com.stubbornjava.common.HttpClient - Accept-Encoding: gzip
+2017-03-21 11:33:14.925 [main] DEBUG com.stubbornjava.common.HttpClient - User-Agent: okhttp/3.6.0
+2017-03-21 11:33:14.927 [main] DEBUG com.stubbornjava.common.HttpClient -
+2017-03-21 11:33:14.927 [main] DEBUG com.stubbornjava.common.HttpClient - {"email":"user1@test.com","roles":["USER"],"dateCreated":"2017-03-21"}
+2017-03-21 11:33:14.927 [main] DEBUG com.stubbornjava.common.HttpClient - --> END POST (70-byte body)
+2017-03-21 11:33:15.391 [main] DEBUG com.stubbornjava.common.HttpClient - <-- 201 Created http://localhost:8080/users (463ms)
+2017-03-21 11:33:15.391 [main] DEBUG com.stubbornjava.common.HttpClient - Content-Encoding: gzip
+2017-03-21 11:33:15.391 [main] DEBUG com.stubbornjava.common.HttpClient - Connection: keep-alive
+2017-03-21 11:33:15.391 [main] DEBUG com.stubbornjava.common.HttpClient - Content-Type: application/json
+2017-03-21 11:33:15.391 [main] DEBUG com.stubbornjava.common.HttpClient - Content-Length: 96
+2017-03-21 11:33:15.391 [main] DEBUG com.stubbornjava.common.HttpClient - Date: Tue, 21 Mar 2017 15:33:15 GMT
+2017-03-21 11:33:15.391 [main] DEBUG com.stubbornjava.common.HttpClient - <-- END HTTP (encoded body omitted)
+2017-03-21 11:33:15.430 [main] DEBUG c.s.e.undertow.rest.RestClient - {"email":"user1@test.com","roles":["USER"],"dateCreated":"2017-03-21"}
+2017-03-21 11:33:15.435 [main] DEBUG com.stubbornjava.common.HttpClient - --> POST http://localhost:8080/users http/1.1
+2017-03-21 11:33:15.435 [main] DEBUG com.stubbornjava.common.HttpClient - Content-Type: application/json; charset=utf-8
+2017-03-21 11:33:15.435 [main] DEBUG com.stubbornjava.common.HttpClient - Content-Length: 71
+2017-03-21 11:33:15.435 [main] DEBUG com.stubbornjava.common.HttpClient - Host: localhost:8080
+2017-03-21 11:33:15.435 [main] DEBUG com.stubbornjava.common.HttpClient - Connection: Keep-Alive
+2017-03-21 11:33:15.435 [main] DEBUG com.stubbornjava.common.HttpClient - Accept-Encoding: gzip
+2017-03-21 11:33:15.435 [main] DEBUG com.stubbornjava.common.HttpClient - User-Agent: okhttp/3.6.0
+2017-03-21 11:33:15.436 [main] DEBUG com.stubbornjava.common.HttpClient -
+2017-03-21 11:33:15.436 [main] DEBUG com.stubbornjava.common.HttpClient - {"email":"user2@test.com","roles":["ADMIN"],"dateCreated":"2017-03-21"}
+2017-03-21 11:33:15.437 [main] DEBUG com.stubbornjava.common.HttpClient - --> END POST (71-byte body)
+2017-03-21 11:33:15.469 [main] DEBUG com.stubbornjava.common.HttpClient - <-- 201 Created http://localhost:8080/users (31ms)
+2017-03-21 11:33:15.469 [main] DEBUG com.stubbornjava.common.HttpClient - Content-Encoding: gzip
+2017-03-21 11:33:15.469 [main] DEBUG com.stubbornjava.common.HttpClient - Connection: keep-alive
+2017-03-21 11:33:15.469 [main] DEBUG com.stubbornjava.common.HttpClient - Content-Type: application/json
+2017-03-21 11:33:15.469 [main] DEBUG com.stubbornjava.common.HttpClient - Content-Length: 97
+2017-03-21 11:33:15.470 [main] DEBUG com.stubbornjava.common.HttpClient - Date: Tue, 21 Mar 2017 15:33:15 GMT
+2017-03-21 11:33:15.470 [main] DEBUG com.stubbornjava.common.HttpClient - <-- END HTTP (encoded body omitted)
+2017-03-21 11:33:15.471 [main] DEBUG c.s.e.undertow.rest.RestClient - {"email":"user2@test.com","roles":["ADMIN"],"dateCreated":"2017-03-21"}
+2017-03-21 11:33:15.471 [main] DEBUG c.s.e.undertow.rest.RestClient -
+
+
+2017-03-21 11:33:15.472 [main] DEBUG c.s.e.undertow.rest.RestClient - **** Updating User ****
+2017-03-21 11:33:15.474 [main] DEBUG com.stubbornjava.common.HttpClient - --> PUT http://localhost:8080/users http/1.1
+2017-03-21 11:33:15.474 [main] DEBUG com.stubbornjava.common.HttpClient - Content-Type: application/json; charset=utf-8
+2017-03-21 11:33:15.475 [main] DEBUG com.stubbornjava.common.HttpClient - Content-Length: 78
+2017-03-21 11:33:15.475 [main] DEBUG com.stubbornjava.common.HttpClient - Host: localhost:8080
+2017-03-21 11:33:15.475 [main] DEBUG com.stubbornjava.common.HttpClient - Connection: Keep-Alive
+2017-03-21 11:33:15.475 [main] DEBUG com.stubbornjava.common.HttpClient - Accept-Encoding: gzip
+2017-03-21 11:33:15.475 [main] DEBUG com.stubbornjava.common.HttpClient - User-Agent: okhttp/3.6.0
+2017-03-21 11:33:15.475 [main] DEBUG com.stubbornjava.common.HttpClient -
+2017-03-21 11:33:15.475 [main] DEBUG com.stubbornjava.common.HttpClient - {"email":"user2@test.com","roles":["USER","ADMIN"],"dateCreated":"2017-03-21"}
+2017-03-21 11:33:15.475 [main] DEBUG com.stubbornjava.common.HttpClient - --> END PUT (78-byte body)
+2017-03-21 11:33:15.481 [main] DEBUG com.stubbornjava.common.HttpClient - <-- 200 OK http://localhost:8080/users (6ms)
+2017-03-21 11:33:15.482 [main] DEBUG com.stubbornjava.common.HttpClient - Content-Encoding: gzip
+2017-03-21 11:33:15.482 [main] DEBUG com.stubbornjava.common.HttpClient - Connection: keep-alive
+2017-03-21 11:33:15.482 [main] DEBUG com.stubbornjava.common.HttpClient - Content-Type: application/json
+2017-03-21 11:33:15.482 [main] DEBUG com.stubbornjava.common.HttpClient - Content-Length: 105
+2017-03-21 11:33:15.482 [main] DEBUG com.stubbornjava.common.HttpClient - Date: Tue, 21 Mar 2017 15:33:15 GMT
+2017-03-21 11:33:15.482 [main] DEBUG com.stubbornjava.common.HttpClient - <-- END HTTP (encoded body omitted)
+2017-03-21 11:33:15.482 [main] DEBUG c.s.e.undertow.rest.RestClient - {"email":"user2@test.com","roles":["USER","ADMIN"],"dateCreated":"2017-03-21"}
+2017-03-21 11:33:15.482 [main] DEBUG c.s.e.undertow.rest.RestClient -
+
+
+2017-03-21 11:33:15.483 [main] DEBUG c.s.e.undertow.rest.RestClient - **** Listing Users ****
+2017-03-21 11:33:15.485 [main] DEBUG com.stubbornjava.common.HttpClient - --> GET http://localhost:8080/users http/1.1
+2017-03-21 11:33:15.485 [main] DEBUG com.stubbornjava.common.HttpClient - Host: localhost:8080
+2017-03-21 11:33:15.485 [main] DEBUG com.stubbornjava.common.HttpClient - Connection: Keep-Alive
+2017-03-21 11:33:15.485 [main] DEBUG com.stubbornjava.common.HttpClient - Accept-Encoding: gzip
+2017-03-21 11:33:15.486 [main] DEBUG com.stubbornjava.common.HttpClient - User-Agent: okhttp/3.6.0
+2017-03-21 11:33:15.486 [main] DEBUG com.stubbornjava.common.HttpClient - --> END GET
+2017-03-21 11:33:15.510 [main] DEBUG com.stubbornjava.common.HttpClient - <-- 200 OK http://localhost:8080/users (23ms)
+2017-03-21 11:33:15.511 [main] DEBUG com.stubbornjava.common.HttpClient - Content-Encoding: gzip
+2017-03-21 11:33:15.511 [main] DEBUG com.stubbornjava.common.HttpClient - Connection: keep-alive
+2017-03-21 11:33:15.511 [main] DEBUG com.stubbornjava.common.HttpClient - Content-Type: application/json
+2017-03-21 11:33:15.511 [main] DEBUG com.stubbornjava.common.HttpClient - Content-Length: 117
+2017-03-21 11:33:15.511 [main] DEBUG com.stubbornjava.common.HttpClient - Date: Tue, 21 Mar 2017 15:33:15 GMT
+2017-03-21 11:33:15.511 [main] DEBUG com.stubbornjava.common.HttpClient - <-- END HTTP (encoded body omitted)
+2017-03-21 11:33:15.514 [main] DEBUG c.s.e.undertow.rest.RestClient - [{"email":"user1@test.com","roles":["USER"],"dateCreated":"2017-03-21"},{"email":"user2@test.com","roles":["USER","ADMIN"],"dateCreated":"2017-03-21"}]
+2017-03-21 11:33:15.515 [main] DEBUG c.s.e.undertow.rest.RestClient -
+
+
+2017-03-21 11:33:15.515 [main] DEBUG c.s.e.undertow.rest.RestClient - **** Get Users ****
+2017-03-21 11:33:15.515 [main] DEBUG com.stubbornjava.common.HttpClient - --> GET http://localhost:8080/users/user1@test.com http/1.1
+2017-03-21 11:33:15.516 [main] DEBUG com.stubbornjava.common.HttpClient - Host: localhost:8080
+2017-03-21 11:33:15.516 [main] DEBUG com.stubbornjava.common.HttpClient - Connection: Keep-Alive
+2017-03-21 11:33:15.516 [main] DEBUG com.stubbornjava.common.HttpClient - Accept-Encoding: gzip
+2017-03-21 11:33:15.516 [main] DEBUG com.stubbornjava.common.HttpClient - User-Agent: okhttp/3.6.0
+2017-03-21 11:33:15.516 [main] DEBUG com.stubbornjava.common.HttpClient - --> END GET
+2017-03-21 11:33:15.521 [main] DEBUG com.stubbornjava.common.HttpClient - <-- 200 OK http://localhost:8080/users/user1@test.com (4ms)
+2017-03-21 11:33:15.521 [main] DEBUG com.stubbornjava.common.HttpClient - Content-Encoding: gzip
+2017-03-21 11:33:15.522 [main] DEBUG com.stubbornjava.common.HttpClient - Connection: keep-alive
+2017-03-21 11:33:15.522 [main] DEBUG com.stubbornjava.common.HttpClient - Content-Type: application/json
+2017-03-21 11:33:15.522 [main] DEBUG com.stubbornjava.common.HttpClient - Content-Length: 96
+2017-03-21 11:33:15.522 [main] DEBUG com.stubbornjava.common.HttpClient - Date: Tue, 21 Mar 2017 15:33:15 GMT
+2017-03-21 11:33:15.522 [main] DEBUG com.stubbornjava.common.HttpClient - <-- END HTTP (encoded body omitted)
+2017-03-21 11:33:15.523 [main] DEBUG c.s.e.undertow.rest.RestClient - {"email":"user1@test.com","roles":["USER"],"dateCreated":"2017-03-21"}
+2017-03-21 11:33:15.524 [main] DEBUG com.stubbornjava.common.HttpClient - --> GET http://localhost:8080/users/user2@test.com http/1.1
+2017-03-21 11:33:15.524 [main] DEBUG com.stubbornjava.common.HttpClient - Host: localhost:8080
+2017-03-21 11:33:15.524 [main] DEBUG com.stubbornjava.common.HttpClient - Connection: Keep-Alive
+2017-03-21 11:33:15.524 [main] DEBUG com.stubbornjava.common.HttpClient - Accept-Encoding: gzip
+2017-03-21 11:33:15.524 [main] DEBUG com.stubbornjava.common.HttpClient - User-Agent: okhttp/3.6.0
+2017-03-21 11:33:15.524 [main] DEBUG com.stubbornjava.common.HttpClient - --> END GET
+2017-03-21 11:33:15.527 [main] DEBUG com.stubbornjava.common.HttpClient - <-- 200 OK http://localhost:8080/users/user2@test.com (3ms)
+2017-03-21 11:33:15.528 [main] DEBUG com.stubbornjava.common.HttpClient - Content-Encoding: gzip
+2017-03-21 11:33:15.528 [main] DEBUG com.stubbornjava.common.HttpClient - Connection: keep-alive
+2017-03-21 11:33:15.528 [main] DEBUG com.stubbornjava.common.HttpClient - Content-Type: application/json
+2017-03-21 11:33:15.528 [main] DEBUG com.stubbornjava.common.HttpClient - Content-Length: 105
+2017-03-21 11:33:15.528 [main] DEBUG com.stubbornjava.common.HttpClient - Date: Tue, 21 Mar 2017 15:33:15 GMT
+2017-03-21 11:33:15.528 [main] DEBUG com.stubbornjava.common.HttpClient - <-- END HTTP (encoded body omitted)
+2017-03-21 11:33:15.529 [main] DEBUG c.s.e.undertow.rest.RestClient - {"email":"user2@test.com","roles":["USER","ADMIN"],"dateCreated":"2017-03-21"}
+2017-03-21 11:33:15.529 [main] DEBUG c.s.e.undertow.rest.RestClient -
+
+
+2017-03-21 11:33:15.529 [main] DEBUG c.s.e.undertow.rest.RestClient - **** Delete Users ****
+2017-03-21 11:33:15.534 [main] DEBUG com.stubbornjava.common.HttpClient - --> DELETE http://localhost:8080/users/user1@test.com http/1.1
+2017-03-21 11:33:15.534 [main] DEBUG com.stubbornjava.common.HttpClient - Content-Length: 0
+2017-03-21 11:33:15.534 [main] DEBUG com.stubbornjava.common.HttpClient - Host: localhost:8080
+2017-03-21 11:33:15.534 [main] DEBUG com.stubbornjava.common.HttpClient - Connection: Keep-Alive
+2017-03-21 11:33:15.534 [main] DEBUG com.stubbornjava.common.HttpClient - Accept-Encoding: gzip
+2017-03-21 11:33:15.534 [main] DEBUG com.stubbornjava.common.HttpClient - User-Agent: okhttp/3.6.0
+2017-03-21 11:33:15.534 [main] DEBUG com.stubbornjava.common.HttpClient -
+2017-03-21 11:33:15.534 [main] DEBUG com.stubbornjava.common.HttpClient -
+2017-03-21 11:33:15.534 [main] DEBUG com.stubbornjava.common.HttpClient - --> END DELETE (0-byte body)
+2017-03-21 11:33:15.539 [main] DEBUG com.stubbornjava.common.HttpClient - <-- 204 No Content http://localhost:8080/users/user1@test.com (4ms)
+2017-03-21 11:33:15.539 [main] DEBUG com.stubbornjava.common.HttpClient - Date: Tue, 21 Mar 2017 15:33:15 GMT
+2017-03-21 11:33:15.539 [main] DEBUG com.stubbornjava.common.HttpClient - <-- END HTTP
+2017-03-21 11:33:15.539 [main] DEBUG c.s.e.undertow.rest.RestClient -
+
+
+2017-03-21 11:33:15.539 [main] DEBUG c.s.e.undertow.rest.RestClient - **** Get Missing User ****
+2017-03-21 11:33:15.540 [main] DEBUG com.stubbornjava.common.HttpClient - --> GET http://localhost:8080/users/user1@test.com http/1.1
+2017-03-21 11:33:15.540 [main] DEBUG com.stubbornjava.common.HttpClient - Host: localhost:8080
+2017-03-21 11:33:15.540 [main] DEBUG com.stubbornjava.common.HttpClient - Connection: Keep-Alive
+2017-03-21 11:33:15.540 [main] DEBUG com.stubbornjava.common.HttpClient - Accept-Encoding: gzip
+2017-03-21 11:33:15.541 [main] DEBUG com.stubbornjava.common.HttpClient - User-Agent: okhttp/3.6.0
+2017-03-21 11:33:15.541 [main] DEBUG com.stubbornjava.common.HttpClient - --> END GET
+2017-03-21 11:33:15.550 [main] DEBUG com.stubbornjava.common.HttpClient - <-- 404 Not Found http://localhost:8080/users/user1@test.com (9ms)
+2017-03-21 11:33:15.551 [main] DEBUG com.stubbornjava.common.HttpClient - Content-Encoding: gzip
+2017-03-21 11:33:15.551 [main] DEBUG com.stubbornjava.common.HttpClient - Connection: keep-alive
+2017-03-21 11:33:15.551 [main] DEBUG com.stubbornjava.common.HttpClient - Content-Type: application/json
+2017-03-21 11:33:15.552 [main] DEBUG com.stubbornjava.common.HttpClient - Content-Length: 85
+2017-03-21 11:33:15.552 [main] DEBUG com.stubbornjava.common.HttpClient - Date: Tue, 21 Mar 2017 15:33:15 GMT
+2017-03-21 11:33:15.552 [main] DEBUG com.stubbornjava.common.HttpClient - <-- END HTTP (encoded body omitted)
+2017-03-21 11:33:15.552 [main] DEBUG c.s.e.undertow.rest.RestClient - null
+2017-03-21 11:33:15.552 [main] DEBUG c.s.e.undertow.rest.RestClient -
+
+
+2017-03-21 11:33:15.552 [main] DEBUG c.s.e.undertow.rest.RestClient - **** Exception ****
+2017-03-21 11:33:15.554 [main] DEBUG com.stubbornjava.common.HttpClient - --> POST http://localhost:8080/users http/1.1
+2017-03-21 11:33:15.554 [main] DEBUG com.stubbornjava.common.HttpClient - Content-Type: application/json; charset=utf-8
+2017-03-21 11:33:15.554 [main] DEBUG com.stubbornjava.common.HttpClient - Content-Length: 4
+2017-03-21 11:33:15.554 [main] DEBUG com.stubbornjava.common.HttpClient - Host: localhost:8080
+2017-03-21 11:33:15.554 [main] DEBUG com.stubbornjava.common.HttpClient - Connection: Keep-Alive
+2017-03-21 11:33:15.554 [main] DEBUG com.stubbornjava.common.HttpClient - Accept-Encoding: gzip
+2017-03-21 11:33:15.554 [main] DEBUG com.stubbornjava.common.HttpClient - User-Agent: okhttp/3.6.0
+2017-03-21 11:33:15.554 [main] DEBUG com.stubbornjava.common.HttpClient -
+2017-03-21 11:33:15.554 [main] DEBUG com.stubbornjava.common.HttpClient - null
+2017-03-21 11:33:15.554 [main] DEBUG com.stubbornjava.common.HttpClient - --> END POST (4-byte body)
+2017-03-21 11:33:15.561 [main] DEBUG com.stubbornjava.common.HttpClient - <-- 500 Internal Server Error http://localhost:8080/users (7ms)
+2017-03-21 11:33:15.562 [main] DEBUG com.stubbornjava.common.HttpClient - Content-Encoding: gzip
+2017-03-21 11:33:15.563 [main] DEBUG com.stubbornjava.common.HttpClient - Connection: keep-alive
+2017-03-21 11:33:15.563 [main] DEBUG com.stubbornjava.common.HttpClient - Content-Type: application/json
+2017-03-21 11:33:15.563 [main] DEBUG com.stubbornjava.common.HttpClient - Content-Length: 77
+2017-03-21 11:33:15.563 [main] DEBUG com.stubbornjava.common.HttpClient - Date: Tue, 21 Mar 2017 15:33:15 GMT
+2017-03-21 11:33:15.563 [main] DEBUG com.stubbornjava.common.HttpClient - <-- END HTTP (encoded body omitted)
+Exception in thread "main" java.lang.RuntimeException: code: 500, body: {
+  "statusCode" : 500,
+  "message" : "Internal Server Error"
+}
+  at com.stubbornjava.common.HttpClient.unknownException(HttpClient.java:69)
+  at com.stubbornjava.examples.undertow.rest.RestClient.lambda$3(RestClient.java:110)
+  at com.stubbornjava.examples.undertow.rest.RestClient$$Lambda$30/1990160809.get(Unknown Source)
+  at org.jooq.lambda.Unchecked.lambda$supplier$37(Unchecked.java:1647)
+  at org.jooq.lambda.Unchecked$$Lambda$33/1007880005.get(Unknown Source)
+  at com.stubbornjava.examples.undertow.rest.RestClient.createUser(RestClient.java:112)
+  at com.stubbornjava.examples.undertow.rest.RestClient.main(RestClient.java:170)
+</code></pre>
+
+<h2 class="anchored">jOOλ - Unchecked</h2>
+<p>We make use of jOOλ's convenient <a href="https://github.com/jOOQ/jOOL#orgjooqlambdaunchecked">Unchecked</a></code> for ignoring IOExceptions in this code. Probably not the best idea but it is an Example.</p>

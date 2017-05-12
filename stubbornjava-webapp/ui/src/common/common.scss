@@ -1,0 +1,76 @@
+@import 'skin.scss';
+
+html {
+  font-size: 14px;
+}
+
+body {
+  padding-top: 70px;
+  color: $gray-light;
+}
+
+a.anchorjs-link {
+  color: $theme;
+}
+
+a {
+  color: $theme;
+}
+
+pre {
+    background-color: #f8f8f8;
+    padding: 0;
+}
+
+.center-text {
+  text-align: center;
+}
+
+.theme-color {
+  color: $theme;
+}
+
+.bold {
+  font-weight: 600;
+}
+
+.success-text {
+  color: $brand-success;
+}
+.info-text {
+  color: $brand-info;
+}
+.warning-text {
+  color: $brand-warning;
+}
+.danger-text {
+  color: $brand-danger;
+}
+
+ul.no-bullet {
+  list-style-type: none;
+  padding-left: 20px;
+}
+
+/*
+  Hacky CSS to make jump to id browser features work with the static header.
+  https://css-tricks.com/hash-tag-links-padding/
+*/
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  &.anchored:before {
+    display: block;
+    content: " ";
+    margin-top: -70px;
+    height: 70px;
+    visibility: hidden;
+  }
+}
+
+.inline-block {
+  display: inline-block;
+}

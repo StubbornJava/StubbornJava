@@ -1,0 +1,98 @@
+<p>Assuming you already know what content types are and what thy are used for lets look at sending some with undertow. <a href="/posts/what-is-a-content-type">What is a content type?</a></p>
+
+<h2 class="anchored">Content Type Handlers</h2>
+<h3 class="anchored">text/plain</h3>
+{{> templates/src/widgets/code/code-snippet file=handlers section=handlers.sections.text}}
+<pre class="line-numbers"><code class="language-bash">curl -v localhost:8080/helloWorldText
+*   Trying ::1...
+* connect to ::1 port 8080 failed: Connection refused
+*   Trying 127.0.0.1...
+* Connected to localhost (127.0.0.1) port 8080 (#0)
+> GET /helloWorldText HTTP/1.1
+> Host: localhost:8080
+> User-Agent: curl/7.49.1
+> Accept: */*
+>
+< HTTP/1.1 200 OK
+< Connection: keep-alive
+< Content-Type: text/plain
+< Content-Length: 11
+< Date: Tue, 10 Jan 2017 03:38:49 GMT
+<
+* Connection #0 to host localhost left intact
+Hello World</code></pre>
+
+<h3 class="anchored">text/html</h3>
+{{> templates/src/widgets/code/code-snippet file=handlers section=handlers.sections.html}}
+<pre class="line-numbers"><code class="language-bash">curl -v localhost:8080/helloWorldHtml
+*   Trying ::1...
+* connect to ::1 port 8080 failed: Connection refused
+*   Trying 127.0.0.1...
+* Connected to localhost (127.0.0.1) port 8080 (#0)
+> GET /helloWorldHtml HTTP/1.1
+> Host: localhost:8080
+> User-Agent: curl/7.49.1
+> Accept: */*
+>
+< HTTP/1.1 200 OK
+< Connection: keep-alive
+< Content-Type: text/html
+< Content-Length: 20
+< Date: Tue, 10 Jan 2017 03:41:07 GMT
+<
+* Connection #0 to host localhost left intact
+&lt;h1&gt;Hello World&lt;/h1&gt;</code></pre>
+
+<h3 class="anchored">application/octet-stream</h3>
+{{> templates/src/widgets/code/code-snippet file=handlers section=handlers.sections.file}}
+<pre class="line-numbers"><code class="language-bash">curl -v localhost:8080/helloWorldFileDownload
+*   Trying ::1...
+* connect to ::1 port 8080 failed: Connection refused
+*   Trying 127.0.0.1...
+* Connected to localhost (127.0.0.1) port 8080 (#0)
+> GET /helloWorldFileDownload HTTP/1.1
+> Host: localhost:8080
+> User-Agent: curl/7.49.1
+> Accept: */*
+>
+< HTTP/1.1 200 OK
+< Connection: keep-alive
+< Content-Type: application/octet-stream
+< Content-Length: 11
+< Content-Disposition: inline; filename="helloworld.txt"
+< Date: Tue, 10 Jan 2017 03:41:38 GMT
+<
+* Connection #0 to host localhost left intact
+Hello World</code></pre>
+
+<h3 class="anchored">application/json</h3>
+{{> templates/src/widgets/code/code-snippet file=handlers section=handlers.sections.json}}
+<pre class="line-numbers"><code class="language-bash">curl -v localhost:8080/helloWorldJson
+*   Trying ::1...
+* connect to ::1 port 8080 failed: Connection refused
+*   Trying 127.0.0.1...
+* Connected to localhost (127.0.0.1) port 8080 (#0)
+> GET /helloWorldJson HTTP/1.1
+> Host: localhost:8080
+> User-Agent: curl/7.49.1
+> Accept: */*
+>
+< HTTP/1.1 200 OK
+< Connection: keep-alive
+< Content-Type: application/json
+< Content-Length: 26
+< Date: Tue, 10 Jan 2017 03:42:16 GMT
+<
+* Connection #0 to host localhost left intact
+{"message": "Hello World"}</code></pre>
+
+<h2 class="anchored">Content Type Routes</h2>
+{{> templates/src/widgets/code/code-snippet file=server section=server.sections.routes}}
+
+<h2 class="anchored">Content Type Server</h2>
+{{> templates/src/widgets/code/code-snippet file=server section=server.sections.server}}
+
+<p>Not very difficult, do we really need frameworks to handle this for us? Boilerplate? sure, but a few convenience functions and it goes away. Lets go ahead and make it check out <a href="https://github.com/StubbornJava/StubbornJava/blob/master/stubbornjava-undertow/src/main/java/com/stubbornjava/undertow/exchange/ContentTypeSenders.java">ContentTypeSenders.java</a> and its implementation at <a href="https://github.com/StubbornJava/StubbornJava/blob/master/stubbornjava-common/src/main/java/com/stubbornjava/common/undertow/Exchange.java">Senders.java</a></p>
+
+<h2 class="anchored">Reduce the Boilerplate!</h2>
+{{> templates/src/widgets/code/code-snippet file=handlers section=handlers.sections.senders}}

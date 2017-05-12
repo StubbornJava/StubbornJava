@@ -1,0 +1,38 @@
+<p>HTTP access logging has many uses, debugging, auditing, metrics, alarms and many more. Undertow has a very extensible access logging handler where you can customize whatever format you want and plug in your own logging framework.</p>
+
+<h2 class="anchored">Basic Routes</h2>
+<p>These are copy pasted from a previous post on <a href="/posts/url-routing-with-undertow-embedded-http-server">Undertow's RoutingHandler</a> so they may look familliar.</p>
+{{> templates/src/widgets/code/code-snippet file=server section=server.sections.routes}}
+
+<h2 class="anchored">Adding the AccessLogHandler</h2>
+<p>AccessLogHandler has a few constructors but here is a simple implementation. The default access log receiver is <a href="https://github.com/undertow-io/undertow/blob/master/core/src/main/java/io/undertow/server/handlers/accesslog/JBossLoggingAccessLogReceiver.java">JBossLoggingAccessLogReceiver.java</a> however we will be using <a href="https://github.com/StubbornJava/StubbornJava/blob/master/stubbornjava-undertow/src/main/java/com/stubbornjava/undertow/handlers/accesslog/Slf4jAccessLogReceiver.java">Slf4jAccessLogReceiver.java</a></p>
+{{> templates/src/widgets/code/code-snippet file=server section=server.sections.accesslog}}
+
+<h2 class="anchored">Server</h2>
+{{> templates/src/widgets/code/code-snippet file=server section=server.sections.server}}
+
+<h2 class="anchored">Output</h2>
+<h3 class="anchored">Requests</h3>
+<pre class="line-numbers"><code class="language-bash">curl -X GET localhost:8080
+GET - My Homepage</code></pre>
+<pre class="line-numbers"><code class="language-bash">curl -X GET localhost:8080/myRoute
+GET - My Route</code></pre>
+<pre class="line-numbers"><code class="language-bash">curl -X POST localhost:8080/myRoute
+POST - My Route</code></pre>
+<pre class="line-numbers"><code class="language-bash">curl -X GET localhost:8080/myOtherRoute
+GET - My Other Route</code></pre>
+<pre class="line-numbers"><code class="language-bash">curl -X GET localhost:8080/myRoutePrefix
+GET - My Prefixed Route</code></pre>
+<pre class="line-numbers"><code class="language-bash">curl -X GET localhost:8080/myRoutePrefixTest
+GET - My Prefixed Route</code></pre>
+<pre class="line-numbers"><code class="language-bash">curl -X GET localhost:8080/123
+Page Not Found!!</code></pre>
+<h3 class="anchored">Log File / Console</h3>
+<pre class="line-numbers"><code class="language-text">08:23:51.254 [XNIO-1 I/O-1] INFO com.stubbornjava.accesslog - 127.0.0.1 - - [11/Jan/2017:08:23:51 -0500] "GET / HTTP/1.1" 200 18 "-" "curl/7.49.1"
+08:23:59.172 [XNIO-1 I/O-3] INFO com.stubbornjava.accesslog - 127.0.0.1 - - [11/Jan/2017:08:23:59 -0500] "GET /myRoute HTTP/1.1" 200 15 "-" "curl/7.49.1"
+08:24:05.492 [XNIO-1 I/O-1] INFO com.stubbornjava.accesslog - 127.0.0.1 - - [11/Jan/2017:08:24:05 -0500] "POST /myRoute HTTP/1.1" 200 16 "-" "curl/7.49.1"
+08:24:15.732 [XNIO-1 I/O-3] INFO com.stubbornjava.accesslog - 127.0.0.1 - - [11/Jan/2017:08:24:15 -0500] "GET /myOtherRoute HTTP/1.1" 200 21 "-" "curl/7.49.1"
+08:24:22.462 [XNIO-1 I/O-1] INFO com.stubbornjava.accesslog - 127.0.0.1 - - [11/Jan/2017:08:24:22 -0500] "GET /myRoutePrefix HTTP/1.1" 200 24 "-" "curl/7.49.1"
+08:24:28.743 [XNIO-1 I/O-3] INFO com.stubbornjava.accesslog - 127.0.0.1 - - [11/Jan/2017:08:24:28 -0500] "GET /myRoutePrefixTest HTTP/1.1" 200 24 "-" "curl/7.49.1"
+08:24:35.480 [XNIO-1 I/O-2] INFO com.stubbornjava.accesslog - 127.0.0.1 - - [11/Jan/2017:08:24:35 -0500] "GET /123 HTTP/1.1" 404 16 "-" "curl/7.49.1"</code></pre>
+<p>Now we have all the basics for access logging date, http method, url, status code, ip, user agent and more. Remember this is very configurable.</p>

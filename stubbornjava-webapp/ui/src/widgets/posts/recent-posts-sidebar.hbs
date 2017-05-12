@@ -1,0 +1,13 @@
+<div class="tag-cloud">
+  <h6><span><i class="fa fa-comment theme-color" aria-hidden="true"></i> Recent Posts</span></h6>
+  <ul class="list-unstyled">
+    {{#each recentPosts}}
+    <li>
+      <div>
+        <a href="/posts/{{slug}}">{{title}}</a>
+      </div>
+      <div class="date">{{dateFormat dateCreated}}</div>
+    </li>
+    {{/each}}
+  </ul>
+</div>

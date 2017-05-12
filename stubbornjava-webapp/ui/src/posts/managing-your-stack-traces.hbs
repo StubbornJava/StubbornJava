@@ -1,0 +1,89 @@
+<p>Stack traces are an extremely useful tool for debugging applications when errors / bugs arise. For such a useful tool it is surprising how little thought developers put into potentially managing them better. Admitantly this is not a huge concern for most applications but there are some things to think about.</p>
+
+<h2 class="anchored">Food for Thought</h2>
+<ul>
+  <li><strong>Call stacks are not free</strong> - The larger your average call tree is the more memory you need for each thread.</li>
+  <li><strong>Logging large stack traces is not free</strong> - Devs tend to forget how expensive logging can be in high throughput applications. Especially when using a blocking logging framework. Larger stack traces equals more time blocking and writing to disk. However, you really shouldn't be spewing out that many exceptions to a log (It happens all the time unfortunately).</li>
+  <li><strong>Large stack traces are difficult to reason about</strong> - When trying to debug an error in production and the stack trace fills more than one terminal window you are going to have a bad day.</li>
+</ul>
+
+<h2 class="anchored">Abstractions</h2>
+<p>Abstractions are a great concept in programming. However, many layers of abstractions lead to deep call stacks and code that can be more difficult to read. This also translates to threads using more memory and sometimes very long stack traces in your error logs. It's not unheard of to see stack traces in Spring / Hibernate approach mid to high hundreds of lines, sometimes into the thousands. Those are always fun to read in logs.</p>
+
+<h3 class="anchored">Spring Boot Exception Handling Example</h3>
+<p>Following a simple <a href="http://www.ekiras.com/2016/02/how-to-do-exception-handling-in-springboot-rest-application.html">Spring Boot exception handling example</a>. We can see the code is pretty clean and the service is not really doing anything other than throwing and handling exceptions. We modified the ExceptionHandler to print the stack trace.
+<pre class="line-numbers"><code class="language-bash">com.ekiras.exception.BaseException: Base Exception
+at com.ekiras.controller.HomeController.ex1(HomeController.java:21) ~[bin/:na]
+at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method) ~[na:1.8.0_45]
+at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) ~[na:1.8.0_45]
+at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) ~[na:1.8.0_45]
+at java.lang.reflect.Method.invoke(Method.java:497) ~[na:1.8.0_45]
+at org.springframework.web.method.support.InvocableHandlerMethod.doInvoke(InvocableHandlerMethod.java:222) ~[spring-web-4.2.4.RELEASE.jar:4.2.4.RELEASE]
+at org.springframework.web.method.support.InvocableHandlerMethod.invokeForRequest(InvocableHandlerMethod.java:137) ~[spring-web-4.2.4.RELEASE.jar:4.2.4.RELEASE]
+at org.springframework.web.servlet.mvc.method.annotation.ServletInvocableHandlerMethod.invokeAndHandle(ServletInvocableHandlerMethod.java:110) ~[spring-webmvc-4.2.4.RELEASE.jar:4.2.4.RELEASE]
+at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.invokeHandlerMethod(RequestMappingHandlerAdapter.java:814) ~[spring-webmvc-4.2.4.RELEASE.jar:4.2.4.RELEASE]
+at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.handleInternal(RequestMappingHandlerAdapter.java:737) ~[spring-webmvc-4.2.4.RELEASE.jar:4.2.4.RELEASE]
+at org.springframework.web.servlet.mvc.method.AbstractHandlerMethodAdapter.handle(AbstractHandlerMethodAdapter.java:85) ~[spring-webmvc-4.2.4.RELEASE.jar:4.2.4.RELEASE]
+at org.springframework.web.servlet.DispatcherServlet.doDispatch(DispatcherServlet.java:959) ~[spring-webmvc-4.2.4.RELEASE.jar:4.2.4.RELEASE]
+at org.springframework.web.servlet.DispatcherServlet.doService(DispatcherServlet.java:893) ~[spring-webmvc-4.2.4.RELEASE.jar:4.2.4.RELEASE]
+at org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:969) [spring-webmvc-4.2.4.RELEASE.jar:4.2.4.RELEASE]
+at org.springframework.web.servlet.FrameworkServlet.doGet(FrameworkServlet.java:860) [spring-webmvc-4.2.4.RELEASE.jar:4.2.4.RELEASE]
+at javax.servlet.http.HttpServlet.service(HttpServlet.java:622) [tomcat-embed-core-8.0.30.jar:8.0.30]
+at org.springframework.web.servlet.FrameworkServlet.service(FrameworkServlet.java:845) [spring-webmvc-4.2.4.RELEASE.jar:4.2.4.RELEASE]
+at javax.servlet.http.HttpServlet.service(HttpServlet.java:729) [tomcat-embed-core-8.0.30.jar:8.0.30]
+at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:291) [tomcat-embed-core-8.0.30.jar:8.0.30]
+at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:206) [tomcat-embed-core-8.0.30.jar:8.0.30]
+at org.apache.tomcat.websocket.server.WsFilter.doFilter(WsFilter.java:52) [tomcat-embed-websocket-8.0.30.jar:8.0.30]
+at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:239) [tomcat-embed-core-8.0.30.jar:8.0.30]
+at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:206) [tomcat-embed-core-8.0.30.jar:8.0.30]
+at org.springframework.web.filter.RequestContextFilter.doFilterInternal(RequestContextFilter.java:99) [spring-web-4.2.4.RELEASE.jar:4.2.4.RELEASE]
+at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:107) [spring-web-4.2.4.RELEASE.jar:4.2.4.RELEASE]
+at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:239) [tomcat-embed-core-8.0.30.jar:8.0.30]
+at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:206) [tomcat-embed-core-8.0.30.jar:8.0.30]
+at org.springframework.web.filter.HttpPutFormContentFilter.doFilterInternal(HttpPutFormContentFilter.java:87) [spring-web-4.2.4.RELEASE.jar:4.2.4.RELEASE]
+at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:107) [spring-web-4.2.4.RELEASE.jar:4.2.4.RELEASE]
+at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:239) [tomcat-embed-core-8.0.30.jar:8.0.30]
+at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:206) [tomcat-embed-core-8.0.30.jar:8.0.30]
+at org.springframework.web.filter.HiddenHttpMethodFilter.doFilterInternal(HiddenHttpMethodFilter.java:77) [spring-web-4.2.4.RELEASE.jar:4.2.4.RELEASE]
+at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:107) [spring-web-4.2.4.RELEASE.jar:4.2.4.RELEASE]
+at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:239) [tomcat-embed-core-8.0.30.jar:8.0.30]
+at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:206) [tomcat-embed-core-8.0.30.jar:8.0.30]
+at org.springframework.web.filter.CharacterEncodingFilter.doFilterInternal(CharacterEncodingFilter.java:121) [spring-web-4.2.4.RELEASE.jar:4.2.4.RELEASE]
+at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:107) [spring-web-4.2.4.RELEASE.jar:4.2.4.RELEASE]
+at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:239) [tomcat-embed-core-8.0.30.jar:8.0.30]
+at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:206) [tomcat-embed-core-8.0.30.jar:8.0.30]
+at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:212) [tomcat-embed-core-8.0.30.jar:8.0.30]
+at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:106) [tomcat-embed-core-8.0.30.jar:8.0.30]
+at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:502) [tomcat-embed-core-8.0.30.jar:8.0.30]
+at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:141) [tomcat-embed-core-8.0.30.jar:8.0.30]
+at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:79) [tomcat-embed-core-8.0.30.jar:8.0.30]
+at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:88) [tomcat-embed-core-8.0.30.jar:8.0.30]
+at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:521) [tomcat-embed-core-8.0.30.jar:8.0.30]
+at org.apache.coyote.http11.AbstractHttp11Processor.process(AbstractHttp11Processor.java:1096) [tomcat-embed-core-8.0.30.jar:8.0.30]
+at org.apache.coyote.AbstractProtocol$AbstractConnectionHandler.process(AbstractProtocol.java:674) [tomcat-embed-core-8.0.30.jar:8.0.30]
+at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1500) [tomcat-embed-core-8.0.30.jar:8.0.30]
+at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.run(NioEndpoint.java:1456) [tomcat-embed-core-8.0.30.jar:8.0.30]
+at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1142) [na:1.8.0_45]
+at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:617) [na:1.8.0_45]
+at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:61) [tomcat-embed-core-8.0.30.jar:8.0.30]
+at java.lang.Thread.run(Thread.java:745) [na:1.8.0_45]</code></pre>
+
+<h3 class="anchored">Undertow Exception Handler (Roll your own Framework)</h3>
+<p>Over at our <a href="/posts/lightweight-embedded-java-rest-server-without-a-framework#routing-server">Embedded Java REST Server</a> example you can see a minimal ExceptionHandler using Undertow. Let's compare stack traces. Forgetting the minor perfomance gains, which would you prefer to read when debugging code in prod? One of the reasons it is shorter is because we have been dispatched to a worker thread and lost some of the original stack context from the IO thread. That's almost a bonus though since all of our logic is in the handler itself.</p>
+<pre class="line-numbers"><code class="language-bash">java.lang.RuntimeException: Some random exception. Could be anything!
+  at com.stubbornjava.examples.undertow.rest.UserRequests.exception(UserRequests.java:23)
+  at com.stubbornjava.examples.undertow.rest.RestServer.lambda$0(RestServer.java:36)
+  at com.stubbornjava.examples.undertow.rest.RestServer$$Lambda$10/592688102.handleRequest(Unknown Source)
+  at com.stubbornjava.common.undertow.handlers.CustomHandlers.lambda$0(CustomHandlers.java:58)
+  at com.stubbornjava.common.undertow.handlers.CustomHandlers$$Lambda$11/103887628.handleRequest(Unknown Source)
+  at io.undertow.server.handlers.ExceptionHandler.handleRequest(ExceptionHandler.java:29)
+  at com.stubbornjava.common.undertow.handlers.StatusCodeHandler.handleRequest(StatusCodeHandler.java:27)
+  at io.undertow.server.handlers.accesslog.AccessLogHandler.handleRequest(AccessLogHandler.java:138)
+  at io.undertow.server.handlers.encoding.EncodingHandler.handleRequest(EncodingHandler.java:72)
+  at io.undertow.server.Connectors.executeRootHandler(Connectors.java:210)
+  at io.undertow.server.HttpServerExchange$1.run(HttpServerExchange.java:809)
+  at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1142)
+  at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:617)
+  at java.lang.Thread.run(Thread.java:745)</code></pre>
+  <p>Fifteen lines vs fifty five. Fifty five is not unreasonable but remember this route isn't doing much. The undertow example aslo has more middleware firing two metrics, access logging and gzipping. Once again this is not a major issue but a small benefit of using lower level libraries that you have more control over.</p>
+

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+{{> templates/head}}
+<title>Properties</title>
+</head>
+
+<body>
+  {{> templates/header}}
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-12">
+        <table class="table table-striped table-condensed table-hover table-bordered table-nonfluid">
+          <thead>
+            <tr>
+              <th>Property</th>
+              <th>Value</th>
+            </tr>
+          </thead>
+          <tbody>
+            {{# data.properties }}
+            <tr>
+              <td>{{ key }}</td>
+              <td>{{ value }}</td>
+            </tr>
+            {{/ data.properties }}
+          </tbody>
+        </table>
+      </div>
+    </div>
+    {{> templates/footer}}
+  </div>
+</body>

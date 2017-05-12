@@ -1,0 +1,17 @@
+<p>HttpHandlers are the building blocks of Undertow. Luckily they are extremly easy to write. Here are a few different approaches that will be used throughout posts on this site.</p>
+
+<h2 class="anchored">Custom Class Implementing HttpHandler</h2>
+<p>This is generally the best option when writing middleware / filtering HttpHandlers that delegate reponsibility to other handlers or handlers with lots of code or complex logic.</p>
+{{> templates/src/widgets/code/code-snippet file=handler section=handler.sections.handler}}
+<p>Sometimes it is nice to then couple classes with static factory methods than can reduce boiler plate or group common handlers together. This will be used extensively in later posts. This is also used in Undertow Core's <a href="https://github.com/undertow-io/undertow/blob/master/core/src/main/java/io/undertow/Handlers.java#L71">Handlers.java</a>.</p>
+{{> templates/src/widgets/code/code-snippet file=handlers section=handlers.sections.handler}}
+
+<h2 class="anchored">Anonymous Handler using Java 8 Lambda</h2>
+{{> templates/src/widgets/code/code-snippet file=handlers section=handlers.sections.anonymous}}
+<p>Notice this has the exact some logic as the more verbose handler above. This approach is nice for simple handlers however a separate class is preferred for more complex logic.</p>
+
+<h2 class="anchored">Implement the HttpHandler contract as a method</h2>
+<p>This is a great approach for the business logic of routes. Any handler that reads params and sends a response fits this design well. You can put multiple handlers in a single file to keep groups of handlers organized. This does not work as well for filters / middleware or handlers with multiple params. It becomes harder to pass them this way.</p>
+{{> templates/src/widgets/code/code-snippet file=handlers section=handlers.sections.method}}
+<p>This can be passed anywhere a HttpHandler is accepted like so.</p>
+<pre class="line-numbers"><code class="language-java">HttpHandler handler = RoutingHandlers::notFoundHandler;</code></pre>

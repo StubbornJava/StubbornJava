@@ -1,0 +1,35 @@
+<p>Previously on <a href="/posts/handling-content-types-with-undertow#text-html">Handling Content Types with Undertow</a> we showed how to send a simple HTML response. That is a little too basic for our use case. However, JSP, JSF, Spring MVC... all seem like they have a bit of learning curve. All we really need is to pass an object to a template and render some HTML, nothing fancy. Let's take this a step further and follow the node / express approach of simply plugging in a HTML templating engine. Enter <a href="http://handlebarsjs.com/">Handlebars</a>, perfect, fairly simple syntax added to plain HTML anyone should be able to pick this up immediately (Yes MVC frameworks can use this also but do we need a framework for what a single class can do?). It also convienetly has ports in many languages. This means we can use the same templates client side (javascript) and server side if we want.</p>
+
+<h2 class="anchored">HTML Templating Utility</h2>
+<p>This is a rare case where we decided to make a simple abstraction hiding the underlying <a href="http://jknack.github.io/handlebars.java/">jknack handlebars</a> implementation. Since it only really needs a few methods we can hide the implementation and easily swap it out later. Notice how we have a few config options. When we are running locally we want handlebars templates to be compiled on the fly and NOT cached. We also utilize HTML compression for all of the HTML specific methods. We also offer some non HTML templating methods. Sometimes it might make sense to abuse a HTML templating library to solve a similair problem.</p>
+{{> templates/src/widgets/code/code-snippet file=templating section=templating.sections.templating}}
+
+<h2 class="anchored">Undertow HTML Templating Sender</h2>
+</p>A few simple lines and we can now send HTML templates with Undertow.</p>
+{{> templates/src/widgets/code/code-snippet file=sender section=sender.sections.sender}}
+
+<h2 class="anchored">Undertow HTML Templating Server</h2>
+</p>Routes for the Handlers below.</p>
+{{> templates/src/widgets/code/code-snippet file=server section=server.sections.server}}
+
+<h2 class="anchored">Undertow HTML Templating Handlers</h2>
+
+<h3 class="anchored">Simple Raw Handlebars HTML Template</h3>
+<p>Simple inline Java Handlebars template with variable substitution.</p>
+{{> templates/src/widgets/code/code-snippet file=handlers section=handlers.sections.message}}
+<pre class="line-numbers"><code class="language-bash">curl localhost:8080/messageRawTemplate?message=StubbornJava
+&lt;p&gt;hello StubbornJava&lt;/p&gt;</code></pre>
+
+<h3 class="anchored">Iterating Raw Handlebars HTML Template</h3>
+<p>Simple inline Java Handlebars template with iteration substitution.</p>
+{{> templates/src/widgets/code/code-snippet file=handlers section=handlers.sections.messages}}
+<pre class="line-numbers"><code class="language-bash">curl 'localhost:8080/messagesRawTemplate?message=StubbornJava&amp;num=3'
+&lt;p&gt;Hello StubbornJava 0&lt;/p&gt;&lt;p&gt;Hello StubbornJava 1&lt;/p&gt;&lt;p&gt;Hello StubbornJava 2&lt;/p&gt;</code></pre>
+
+<h3 class="anchored">Handlebars HTML Template with CSS</h3>
+<p>Java Handlebars template from resource files with layout, includes, and iteration. Now this is starting to look like a real website. Find the templates <a href="https://github.com/StubbornJava/StubbornJava/tree/master/stubbornjava-examples/src/main/resources/examples/handlebars">here</a></p>
+{{> templates/src/widgets/code/code-snippet file=handlers section=handlers.sections.messagesFull}}
+<pre class="line-numbers"><code class="language-bash">curl 'localhost:8080/messagesTemplate?message=StubbornJava&amp;num=3'
+&lt;!DOCTYPE html&gt; &lt;html lang="en"&gt; &lt;head&gt; &lt;meta charset="utf-8"/&gt; &lt;meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/&gt; &lt;meta http-equiv="x-ua-compatible" content="ie=edge"/&gt; &lt;link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"/&gt; &lt;title&gt;Messages Demo&lt;/title&gt; &lt;/head&gt; &lt;body&gt; &lt;nav class="navbar navbar-default" role="navigation"&gt; &lt;div class="container-fluid"&gt; &lt;div class="navbar-header"&gt; &lt;button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1"&gt; &lt;span class="sr-only"&gt;Toggle navigation&lt;/span&gt; &lt;span class="icon-bar"&gt;&lt;/span&gt; &lt;span class="icon-bar"&gt;&lt;/span&gt; &lt;span class="icon-bar"&gt;&lt;/span&gt; &lt;/button&gt; &lt;a class="navbar-brand logo" href="/"&gt;Demo&lt;/a&gt; &lt;/div&gt; &lt;/div&gt; &lt;/nav&gt; &lt;div class="container"&gt; &lt;p&gt;Hello StubbornJava 0&lt;/p&gt;&lt;p&gt;Hello StubbornJava 1&lt;/p&gt;&lt;p&gt;Hello StubbornJava 2&lt;/p&gt; &lt;/div&gt; &lt;script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"&gt;&lt;/script&gt; &lt;/body&gt; &lt;/html&gt;</code></pre>
+
+<p>These examples are better to clone the repo and run locally. The HTML compression will smash everything on one line. The final example includes all CSS / JS from bootstrap using the public CDN. In later examples we can get into using Webpack to manage HTML / CSS / JS.</p>

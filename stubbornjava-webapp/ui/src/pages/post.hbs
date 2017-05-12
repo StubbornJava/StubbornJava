@@ -1,0 +1,26 @@
+{{#> templates/src/common/_base-layout metaDesc=post.metaDesc twitterSummaryCard=true title=post.title}}
+  {{#*inline "title"}}{{post.title}}{{/inline}}
+  {{#*inline "content"}}
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12 col-lg-9">
+          <h1>{{post.title}}</h1>
+          <div class="post-meta">
+            <span><i class="fa fa-calendar"></i>{{dateFormat post.dateCreated}}</span>
+          </div>
+          <div class="post-meta-block">
+            <span class="bold">Tags/Libraries:</span> &nbsp;
+            {{> templates/src/widgets/posts/tagOrLibs tagOrLibraries=post.tagOrLibraries}}
+            <div class="post-content">{{{post.content}}}</div>
+          </div>
+          <div id="disqus_thread"></div>
+        </div>
+        <div class="col-lg-3 hidden-sm hidden-xs">
+          {{> templates/src/widgets/recommendations/recommendations-sidebar}}
+          {{> templates/src/widgets/posts/recent-posts-sidebar recentPosts=recentPosts}}
+        </div>
+      </div>
+    </div>
+    {{> templates/src/widgets/disqus/disqus id=post.slug}}
+  {{/inline}}
+{{/ templates/src/common/_base-layout}}

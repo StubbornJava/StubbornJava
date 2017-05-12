@@ -1,0 +1,17 @@
+<div class="posts">
+  {{#each javaLibs}}
+  <div class="post">
+    <h3><a href="/java-libraries/{{name}}">{{name}}</a></h3>
+    
+    <div class="post-meta">
+      <span><a href="{{github}}"><i class="fa fa-github" aria-hidden="true"></i>GitHub</a></span>
+      <span><a href="{{url}}"><i class="fa fa-link" aria-hidden="true"></i>Website</a></span>
+    </div>
+    
+    <div class="post-meta-block">
+      {{description}}
+    </div>
+
+  </div>
+  {{/each}}
+</div>

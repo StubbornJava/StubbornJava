@@ -1,0 +1,18 @@
+{{#> templates/src/common/_base-layout}}
+  {{#*inline "title"}}{{value}} Related Posts{{/inline}}
+  {{#*inline "content"}}
+    <div class="container">
+      <div class="row">
+        <div class="col-sm-12 col-md-9">
+          <h1>{{type}} Results for {{value}}</h1>
+          {{#if noData}}<p>There are currently no results for {{type}}: {{value}} or it no longer exists.{{/if}}
+          {{> templates/src/widgets/posts/recent-posts recentPosts=posts}}
+        </div>
+        <div class="col-md-3 hidden-sm hidden-xs">
+          {{> templates/src/widgets/recommendations/recommendations-sidebar}}
+          {{> templates/src/widgets/posts/recent-posts-sidebar recentPosts=recentPosts}}
+        </div>
+      </div>
+    </div>
+  {{/inline}}
+{{/ templates/src/common/_base-layout}}

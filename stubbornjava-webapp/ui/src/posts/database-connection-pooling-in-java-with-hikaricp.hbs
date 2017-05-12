@@ -1,0 +1,158 @@
+<p>Connection pooling is a technique used to improve performance in applications with dynamic database driven content. Opening and closing database connections may not seem like a costly expense but it can add up rather quickly. Let's assume it takes 5ms to establish a connection and 5ms to execute your query (Completely made up numbers), 50% of the time is establishing the connection. Extend this to thousands or tens of thousands of requests and there is a lot of wasted network time. Connection pools are essentially a cache of open database connections. Once you open and use a database connection instead of closing it you add it back to the pool. When you go to fetch a new connection if there is one available in the pool it will use that connection instead of establishing another.</p>
+
+<h2 class="anchored">Why use a connection pool?</h2>
+<ul>
+  <li>Constantly opening and closing connections can be expensive. Cache and reuse.</li>
+  <li>When activity spikes you can limit the number of connections to the database. This will force code to block until a connection is available. This is especially helpful in distributed environments.</li>
+  <li>Split out common operations into multiple pools. For instance you can have a pool designated for OLAP connections and a pool for OLTP connections each with different configurations.</li>
+</ul>
+
+<h2 class="anchored">HikariCP</h2>
+<p><A href="https://github.com/brettwooldridge/HikariCP">HikariCP</a> is a very fast lightweight Java connection pool. The API and overall codebase is relatively small (A good thing) and highly optimized. It also does not cut corners for performance like many other Java connection pool implementations. The Wiki is highly informative and dives really deep. If you are not as interested in the deep dives you should at least read and watch the video on <a href="https://github.com/brettwooldridge/HikariCP/wiki/About-Pool-Sizing">connection pool sizing.</a></p>
+
+<h2 class="anchored">Creating Connection pools</h2>
+<p>Let's create two connections pools one for OLTP (named transactional) queries and one for OLAP (named processing). We want them split so we can have a queue of reporting queries back up but allow critical transactional queries to still get priority (This is up to the database of course but we can help a bit). We can also easily configure different timeouts or transaction iscolation levels. For now we just just change their names and pool sizes.</p>
+
+<h3 class="anchored">Configuring the Pools</h3>
+<p>HikariCP offers several options for configuring the pool. Since we are fans of roll your own and already created our own <a href="/posts/environment-aware-configuration-with-typesafe-config">Typesafe Configuration</a> we will reuse that. Notice we are using some of Typesafe's configuration inheritance.</p>
+{{> templates/src/widgets/code/code-snippet file=config section=config.sections.config language="json"}}
+
+<h3 class="anchored">ConnectionPool Factory</h3>
+<p>Since we don't need any additional state a static factory method passing our config, MetricRegistry, and HealthCheckRegistry is sufficient. Once again <a href="/posts/monitoring-your-jvm-with-dropwizard-metrics">Dropwizard Metrics</a> makes an appearance hooking into our connection pool now. This will provide us with some very useful pool stats in the future.</p>
+{{> templates/src/widgets/code/code-snippet file=poolFactory section=poolFactory.sections.poolFactory}}
+<p>Interested in knowing when your application cannot connect to the database? Take a look at <a href="/posts/monitoring-your-java-services-with-dropwizard-health-checks">Monitoring your Java Services with Dropwizard Health Checks</a></p>
+
+<h3 class="anchored">ConnectionPool Implementation</h3>
+<p>Now that we have two separate configs for our transactional and processing pools lets initialize them. Once again we are not using DI and instead are using the enum singleton pattern for lazy initialized singletons. Feel free to use DI in your own implementations. We now have two different pools with different configs that each lazily wire themselves up on demand.</p>
+{{> templates/src/widgets/code/code-snippet file=pools section=pools.sections.pools}}
+
+<h3 class="anchored">ConnectionPool Implementation Log</h3>
+<p>Notice how the config properly inherited its values and each config is lazily loaded.</p>
+<pre class="line-numbers"><code class="language-bash">2017-02-08 22:43:04.428 [main] INFO  com.stubbornjava.common.Configs - Loading configs first row is highest priority, second row is fallback and so on
+2017-02-08 22:43:04.428 [main] INFO  com.stubbornjava.common.Configs - examples/hikaricp/pools.conf
+2017-02-08 22:43:04.439 [main] DEBUG com.stubbornjava.common.Configs - Logging properties. Make sure sensitive data such as passwords or secrets are not logged!
+2017-02-08 22:43:04.439 [main] DEBUG com.stubbornjava.common.Configs - {
+    "pools" : {
+        "default" : {
+            "cachePrepStmts" : true,
+            "jdbcUrl" : "jdbc:hsqldb:mem:testdb",
+            "maximumPoolSize" : 10,
+            "minimumIdle" : 2,
+            "password" : "",
+            "prepStmtCacheSize" : 256,
+            "prepStmtCacheSqlLimit" : 2048,
+            "useServerPrepStmts" : true,
+            "username" : "SA"
+        },
+        "processing" : {
+            "cachePrepStmts" : true,
+            "jdbcUrl" : "jdbc:hsqldb:mem:testdb",
+            "maximumPoolSize" : 30,
+            "minimumIdle" : 2,
+            "password" : "",
+            "poolName" : "processing",
+            "prepStmtCacheSize" : 256,
+            "prepStmtCacheSqlLimit" : 2048,
+            "useServerPrepStmts" : true,
+            "username" : "SA"
+        },
+        "transactional" : {
+            "cachePrepStmts" : true,
+            "jdbcUrl" : "jdbc:hsqldb:mem:testdb",
+            "maximumPoolSize" : 10,
+            "minimumIdle" : 2,
+            "password" : "",
+            "poolName" : "transactional",
+            "prepStmtCacheSize" : 256,
+            "prepStmtCacheSqlLimit" : 2048,
+            "useServerPrepStmts" : true,
+            "username" : "SA"
+        }
+    }
+}
+
+2017-02-08 22:43:04.440 [main] DEBUG c.s.e.hikaricp.ConnectionPools - starting
+2017-02-08 22:43:04.525 [main] DEBUG com.zaxxer.hikari.HikariConfig - processing - configuration:
+2017-02-08 22:43:04.539 [main] DEBUG com.zaxxer.hikari.HikariConfig - allowPoolSuspension.............false
+2017-02-08 22:43:04.539 [main] DEBUG com.zaxxer.hikari.HikariConfig - autoCommit......................true
+2017-02-08 22:43:04.539 [main] DEBUG com.zaxxer.hikari.HikariConfig - catalog.........................none
+2017-02-08 22:43:04.539 [main] DEBUG com.zaxxer.hikari.HikariConfig - connectionInitSql...............none
+2017-02-08 22:43:04.539 [main] DEBUG com.zaxxer.hikari.HikariConfig - connectionTestQuery.............none
+2017-02-08 22:43:04.540 [main] DEBUG com.zaxxer.hikari.HikariConfig - connectionTimeout...............30000
+2017-02-08 22:43:04.540 [main] DEBUG com.zaxxer.hikari.HikariConfig - dataSource......................none
+2017-02-08 22:43:04.540 [main] DEBUG com.zaxxer.hikari.HikariConfig - dataSourceClassName.............none
+2017-02-08 22:43:04.540 [main] DEBUG com.zaxxer.hikari.HikariConfig - dataSourceJNDI..................none
+2017-02-08 22:43:04.543 [main] DEBUG com.zaxxer.hikari.HikariConfig - dataSourceProperties............{password=&lt;masked&gt;, prepStmtCacheSqlLimit=2048, cachePrepStmts=true, useServerPrepStmts=true, prepStmtCacheSize=256}
+2017-02-08 22:43:04.543 [main] DEBUG com.zaxxer.hikari.HikariConfig - driverClassName.................none
+2017-02-08 22:43:04.543 [main] DEBUG com.zaxxer.hikari.HikariConfig - healthCheckProperties...........{}
+2017-02-08 22:43:04.544 [main] DEBUG com.zaxxer.hikari.HikariConfig - healthCheckRegistry.............com.codahale.metrics.health.HealthCheckRegistry@34123d65
+2017-02-08 22:43:04.544 [main] DEBUG com.zaxxer.hikari.HikariConfig - idleTimeout.....................600000
+2017-02-08 22:43:04.544 [main] DEBUG com.zaxxer.hikari.HikariConfig - initializationFailFast..........true
+2017-02-08 22:43:04.544 [main] DEBUG com.zaxxer.hikari.HikariConfig - initializationFailTimeout.......1
+2017-02-08 22:43:04.545 [main] DEBUG com.zaxxer.hikari.HikariConfig - isolateInternalQueries..........false
+2017-02-08 22:43:04.545 [main] DEBUG com.zaxxer.hikari.HikariConfig - jdbc4ConnectionTest.............false
+2017-02-08 22:43:04.545 [main] DEBUG com.zaxxer.hikari.HikariConfig - jdbcUrl........................."jdbc:hsqldb:mem:testdb"
+2017-02-08 22:43:04.546 [main] DEBUG com.zaxxer.hikari.HikariConfig - leakDetectionThreshold..........0
+2017-02-08 22:43:04.546 [main] DEBUG com.zaxxer.hikari.HikariConfig - maxLifetime.....................1800000
+2017-02-08 22:43:04.546 [main] DEBUG com.zaxxer.hikari.HikariConfig - maximumPoolSize.................30
+2017-02-08 22:43:04.546 [main] DEBUG com.zaxxer.hikari.HikariConfig - metricRegistry..................com.codahale.metrics.MetricRegistry@59474f18
+2017-02-08 22:43:04.546 [main] DEBUG com.zaxxer.hikari.HikariConfig - metricsTrackerFactory...........none
+2017-02-08 22:43:04.547 [main] DEBUG com.zaxxer.hikari.HikariConfig - minimumIdle.....................2
+2017-02-08 22:43:04.547 [main] DEBUG com.zaxxer.hikari.HikariConfig - password........................&lt;masked&gt;
+2017-02-08 22:43:04.547 [main] DEBUG com.zaxxer.hikari.HikariConfig - poolName........................"processing"
+2017-02-08 22:43:04.547 [main] DEBUG com.zaxxer.hikari.HikariConfig - readOnly........................false
+2017-02-08 22:43:04.547 [main] DEBUG com.zaxxer.hikari.HikariConfig - registerMbeans..................false
+2017-02-08 22:43:04.547 [main] DEBUG com.zaxxer.hikari.HikariConfig - scheduledExecutor...............none
+2017-02-08 22:43:04.548 [main] DEBUG com.zaxxer.hikari.HikariConfig - scheduledExecutorService........internal
+2017-02-08 22:43:04.548 [main] DEBUG com.zaxxer.hikari.HikariConfig - threadFactory...................internal
+2017-02-08 22:43:04.548 [main] DEBUG com.zaxxer.hikari.HikariConfig - transactionIsolation............default
+2017-02-08 22:43:04.548 [main] DEBUG com.zaxxer.hikari.HikariConfig - username........................"SA"
+2017-02-08 22:43:04.548 [main] DEBUG com.zaxxer.hikari.HikariConfig - validationTimeout...............5000
+2017-02-08 22:43:04.551 [main] INFO  com.zaxxer.hikari.HikariDataSource - processing - Starting...
+2017-02-08 22:43:05.084 [main] INFO  com.zaxxer.hikari.pool.PoolBase - processing - Driver does not support get/set network timeout for connections. (feature not supported)
+2017-02-08 22:43:05.089 [main] DEBUG com.zaxxer.hikari.pool.HikariPool - processing - Added connection org.hsqldb.jdbc.JDBCConnection@66982506
+2017-02-08 22:43:05.109 [main] INFO  com.zaxxer.hikari.HikariDataSource - processing - Start completed.
+2017-02-08 22:43:05.110 [main] DEBUG c.s.e.hikaricp.ConnectionPools - processing started
+2017-02-08 22:43:05.112 [main] DEBUG com.zaxxer.hikari.HikariConfig - transactional - configuration:
+2017-02-08 22:43:05.115 [main] DEBUG com.zaxxer.hikari.HikariConfig - allowPoolSuspension.............false
+2017-02-08 22:43:05.115 [main] DEBUG com.zaxxer.hikari.HikariConfig - autoCommit......................true
+2017-02-08 22:43:05.115 [main] DEBUG com.zaxxer.hikari.HikariConfig - catalog.........................none
+2017-02-08 22:43:05.115 [main] DEBUG com.zaxxer.hikari.HikariConfig - connectionInitSql...............none
+2017-02-08 22:43:05.115 [main] DEBUG com.zaxxer.hikari.HikariConfig - connectionTestQuery.............none
+2017-02-08 22:43:05.116 [main] DEBUG com.zaxxer.hikari.HikariConfig - connectionTimeout...............30000
+2017-02-08 22:43:05.116 [main] DEBUG com.zaxxer.hikari.HikariConfig - dataSource......................none
+2017-02-08 22:43:05.116 [main] DEBUG com.zaxxer.hikari.HikariConfig - dataSourceClassName.............none
+2017-02-08 22:43:05.116 [main] DEBUG com.zaxxer.hikari.HikariConfig - dataSourceJNDI..................none
+2017-02-08 22:43:05.116 [main] DEBUG com.zaxxer.hikari.HikariConfig - dataSourceProperties............{password=&lt;masked&gt;, prepStmtCacheSqlLimit=2048, cachePrepStmts=true, useServerPrepStmts=true, prepStmtCacheSize=256}
+2017-02-08 22:43:05.116 [main] DEBUG com.zaxxer.hikari.HikariConfig - driverClassName.................none
+2017-02-08 22:43:05.116 [main] DEBUG com.zaxxer.hikari.HikariConfig - healthCheckProperties...........{}
+2017-02-08 22:43:05.117 [main] DEBUG com.zaxxer.hikari.HikariConfig - healthCheckRegistry.............com.codahale.metrics.health.HealthCheckRegistry@34123d65
+2017-02-08 22:43:05.117 [main] DEBUG com.zaxxer.hikari.HikariConfig - idleTimeout.....................600000
+2017-02-08 22:43:05.117 [main] DEBUG com.zaxxer.hikari.HikariConfig - initializationFailFast..........true
+2017-02-08 22:43:05.117 [main] DEBUG com.zaxxer.hikari.HikariConfig - initializationFailTimeout.......1
+2017-02-08 22:43:05.117 [main] DEBUG com.zaxxer.hikari.HikariConfig - isolateInternalQueries..........false
+2017-02-08 22:43:05.118 [main] DEBUG com.zaxxer.hikari.HikariConfig - jdbc4ConnectionTest.............false
+2017-02-08 22:43:05.118 [main] DEBUG com.zaxxer.hikari.HikariConfig - jdbcUrl........................."jdbc:hsqldb:mem:testdb"
+2017-02-08 22:43:05.118 [main] DEBUG com.zaxxer.hikari.HikariConfig - leakDetectionThreshold..........0
+2017-02-08 22:43:05.118 [main] DEBUG com.zaxxer.hikari.HikariConfig - maxLifetime.....................1800000
+2017-02-08 22:43:05.118 [main] DEBUG com.zaxxer.hikari.HikariConfig - maximumPoolSize.................10
+2017-02-08 22:43:05.119 [main] DEBUG com.zaxxer.hikari.HikariConfig - metricRegistry..................com.codahale.metrics.MetricRegistry@59474f18
+2017-02-08 22:43:05.119 [main] DEBUG com.zaxxer.hikari.HikariConfig - metricsTrackerFactory...........none
+2017-02-08 22:43:05.119 [main] DEBUG com.zaxxer.hikari.HikariConfig - minimumIdle.....................2
+2017-02-08 22:43:05.119 [main] DEBUG com.zaxxer.hikari.HikariConfig - password........................&lt;masked&gt;
+2017-02-08 22:43:05.119 [main] DEBUG com.zaxxer.hikari.HikariConfig - poolName........................"transactional"
+2017-02-08 22:43:05.119 [main] DEBUG com.zaxxer.hikari.HikariConfig - readOnly........................false
+2017-02-08 22:43:05.120 [main] DEBUG com.zaxxer.hikari.HikariConfig - registerMbeans..................false
+2017-02-08 22:43:05.120 [main] DEBUG com.zaxxer.hikari.HikariConfig - scheduledExecutor...............none
+2017-02-08 22:43:05.120 [main] DEBUG com.zaxxer.hikari.HikariConfig - scheduledExecutorService........internal
+2017-02-08 22:43:05.120 [main] DEBUG com.zaxxer.hikari.HikariConfig - threadFactory...................internal
+2017-02-08 22:43:05.120 [main] DEBUG com.zaxxer.hikari.HikariConfig - transactionIsolation............default
+2017-02-08 22:43:05.120 [main] DEBUG com.zaxxer.hikari.HikariConfig - username........................"SA"
+2017-02-08 22:43:05.120 [main] DEBUG com.zaxxer.hikari.HikariConfig - validationTimeout...............5000
+2017-02-08 22:43:05.121 [main] INFO  com.zaxxer.hikari.HikariDataSource - transactional - Starting...
+2017-02-08 22:43:05.121 [main] INFO  com.zaxxer.hikari.pool.PoolBase - transactional - Driver does not support get/set network timeout for connections. (feature not supported)
+2017-02-08 22:43:05.122 [main] DEBUG com.zaxxer.hikari.pool.HikariPool - transactional - Added connection org.hsqldb.jdbc.JDBCConnection@69c81773
+2017-02-08 22:43:05.123 [main] INFO  com.zaxxer.hikari.HikariDataSource - transactional - Start completed.
+2017-02-08 22:43:05.123 [main] DEBUG c.s.e.hikaricp.ConnectionPools - transactional started
+2017-02-08 22:43:05.123 [main] DEBUG c.s.e.hikaricp.ConnectionPools - done</code></pre>
+

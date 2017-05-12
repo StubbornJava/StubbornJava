@@ -1,0 +1,18 @@
+<div class="posts">
+  {{#each recentPosts}}
+  <div class="post">
+    <h4><a href="/posts/{{slug}}">{{title}}</a></h4>
+    
+    <div class="post-meta">
+      <span><i class="fa fa-calendar"></i>{{dateFormat dateCreated}}</span> 
+    </div>
+    
+    <div class="post-meta-block">
+      <span class="bold">Tags/Libraries:</span> &nbsp; 
+      {{> templates/src/widgets/posts/tagOrLibs tagOrLibraries=tagOrLibraries}}
+    </div>
+
+  </div>
+  {{/each}}
+</div>
+
