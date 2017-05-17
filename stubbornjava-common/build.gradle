@@ -29,7 +29,8 @@ dependencies {
     compile libs.okhttp
     compile libs.okhttpUrlConnection
     compile libs.loggingInterceptor
-
+    compile libs.s3
+    
     testCompile libs.junit
 }
 // {{end:dependencies}}
