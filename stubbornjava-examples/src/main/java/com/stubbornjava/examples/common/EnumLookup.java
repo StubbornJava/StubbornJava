@@ -35,9 +35,9 @@ public class EnumLookup {
         CLUB("Club", String.valueOf((char) 0x2663), CardColor.BLACK),
         ;
 
-        private String displayName;
-        private String symbol;
-        private CardColor color;
+        private final String displayName;
+        private final String symbol;
+        private final CardColor color;
         private CardSuit(String displayName, String symbol, CardColor color) {
             this.displayName = displayName;
             this.symbol =  symbol;
@@ -46,20 +46,13 @@ public class EnumLookup {
         public String getDisplayName() {
             return displayName;
         }
-        public void setDisplayName(String displayName) {
-            this.displayName = displayName;
-        }
+
         public String getSymbol() {
             return symbol;
         }
-        public void setSymbol(String symbol) {
-            this.symbol = symbol;
-        }
+
         public CardColor getColor() {
             return color;
-        }
-        public void setColor(CardColor color) {
-            this.color = color;
         }
     // {{end:enums}}
 
