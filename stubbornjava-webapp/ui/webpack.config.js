@@ -45,7 +45,8 @@ module.exports = {
                 loader: 'json-loader'
             }, {
                 test:    /\.js$/,
-                exclude: /(node_modules|bower_components)\/[^s]/, //^shared
+                // Some of the 3rd party libs are in ES6 so we need to run babel
+                //exclude: /(node_modules|bower_components)\/[^s]/, //^shared
                 loader:  'babel-loader',
                 query:   {
                     presets: ['es2015']
@@ -66,10 +67,12 @@ module.exports = {
             }
         ]),
         new webpack.ProvidePlugin({
-           $: "jquery",
-           jQuery: "jquery",
-           'window.$': 'jquery',
-           'window.jQuery': 'jquery'
+          // We shouldn't need all of these but ran into some issues
+          // Adding all of them fixed it :(
+          $: "jquery",
+          jQuery: "jquery",
+          'window.$': 'jquery',
+          'window.jQuery': 'jquery'
        })
     ],
 
