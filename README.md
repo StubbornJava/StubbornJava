@@ -23,6 +23,7 @@ Undertow is a very fast low level non blocking web server written in Java. It is
 * [Handling Exceptions in Undertow](https://www.stubbornjava.com/posts/handling-exceptions-in-undertow-with-composition)
 * [Creating Middleware in Undertow](https://www.stubbornjava.com/posts/logging-gzip-blocking-exception-handling-metrics-middleware-chaining-in-undertow)
 * [Simple REST server in Undertow](https://www.stubbornjava.com/posts/lightweight-embedded-java-rest-server-without-a-framework)
+* [Virtual Hosting in Undertow](https://www.stubbornjava.com/posts/virtual-hosting-in-undertow-s-embedded-java-web-server)
 
 ## OkHttp for HTTP Client
 * [OkHttp Example REST client](https://www.stubbornjava.com/posts/okhttp-example-rest-client)
