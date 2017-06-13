@@ -20,9 +20,14 @@
 
   .header-social {
     display: flex;
+    margin-right: 1rem;
     a {
       font-size: 2rem;
       margin-left: 0.5rem;
+      color: $theme-dark;
+      :hover {
+        color: darken($theme, 20%);
+      }
     }
   }
 
@@ -49,5 +54,5 @@
   //     background-color: #fff;
   //   }
   // }
-  
+
 }
