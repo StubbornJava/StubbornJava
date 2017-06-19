@@ -45,6 +45,7 @@
     text-align: center;
     background-color: $black;
     border-radius: .25rem;
+    @extend .z-depth-1;
 
     &:after {
       position: absolute;
