@@ -3,6 +3,7 @@
 
 .navbar-inverse {
   background-color: $theme;
+  flex-direction: row;
 
   .navbar-brand {
     padding: 0;
@@ -10,6 +11,11 @@
 
   .java {
     color: $gold;
+  }
+
+  .filler {
+    display: flex;
+    width: 100%;
   }
 
   .navbar-nav {
@@ -20,14 +26,38 @@
 
   .header-social {
     display: flex;
+    align-items: center;
     margin-right: 1rem;
     a {
       font-size: 2rem;
-      margin-left: 0.5rem;
-      color: $theme-dark;
+      margin-left: 0.7rem;
+      color: $gold;
       :hover {
-        color: darken($theme, 20%);
+        color: darken($gold, 20%);
       }
+    }
+  }
+
+  .followus {
+    color: $white;
+    white-space: nowrap;
+    padding: 3px 8px;
+    text-align: center;
+    background-color: $black;
+    border-radius: .25rem;
+
+    &:after {
+      position: absolute;
+      width: 0;
+      height: 0;
+      border-color: transparent;
+      border-style: solid;
+      top: 50%;
+      margin-top: -5px;
+      margin-left: 8px;
+      content: "";
+      border-width: 5px 0 5px 5px;
+      border-left-color: $black;
     }
   }
 
