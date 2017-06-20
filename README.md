@@ -16,6 +16,9 @@ SLF4J is fairly standard and we chose to use Logback as our underlying implement
 ## [Typesafe Config For Configuration](https://www.stubbornjava.com/posts/environment-aware-configuration-with-typesafe-config)
 Typesafe config is a clean lightweight immutable configuration library. It offers several formats such as `.properties`, `.yml`, `.json` as well as a human friendly json super set. It handles configuration inheritance, includes, data types (string, boolean, int, long, double, durations, arrays, ...), variabe substitution and many more features.
 
+## Jackson for JSON
+* [Practical Jackson ObjectMapper Configuration](https://www.stubbornjava.com/posts/practical-jackson-objectmapper-configuration)
+
 ## [Embedded Undertow Web Server](https://www.stubbornjava.com/posts/java-hello-world-embedded-http-server-using-undertow)
 Undertow is a very fast low level non blocking web server written in Java. It is very lightweight and has a very clean API that should be relatively easy for anyone who knows HTTP to pick up. Most custom code will be in the form of an HttpHandler which is a simple interface that can be used in a variety of ways.
 * [Writing Custom HttpHandlers](https://www.stubbornjava.com/posts/undertow-writing-custom-httphandlers)
@@ -24,6 +27,7 @@ Undertow is a very fast low level non blocking web server written in Java. It is
 * [Creating Middleware in Undertow](https://www.stubbornjava.com/posts/logging-gzip-blocking-exception-handling-metrics-middleware-chaining-in-undertow)
 * [Simple REST server in Undertow](https://www.stubbornjava.com/posts/lightweight-embedded-java-rest-server-without-a-framework)
 * [Virtual Hosting in Undertow](https://www.stubbornjava.com/posts/virtual-hosting-in-undertow-s-embedded-java-web-server)
+* [Webpack and npm with Java](https://www.stubbornjava.com/posts/webpack-and-npm-for-simple-java-8-web-apps)
 
 ## OkHttp for HTTP Client
 * [OkHttp Example REST client](https://www.stubbornjava.com/posts/okhttp-example-rest-client)
