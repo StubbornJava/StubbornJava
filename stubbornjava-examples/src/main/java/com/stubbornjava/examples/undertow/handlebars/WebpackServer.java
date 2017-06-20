@@ -1,5 +1,7 @@
 package com.stubbornjava.examples.undertow.handlebars;
 
+import static com.stubbornjava.common.undertow.handlers.CustomHandlers.timed;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -78,10 +80,10 @@ public class WebpackServer {
     // Simple routing, anything not matching a route will fall back
     // to the not found handler.
     private static final HttpHandler ROUTES = new RoutingHandler()
-        .get("/", WebpackServer::home)
-        .get("/hello", WebpackServer::hello)
-        .get("/static*", CustomHandlers.resource(""))
-        .setFallbackHandler(WebpackServer::notFound)
+        .get("/", timed("home", WebpackServer::home))
+        .get("/hello", timed("hello", WebpackServer::hello))
+        .get("/static*", timed("static", CustomHandlers.resource("")))
+        .setFallbackHandler(timed("notfound", WebpackServer::notFound))
     ;
 
     public static void main(String[] args) {
