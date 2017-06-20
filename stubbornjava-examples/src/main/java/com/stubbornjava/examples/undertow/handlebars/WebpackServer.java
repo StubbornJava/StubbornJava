@@ -18,11 +18,14 @@ import io.undertow.server.handlers.BlockingHandler;
 public class WebpackServer {
     private static final Logger log = LoggerFactory.getLogger(WebpackServer.class);
 
+    // {{start:routes}}
+    // Simple not found 404 page
     public static void notFound(HttpServerExchange exchange) {
         exchange.setStatusCode(404);
         Exchange.body().sendHtmlTemplate(exchange, "static/templates/src/notfound", SimpleResponse.create());
     }
 
+    // Default error page when something unexpected happens
     public static void error(HttpServerExchange exchange) {
         exchange.setStatusCode(500);
         Exchange.body().sendHtmlTemplate(exchange, "static/templates/src/serverError", SimpleResponse.create());
@@ -34,7 +37,7 @@ public class WebpackServer {
         Exchange.body().sendHtmlTemplate(exchange, "static/templates/src/home", SimpleResponse.create());
     }
 
-    // Render hello {name} page.
+    // Render hello {name} page based on the name query param.
     public static void hello(HttpServerExchange exchange) {
         exception(exchange);
         String name = Exchange.queryParams()
@@ -46,18 +49,23 @@ public class WebpackServer {
         Exchange.body().sendHtmlTemplate(exchange, "static/templates/src/hello", response);
     }
 
+    // Helper function to forcibly throw an exception whenever the query
+    // parameter exception=true
     private static void exception(HttpServerExchange exchange) {
         if (Exchange.queryParams().queryParamAsBoolean(exchange, "exception").orElse(false)) {
             throw new RuntimeException("Poorly Named Exception!!!");
         }
     }
+    // {{end:routes}}
 
     // {{start:server}}
+    // We are currently handling all exceptions the same way
     private static HttpHandler exceptionHandler(HttpHandler next) {
         return CustomHandlers.exception(next)
            .addExceptionHandler(Throwable.class, WebpackServer::error);
     }
 
+    // Useful middleware
     private static HttpHandler wrapWithMiddleware(HttpHandler handler) {
         return MiddlewareBuilder.begin(BlockingHandler::new)
                                 .next(CustomHandlers::gzip)
@@ -67,6 +75,8 @@ public class WebpackServer {
                                 .complete(handler);
     }
 
+    // Simple routing, anything not matching a route will fall back
+    // to the not found handler.
     private static final HttpHandler ROUTES = new RoutingHandler()
         .get("/", WebpackServer::home)
         .get("/hello", WebpackServer::hello)
