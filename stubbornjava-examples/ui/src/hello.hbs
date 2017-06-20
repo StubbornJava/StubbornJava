@@ -1,0 +1,11 @@
+{{#> static/templates/src/layout}}
+  {{#*inline "title"}}Hello {{name}}!{{/inline}}
+  {{#*inline "content"}}
+    <div class="page-heading">
+      <div class="container center-text">
+        <h1>Hello {{name}}!</h1>
+        <p>Edit the name by modifying the <code>?name=</code> query parameter. Empty string or a non existent parameter defaults to world.</p>
+      </div>
+    </div>
+  {{/inline}}
+{{/ static/templates/src/common/_base-layout}}

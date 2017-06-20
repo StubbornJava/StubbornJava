@@ -1,0 +1,39 @@
+$theme: #5cb85c;
+
+body {
+  padding-top: 70px;
+}
+
+// footer
+$footer-height: 60px;
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+  margin-bottom: $footer-height;
+}
+
+.footer {
+  margin-top: 35px;
+  border-top: 3px solid $theme;
+
+  // sticky footer
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  /* Set the fixed height of the footer here */
+
+  footer {
+    color: $theme;
+    padding: 15px 10px 4px;
+    //border-top: 1px solid rgba(255, 255, 255, 0.05);
+    font-size: 12px;
+    background: #292b2c;
+    a {
+      color: $theme;
+    }
+  }
+}
