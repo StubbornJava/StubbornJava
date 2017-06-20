@@ -1,0 +1,65 @@
+<p>Java doesn't have the best reputation when it comes to web development. Let's face it, it's a verbose language littered with large frameworks (they have their place, but not all tasks require a framework) that can be quite daunting to learn. It would be tough to argue against using a dynamic language such as Ruby or Javascript when deciding to build a web application. They have great tooling and dynamic languages tend to speed up web development productivity.</p>
+
+<p>How large is the gap though? If an experienced Java dev wants to build a web site / application should they learn a new language or possibly have a single page app with a Java backed REST service? Or should they pick one of the many frameworks GWT, Vaadin, JSF, PrimeFaces, one of many MVC frameworks? After exploring both single page application frameworks and Java frameworks there seems to be quite a large learning curve, one that there isn't time for. Why can't we build a very quick server side rendered website for a quick MVP or even a full size project?</p>
+
+<p>Building a server side rendered website in javascript is pretty straightforward and has minimal barrier to entry. Pick up node.js, express and a HTML templating engine (handlebars, mustache, jade, ...). How close can we get to this with Java?</p>
+
+<h2 class="anchored">Lightweight Java HTTP Server</h2>
+<p>Undertow is a great lower level web server and we can compare it to node.js in our example. Undertow has been covered fairly extensively on this site so we will jump right into the code. For a refresher or intro to Undertow take a look at <a href="/guides/embedded-java-web-server">Embedded Java HTTP Server</a>.</p>
+
+<h3 class="anchored">HTTP Handlers</h3>
+<p>We will be creating four routes for this example. A simple static homepage, a hello {name} page which uses a query parameter, a not found 404 page and finally a default 500 internal server error page. These should all be fairly straight forward.</p>
+{{> templates/src/widgets/code/code-snippet file=java section=java.sections.routes}}
+
+<h3 class="anchored">Middleware and Routes</h3>
+<p>Now that we have our <code>HttpHandlers</code> we need to tie them to specific routes using our <code>RoutingHandler</code>. While we are at it let's add some useful middleware such as logging, metrics, exception handling, and gzip.</p>
+{{> templates/src/widgets/code/code-snippet file=java section=java.sections.server}}
+
+<h2 class="anchored">HTML Templating</h2>
+<p>Handlebars is widely used and simple to learn let's start with that. We can create a layout to share our common page formatting as well as many re-useable widgets. We will only list some files here but all of the front end of StubbornJava can be found <a href="https://github.com/StubbornJava/StubbornJava/tree/master/stubbornjava-webapp/ui">here</a>.</p>
+<p>Simple page layout.</p>
+{{> templates/src/widgets/code/code-snippet file=layout section=layout.content language="html"}}
+<p>Dynamic hello page using the base layout.</p>
+{{> templates/src/widgets/code/code-snippet file=hello section=hello.content language="html"}}
+
+<h2 class="anchored">Handling Assets</h2>
+<p>Now that we have a web server that can handle requests how do we manage all of our assets? We need CSS (sass / less), images, javascript libraries. Luckily javascript already has some pretty good tools for the job.</p>
+
+<h3 class="anchored">npm</h3>
+<p>We can use npm to handle all of our javascript dependencies and most of our css ones as well. It doesn't do anything fancy other than put files in the <code>node_modules</code> directory. Disclaimer: This is mostly copy pasted feel free to open a PR if something can be improved.</p>
+{{> templates/src/widgets/code/code-snippet file=npm section=npm.content language="json"}}
+
+<h3 class="anchored">Webpack</h3>
+<p>Now that we have many of our assets we don't want to go back in time too far and have our webpage make 40+ requests just to load javascript and css. Webpack exists, it's cool, let's try that out. With Webpack we can now minify / uglify our js / css and also control how many output files we have (Plus many many more features). Disclaimer: This is mostly copy pasted feel free to open a PR if something can be improved.</p>
+{{> templates/src/widgets/code/code-snippet file=webpack section=webpack.content language="javascript"}}
+
+<h3 class="anchored">App.js</h3>
+<p>The <code>app.js</code> file is what pulls everything together. You can have more than one entrypoint file in Webpack but we are sticking to one for now.</p>
+{{> templates/src/widgets/code/code-snippet file=appjs section=appjs.content language="javascript"}}
+
+<h2 class="anchored">Workflow</h2>
+<p>How exactly do Webpack and npm hook into Java now? Simple, it's just input and output files. In our Webpack config we are outputting everything into an <code>assets</code> directory. All we need to do is add this <a href="https://github.com/StubbornJava/StubbornJava/blob/master/stubbornjava-webapp/build.gradle#L23">directory to our class path</a> and Java can now read the files. While developing simply run <code>webpack --progress --watch</code> and you can quickly develop locally. Sometimes you need to restart when adding a brand new hbs template open a PR if you know how to fix that please. When building an executable jar you just need to remember to run <code>webpack</code> before you build the Jar and you are good to go.</p>
+
+<h2 class="anchored">Demo Site</h2>
+<p>You should be able to clone the repo and run the <code>WebpackServer</code> example. As long as you run <code>webpack --progress --watch</code> everything should work locally. If there are issues loading assets try changing the <code>assets.root</code> property found <a href="https://github.com/StubbornJava/StubbornJava/blob/master/stubbornjava-examples/src/main/resources/application.conf#L2">here</a>. This is a hack to make files load faster in the IDE, for some reason even with native hooks turned on the IDE's are slow to pick up file changes. Here are screen shots of the four pages.</p>
+
+<h2 class="anchored">home</h2>
+<div><img width=100% src="/images/homepage.png" /></div>
+<hr/>
+<br/>
+<br/>
+<br/>
+<h2 class="anchored">hello {name}</h2>
+<img width=100% src="/images/hello.png" />
+<hr/>
+<br/>
+<br/>
+<br/>
+<h2 class="anchored">Not Found</h2>
+<img width=100% src="/images/notfound.png" />
+<hr/>
+<br/>
+<br/>
+<br/>
+<h2 class="anchored">Server Error</h2>
+<img width=100% src="/images/error.png" />
