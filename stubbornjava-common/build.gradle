@@ -30,6 +30,8 @@ dependencies {
     compile libs.okhttpUrlConnection
     compile libs.loggingInterceptor
     compile libs.s3
+    compile libs.failsafe
+    compile libs.jsoup
     
     testCompile libs.junit
 }
