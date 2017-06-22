@@ -18,9 +18,12 @@ import javax.net.ssl.X509TrustManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import okhttp3.Interceptor;
+import okhttp3.Interceptor.Chain;
 import okhttp3.JavaNetCookieJar;
 import okhttp3.OkHttpClient;
 import okhttp3.OkHttpClient.Builder;
+import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.logging.HttpLoggingInterceptor;
 import okhttp3.logging.HttpLoggingInterceptor.Level;
@@ -43,6 +46,14 @@ public class HttpClient {
         return loggingInterceptor;
     }
     // {{end:logging}}
+
+    public static Interceptor getHeaderInterceptor(String name, String value) {
+        return (Chain chain) -> {
+            Request orig = chain.request();
+            Request newRequest = orig.newBuilder().addHeader(name, value).build();
+            return chain.proceed(newRequest);
+        };
+    }
 
     // {{start:client}}
     private static final OkHttpClient client = new OkHttpClient.Builder()
