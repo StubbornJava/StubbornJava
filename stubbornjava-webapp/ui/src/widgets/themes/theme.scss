@@ -16,11 +16,8 @@
 }
 
 .theme {
-  hr {
-    border-color: $gray-light;
-    border-top-style: dotted;
-    margin-top: 0;
-    margin-bottom: 0.5rem;
+  .theme-thumbnail {
+    border-bottom: 1px solid #f7f7f7;
   }
   &.card {
     padding: 0;
