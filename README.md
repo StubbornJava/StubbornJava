@@ -32,6 +32,7 @@ Undertow is a very fast low level non blocking web server written in Java. It is
 ## OkHttp for HTTP Client
 * [OkHttp Example REST client](https://www.stubbornjava.com/posts/okhttp-example-rest-client)
 * [OkHttp Logging Interceptors](https://www.stubbornjava.com/posts/okhttpclient-logging-configuration-with-interceptors)
+* [OkHttpClient Trust All SSL Certificates](https://www.stubbornjava.com/posts/okhttpclient-trust-all-ssl-certificates)
 
 ## [HikariCP for JDBC Connection Pooling](https://www.stubbornjava.com/posts/database-connection-pooling-in-java-with-hikaricp)
 HikariCP is a very fast lightweight Java connection pool. The API and overall codebase is relatively small (A good thing) and highly optimized. It also does not cut corners for performance like many other Java connection pool implementations.
