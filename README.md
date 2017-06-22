@@ -43,3 +43,6 @@ HikariCP is a very fast lightweight Java connection pool. The API and overall co
 * [StubbornJava](https://www.stubbornjava.com/)
 * [QuickDraw](https://quickdraw.onsightdigitalsolutions.com/about)
 * [DeckHandHQ](https://www.deckhandhq.com)
+
+## Tools
+* [HTML / CSS Themes and Templates](https://www.stubbornjava.com/best-selling-html-css-themes-and-website-templates)
