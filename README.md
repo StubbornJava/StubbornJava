@@ -1,3 +1,5 @@
+[![Release](https://jitpack.io/v/StubbornJava/StubbornJava.svg)](https://jitpack.io/#StubbornJava/StubbornJava)
+
 # StubbornJava
 https://www.stubbornjava.com/
 
