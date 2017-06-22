@@ -1,0 +1,42 @@
+{{#assign "metaDesc"}}Best HTML / CSS themes and website templates of {{year}}{{/assign}}
+{{#> templates/src/common/_base-layout metaDesc=post.metaDesc twitterSummaryCard=true title=post.title}}
+  {{#*inline "title"}}Bestselling HTML / CSS Theme and Website Templates of {{year}}{{/inline}}
+  {{#*inline "content"}}
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12 col-lg-9">
+          <div class="anchored-md">
+            {{#assign "markdown"}}
+#Top HTML/CSS Website Templates of {{year}}
+Everyone wants a website that is pleasing to look at, responsive on all devices, nice fonts, slick animations and to top it off it needs to look professional and somewhat unique. Unless you are or know an experienced designer (willing to work for free or cheap) with HTML, CSS and some Javascript experience you are out of luck.
+
+You can try to learn all of these skills yourself but it can be very time consuming and you will probably end up with a less than ideal final result. You can use something like [Twitters Bootstrap](http://getbootstrap.com/). Bootstrap is generally easy to learn and quick to get up and running. The main drawback is your site will look very similar to many other sites. Another option would be to hire a freelance designer. If you want a unique website this is one of the best options but comes with a few drawbacks. You need to find the designer, communicate your vision, then hope it turns out well while you wait for the work to be done. Also be prepared to pay a hefty price tag. Depending on your company size, branding and how unique you want to be it could very well be worth the money.
+
+A final option mixes a little bit of all the previous options together. You can learn bootstrap and purchase a theme / skin to make it look much more professional. Sites like [wrapbootstrap](https://wrapbootstrap.com/?ref=stubbornjava) or [themeforest](https://themeforest.net/?ref=StubbornJava) can provide very clean designs at much more affordable pricing. You will still need to do quite a bit of the work yourself but you also learn along the way. Your site will be more unique than Bootstrap but others can still buy it so it's possible to have a site look like someone else's.
+
+##Recommendations
+* Purchase one or more themes but don't import the whole theme, just use it as inspiration. This allows you to keep the size of the assets smaller as well as switch to SASS or LESS if it's not provided.
+* Make it yours - Modularize the theme in your own way and custom tailor it whenever you see fit.
+* Look at the example pages - Mix and match different example pages to get a look and feel you like. Some themes have 200+ sample pages which meet the requirements of many site types.
+
+##Best Selling HTML / CSS Theme / Templates of {{year}}
+            {{/assign}}
+            {{md markdown}}
+          </div>
+          <div class="row theme-row">
+          {{#each themes}}
+            <div class="col-12 col-sm-6 col-md-4 theme-container">
+              {{> templates/src/widgets/themes/theme-card}}
+            </div>
+          {{/each}}
+          </div>
+        </div>
+        <div class="col-lg-3 hidden-sm hidden-xs">
+          {{> templates/src/widgets/recommendations/recommendations-sidebar}}
+          {{> templates/src/widgets/posts/recent-posts-sidebar recentPosts=recentPosts}}
+        </div>
+      </div>
+    </div>
+    {{> templates/src/widgets/disqus/disqus id=post.slug}}
+  {{/inline}}
+{{/ templates/src/common/_base-layout}}

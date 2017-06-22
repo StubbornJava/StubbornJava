@@ -26,7 +26,7 @@ var anchors = new AnchorJS();
 anchors.options = {
   placement: 'left'
 };
-anchors.add('.anchored');
+anchors.add('.anchored, .anchored-md h1, .anchored-md h2, .anchored-md h3, .anchored-md h4, .anchored-md h5');
 
 Prism.highlightAll();
 
