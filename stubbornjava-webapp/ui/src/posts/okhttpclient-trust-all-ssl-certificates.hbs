@@ -1,0 +1,13 @@
+<p><code>This should NOT be used in production and is generally a very bad practice.</code> Ignoring SSL certs might be acceptable in a non production environment or possibly if you are just scraping a website and not sending any sensitive data. Use with your own judgement.</p>
+
+<p>SSL is great, when it works well. Unfortunately it can often be misconfigured which leads to dirty hacks like this. Knowing that this is a bad practice it can easily overcome the dreaded <code>javax.net.ssl.SSLHandshakeException: sun.security.validator.ValidatorException: PKIX path building failed: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target</code> error. This means the SSL cert's chain was probably not set up correctly or is using a lesser known SSL provider. The proper fix involves downloading the SSL cert and manually installing it into the Java keystore using the keytool. This can be a bit tedious especially if you have many servers. You should take the time to do it properly in production.</p>
+
+<h2 class="anchored">Custom TrustManager</h2>
+<p>This code was taken from the following <a href="https://gist.github.com/chalup/8706740">gist</a>. We will basically be creating a TrustManager that doesn't actually verify the certificates and just passes everything (bad!).</p>
+{{> templates/src/widgets/code/code-snippet file=httpClient section=httpClient.sections.trustManager}}
+
+<h2 class="anchored">Trust all SSL certificates OkHttpClient</h2>
+<p>OkHttpClient conveniently lets you create a new Builder from an existing client. This allows us to take a preconfigured client and just overwrite how it handles SSL.</p>
+{{> templates/src/widgets/code/code-snippet file=httpClient section=httpClient.sections.trustAllSslClient}}
+<p>That's all there is to it. You should now be able to create a client that trusts all SSL certs as shown below.</p>
+<pre class="line-numbers"><code class="language-java">OkHttpClient client = HttpClient.trustAllSslClient(preconfiguredClient);</code></pre>
