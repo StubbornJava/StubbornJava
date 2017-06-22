@@ -79,6 +79,7 @@ public class HttpClient {
         return new RuntimeException(String.format("code: %s, body: %s", response.code(), response.body().string()));
     }
 
+    // {{start:trustManager}}
     /*
      * This is very bad practice and should NOT be used in production.
      */
@@ -108,7 +109,13 @@ public class HttpClient {
         }
     }
     private static final SSLSocketFactory trustAllSslSocketFactory = trustAllSslContext.getSocketFactory();
+    // {{end:trustManager}}
 
+    // {{start:trustAllSslClient}}
+    /*
+     * This should not be used in production unless you really don't care
+     * about the security. Use at your own risk.
+     */
     public static OkHttpClient trustAllSslClient(OkHttpClient client) {
         log.warn("Using the trustAllSslClient is highly discouraged and should not be used in Production!");
         Builder builder = client.newBuilder();
@@ -121,4 +128,5 @@ public class HttpClient {
         });
         return builder.build();
     }
+    // {{end:trustAllSslClient}}
 }
