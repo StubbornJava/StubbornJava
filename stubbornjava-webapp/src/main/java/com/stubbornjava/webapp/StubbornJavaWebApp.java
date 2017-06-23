@@ -5,14 +5,12 @@ import static com.stubbornjava.common.undertow.handlers.CustomHandlers.timed;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.stubbornjava.HelperRoutes;
-import com.stubbornjava.PageRoutes;
 import com.stubbornjava.common.undertow.SimpleServer;
 import com.stubbornjava.common.undertow.handlers.CustomHandlers;
-import com.stubbornjava.guide.GuideRoutes;
-import com.stubbornjava.post.JavaLibRoutes;
-import com.stubbornjava.post.PostRoutes;
 import com.stubbornjava.undertow.handlers.MiddlewareBuilder;
+import com.stubbornjava.webapp.guide.GuideRoutes;
+import com.stubbornjava.webapp.post.JavaLibRoutes;
+import com.stubbornjava.webapp.post.PostRoutes;
 import com.stubbornjava.webapp.themes.ThemeRoutes;
 
 import io.undertow.server.HttpHandler;

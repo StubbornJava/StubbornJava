@@ -22,6 +22,7 @@ ext {
         hashids           : '1.0.1',       // Id hashing
         failsafe          : '1.0.4',       // retry and circuit breakers
         jsoup             : '1.10.3',      // DOM parsing library
+        lombok            : '1.16.16',     // Code gen        
 
         junit             : '4.12',        // Unit Testing
     ]
@@ -64,6 +65,7 @@ ext {
         hashids                   : "org.hashids:hashids:$versions.hashids",
         failsafe                  : "net.jodah:failsafe:$versions.failsafe",
         jsoup                     : "org.jsoup:jsoup:$versions.jsoup",
+        lombok                    : "org.projectlombok:lombok:$versions.lombok",
 
         junit                     : "junit:junit:$versions.junit",
     ]

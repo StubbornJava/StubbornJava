@@ -42,4 +42,11 @@ public class Exchange {
     public static UrlImpl urls() {
         return URLS;
     }
+
+    public static interface HeaderImpl extends Headers {};
+    private static final HeaderImpl HEADERS = new HeaderImpl(){};
+    public static HeaderImpl headers() {
+        return HEADERS;
+    }
+
 }

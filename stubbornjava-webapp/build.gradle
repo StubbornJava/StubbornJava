@@ -4,6 +4,8 @@ dependencies {
     compile project(':stubbornjava-undertow')
     compile project(':stubbornjava-common')
     compile project(':stubbornjava-private')
+    
+    compile libs.lombok
 
     testCompile libs.junit
 }
