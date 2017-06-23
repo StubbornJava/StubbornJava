@@ -1,0 +1,21 @@
+package com.stubbornjava.utils;
+
+import java.io.IOException;
+import java.nio.charset.Charset;
+
+import com.google.common.io.Resources;
+
+public class ResourceUtil {
+
+    // {{start:method1}}
+    public static String method1() {
+        return "method1";
+    }
+    // {{end:method1}}
+    
+    // {{start:method2}}
+    public static String method2() {
+        return "method2";
+    }
+    // {{end:method2}}
+}
