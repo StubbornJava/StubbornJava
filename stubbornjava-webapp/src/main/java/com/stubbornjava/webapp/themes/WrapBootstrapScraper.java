@@ -19,6 +19,7 @@ import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 
+// {{start:scraper}}
 public class WrapBootstrapScraper {
     private static final Logger log = LoggerFactory.getLogger(WrapBootstrapScraper.class);
     private static final String affilaiteCode = "stubbornjava";
@@ -60,3 +61,4 @@ public class WrapBootstrapScraper {
         log.debug(Json.serializer().toPrettyString(themes));
     }
 }
+// {{end:scraper}}

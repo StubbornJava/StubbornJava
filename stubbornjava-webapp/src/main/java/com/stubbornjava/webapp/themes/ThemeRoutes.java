@@ -8,6 +8,7 @@ import com.stubbornjava.webapp.Response;
 
 import io.undertow.server.HttpServerExchange;
 
+// {{start:routes}}
 public class ThemeRoutes {
 
     public static void popularThemes(HttpServerExchange exchange) {
@@ -21,3 +22,4 @@ public class ThemeRoutes {
         Exchange.body().sendHtmlTemplate(exchange, "templates/src/pages/popular-themes", response);
     }
 }
+// {{end:routes}}

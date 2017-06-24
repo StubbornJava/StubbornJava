@@ -45,6 +45,12 @@ public class TemplateMonsterScraper {
                             .addQueryParameter("aff", affilaiteCode)
                             .build().toString();
         String imageUrl = element.select(".thumbnail-preview link").attr("href");
+
+        /*
+         *  Downloads aren't available on this page and we
+         *  currently don't want to scrape all the detail pages
+         *  just to get download counts.
+         */
         int downloads = 0;
         return new HtmlCssTheme(title, url, imageUrl, downloads);
     }

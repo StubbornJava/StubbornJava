@@ -1,5 +1,6 @@
 package com.stubbornjava.webapp.themes;
 
+// {{start:model}}
 public class HtmlCssTheme {
     private final String title;
     private final String url;
@@ -25,3 +26,5 @@ public class HtmlCssTheme {
         return downloads;
     }
 }
+//{{end:model}}
+
