@@ -35,6 +35,10 @@ public class Themes {
     private static final List<HtmlCssTheme> fetchPopularThemes() {
         return Seq.seq(suppliers)
                   .map(sup -> {
+                    /*
+                     *  If one fails we don't want them all to fail.
+                     *  This can be handled better but good enough for now.
+                     */
                     try {
                         return sup.get();
                     } catch (Exception ex) {

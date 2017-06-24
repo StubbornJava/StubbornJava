@@ -529,21 +529,30 @@ public class PostData {
            ))
            .build()
       );
-//      posts.add(PostRaw.builder()
-//           .postId(877736688294485954L)
-//           .title("Web Scraping in Java using jsoup and OkHttp")
-//           .metaDesc("jsoup example scraping the DOM using CSS selectors and OkHttpClient for networking.")
-//           .dateCreated(LocalDateTime.parse("2017-06-22T10:15:30"))
-//           .dateUpdated(LocalDateTime.parse("2017-06-22T10:15:30"))
-//           .javaLibs(Lists.newArrayList(JavaLib.OkHttp, JavaLib.jsoup, JavaLib.Failsafe, JavaLib.jOOλ, JavaLib.Guava))
-//           .tags(Lists.newArrayList(Tags.HTTP, Tags.HtmlTemplating))
-//           .gitFileReferences(Lists.newArrayList(
-//               FileReference.stubbornJava(
-//                  "httpClient",
-//                  "stubbornjava-common/src/main/java/com/stubbornjava/common/HttpClient.java")
-//           ))
-//           .build()
-//     );
+      posts.add(PostRaw.builder()
+           .postId(877736688294485954L)
+           .title("Web Scraping in Java using jsoup and OkHttp")
+           .metaDesc("jsoup example scraping the DOM using CSS selectors and OkHttpClient for networking.")
+           .dateCreated(LocalDateTime.parse("2017-06-22T10:15:30"))
+           .dateUpdated(LocalDateTime.parse("2017-06-22T10:15:30"))
+           .javaLibs(Lists.newArrayList(JavaLib.OkHttp, JavaLib.jsoup, JavaLib.Failsafe, JavaLib.jOOλ, JavaLib.Guava))
+           .tags(Lists.newArrayList(Tags.HTTP, Tags.HtmlTemplating))
+           .gitFileReferences(Lists.newArrayList(
+               FileReference.stubbornJava(
+                  "model",
+                  "stubbornjava-webapp/src/main/java/com/stubbornjava/webapp/themes/HtmlCssTheme.java")
+               , FileReference.stubbornJava(
+                   "scraper",
+                   "stubbornjava-webapp/src/main/java/com/stubbornjava/webapp/themes/WrapBootstrapScraper.java")
+               , FileReference.stubbornJava(
+                   "service",
+                   "stubbornjava-webapp/src/main/java/com/stubbornjava/webapp/themes/Themes.java")
+               , FileReference.stubbornJava(
+                   "routes",
+                   "stubbornjava-webapp/src/main/java/com/stubbornjava/webapp/themes/ThemeRoutes.java")
+           ))
+           .build()
+     );
     }
 
     public static List<PostRaw> getPosts() {

@@ -31,16 +31,23 @@ public class WrapBootstrapScraper {
     public static List<HtmlCssTheme> popularThemes() {
         HttpUrl url = HttpUrl.parse(POPULAR_THEMES_URL);
         Request request = new Request.Builder().url(url).get().build();
+        // Retry if the request is not successful code >= 200 && code < 300
         String html = Retry.retryUntilSuccessfulWithBackoff(
             () -> client.newCall(request).execute()
         );
 
+        // Select all the elements with the given CSS selector.
         Elements elements = Jsoup.parse(html).select("#themes .item");
-        List<HtmlCssTheme> themes = Seq.seq(elements).map(WrapBootstrapScraper::themeFromElement).toList();
+        List<HtmlCssTheme> themes = Seq.seq(elements)
+                                       .map(WrapBootstrapScraper::themeFromElement)
+                                       .toList();
 
         return themes;
     }
 
+    /*
+     * Parse out the data from each Element
+     */
     private static HtmlCssTheme themeFromElement(Element element) {
         Element titleElement = element.select(".item_head h2 a").first();
         String title = titleElement.text();
@@ -56,6 +63,10 @@ public class WrapBootstrapScraper {
         return new HtmlCssTheme(title, url, imageUrl, downloads);
     }
 
+    /*
+     * Main methods everywhere! Very convenient for quick ad hoc
+     * testing without spinning up an entire application.
+     */
     public static void main(String[] args) {
         List<HtmlCssTheme> themes = popularThemes();
         log.debug(Json.serializer().toPrettyString(themes));

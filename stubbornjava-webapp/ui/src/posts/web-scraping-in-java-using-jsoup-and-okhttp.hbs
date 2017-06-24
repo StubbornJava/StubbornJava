@@ -1,0 +1,23 @@
+<div class="anchored-md">
+{{#assign "markdown"}}
+Web scraping is a fundamental skill that is extremely useful for data collection and automating tasks. The following examples will show how we scrape sites such as [wrapbootstrap](https://wrapbootstrap.com/?ref=stubbornjava) and [themeforest](https://themeforest.net/?ref=StubbornJava) to populate the [HTML/CSS Theme Templates](/best-selling-html-css-themes-and-website-templates) page. We will be using [jsoup](https://jsoup.org/) for DOM parsing and [OkHttp](http://square.github.io/okhttp/) for HTTP. Although jsoup is capable of handling HTTP for us we prefer to stick with OkHttp incase we need anything more complex than a simple GET request such as special headers and cookies. Why learn two libraries when one will do?
+{{/assign}}
+{{md markdown}}
+</div>
+
+<h2 class="anchored">Model / POJO</h2>
+</p>We like to start simple so we are only gathering four fields title, url, image url, and number of downloads if available.</p>
+{{> templates/src/widgets/code/code-snippet file=model section=model.sections.model}}
+
+<h2 class="anchored">jsoup Scraper</h2>
+<p>Our scraper is fairly simple. All it needs to do is a single GET request and extract the data we are interested in. We are using <a href="https://github.com/jhalterman/failsafe#retries">failsafe</a> for retry logic and <a href="https://github.com/jOOQ/jOOL">jOOλ</a> for a simplified streaming api. Setting up <a href="/posts/okhttpclient-logging-configuration-with-interceptors">OkHttpClient Logging Interceptors</a> is very useful for tracking down bugs. We are only showing the <a href="https://wrapbootstrap.com/?ref=stubbornjava">wrapbootstrap</a> scraper but the rest can be found <a href="https://github.com/StubbornJava/StubbornJava/tree/master/stubbornjava-webapp/src/main/java/com/stubbornjava/webapp/themes">here</a>.</p>
+{{> templates/src/widgets/code/code-snippet file=scraper section=scraper.sections.scraper}}
+
+<h2 class="anchored">Theme Service layer</h2>
+<p>Our naming convention for the service layer is generally jut pluralizing the model. We don't care how it's getting the data as long as it gets it. We are caching the results of each scraper so we don't upset the websites maintainers. In a more ideal world we might periodically scrape and store the data in our own database.</p>
+{{> templates/src/widgets/code/code-snippet file=service section=service.sections.themes}}
+
+<h2 class="anchored">Theme Routes</h2>
+<p>Now we simply create a custom <a href="/posts/undertow-writing-custom-httphandlers">HttpHandler</a> and pass the themes along to the HTML template.</p>
+{{> templates/src/widgets/code/code-snippet file=routes section=routes.sections.routes}}
+<p>Finally its hooked into our <a href="https://github.com/StubbornJava/StubbornJava/blob/master/stubbornjava-webapp/src/main/java/com/stubbornjava/webapp/StubbornJavaWebApp.java#L58">router</a> and now we have a functioning <a href="/best-selling-html-css-themes-and-website-templates">HTML / CSS Theme Template</a> page.
