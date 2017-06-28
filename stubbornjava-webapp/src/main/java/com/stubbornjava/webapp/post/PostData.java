@@ -553,6 +553,30 @@ public class PostData {
            ))
            .build()
      );
+      posts.add(PostRaw.builder()
+          .postId(880770018810625706L)
+          .title("Creating XML sitemaps in Java")
+          .metaDesc("Example XML sitemap in Java using sitemapgen4j to increase page exposure and SEO.")
+          .dateCreated(LocalDateTime.parse("2017-07-15T10:15:30"))
+          .dateUpdated(LocalDateTime.parse("2017-07-15T10:15:30"))
+          .javaLibs(Lists.newArrayList(JavaLib.Undertow, JavaLib.SitemapGen4j))
+          .tags(Lists.newArrayList(Tags.SEO))
+          .gitFileReferences(Lists.newArrayList(
+              FileReference.stubbornJava(
+                 "model",
+                 "stubbornjava-webapp/src/main/java/com/stubbornjava/webapp/themes/HtmlCssTheme.java")
+              , FileReference.stubbornJava(
+                  "scraper",
+                  "stubbornjava-webapp/src/main/java/com/stubbornjava/webapp/themes/WrapBootstrapScraper.java")
+              , FileReference.stubbornJava(
+                  "service",
+                  "stubbornjava-webapp/src/main/java/com/stubbornjava/webapp/themes/Themes.java")
+              , FileReference.stubbornJava(
+                  "routes",
+                  "stubbornjava-webapp/src/main/java/com/stubbornjava/webapp/themes/ThemeRoutes.java")
+          ))
+          .build()
+    );
     }
 
     public static List<PostRaw> getPosts() {

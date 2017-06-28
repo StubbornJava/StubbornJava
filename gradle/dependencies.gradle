@@ -22,7 +22,8 @@ ext {
         hashids           : '1.0.1',       // Id hashing
         failsafe          : '1.0.4',       // retry and circuit breakers
         jsoup             : '1.10.3',      // DOM parsing library
-        lombok            : '1.16.16',     // Code gen        
+        lombok            : '1.16.16',     // Code gen
+        sitemapgen4j      : '1.0.6',       // Sitemap generator for SEO
 
         junit             : '4.12',        // Unit Testing
     ]
@@ -66,6 +67,7 @@ ext {
         failsafe                  : "net.jodah:failsafe:$versions.failsafe",
         jsoup                     : "org.jsoup:jsoup:$versions.jsoup",
         lombok                    : "org.projectlombok:lombok:$versions.lombok",
+        sitemapgen4j              : "com.github.dfabulich:sitemapgen4j:$versions.sitemapgen4j",
 
         junit                     : "junit:junit:$versions.junit",
     ]

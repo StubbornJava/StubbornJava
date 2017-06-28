@@ -3,3 +3,7 @@ Allow: /
 
 User-agent: *
 Disallow: /dev
+
+{{#each sitemaps}}
+Sitemap: {{host}}sitemaps/{{.}}
+{{/each}}

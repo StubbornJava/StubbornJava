@@ -17,6 +17,11 @@ public interface ContentTypeSenders {
         exchange.getResponseSender().send(ByteBuffer.wrap(bytes));
     }
 
+    default void sendXml(HttpServerExchange exchange, String xml) {
+        exchange.getResponseHeaders().put(Headers.CONTENT_TYPE, "application/xml");
+        exchange.getResponseSender().send(xml);
+    }
+
     default void sendHtml(HttpServerExchange exchange, String html) {
         exchange.getResponseHeaders().put(Headers.CONTENT_TYPE, "text/html");
         exchange.getResponseSender().send(html);
