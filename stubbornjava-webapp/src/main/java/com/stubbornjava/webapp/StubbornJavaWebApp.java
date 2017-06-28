@@ -5,6 +5,7 @@ import static com.stubbornjava.common.undertow.handlers.CustomHandlers.timed;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.stubbornjava.common.seo.SitemapRoutes;
 import com.stubbornjava.common.undertow.SimpleServer;
 import com.stubbornjava.common.undertow.handlers.CustomHandlers;
 import com.stubbornjava.undertow.handlers.MiddlewareBuilder;
@@ -58,6 +59,9 @@ public class StubbornJavaWebApp {
         .get("/best-selling-html-css-themes-and-website-templates", timed("popularThemes", ThemeRoutes::popularThemes))
 
         .get("/dev/metrics", timed("getMetrics", HelperRoutes::getMetrics))
+
+        // addAll allows you to combine more than one RoutingHandler together.
+        .addAll(SitemapRoutes.router(StubbornJavaSitemapGenerator.getSitemap()))
 
         .setFallbackHandler(timed("notFound", PageRoutes::notFound))
     ;

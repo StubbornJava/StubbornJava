@@ -106,6 +106,12 @@ public enum JavaLib {
         , "https://github.com/jhalterman/failsafe"
         , "Failsafe is a lightweight, zero-dependency library for handling failures. It was designed to be as easy to use as possible, with a concise API for handling everyday use cases and the flexibility to handle everything else. Failsafe "
     )
+    , SitemapGen4j(
+        "SitemapGen4j",
+        null,
+        "https://github.com/dfabulich/sitemapgen4j",
+        "SitemapGen4j is a library to generate XML sitemaps in Java."
+    )
     ;
 
     private final String name;

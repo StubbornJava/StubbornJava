@@ -32,6 +32,7 @@ dependencies {
     compile libs.s3
     compile libs.failsafe
     compile libs.jsoup
+    compile libs.sitemapgen4j
     
     testCompile libs.junit
 }

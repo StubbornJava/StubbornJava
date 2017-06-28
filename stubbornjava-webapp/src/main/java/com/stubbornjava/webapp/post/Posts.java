@@ -89,6 +89,10 @@ public class Posts {
                        .orElse(null);
     }
 
+    public static List<String> getAllSlugs() {
+        return Seq.seq(slugIndex.keySet()).sorted().toList();
+    }
+
     private static List<TagOrLibrary> findFromIndex(Multimap<String, PostMeta> index, Type type) {
         return Seq.seq(index.asMap().entrySet())
                   .map(e -> new TagOrLibrary(e.getKey(), type, e.getValue().size()))

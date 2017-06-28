@@ -1,5 +1,7 @@
 package com.stubbornjava.webapp;
 
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -65,7 +67,11 @@ public class PageRoutes {
     }
 
     public static void robots(HttpServerExchange exchange) {
-        Response response = Response.fromExchange(exchange);
+        String host = Exchange.urls().host(exchange).toString();
+        List<String> sitemaps = StubbornJavaSitemapGenerator.getSitemap().getIndexNames();
+        Response response = Response.fromExchange(exchange)
+                                    .with("sitemaps", sitemaps)
+                                    .with("host", host);
         Exchange.body().sendText(exchange, Templating.instance().renderTemplate("templates/src/pages/robots.txt", response));
     }
 

@@ -1,4 +1,6 @@
 package com.stubbornjava.common.undertow;
+import com.stubbornjava.common.HttpUrls;
+
 import io.undertow.server.HttpServerExchange;
 import okhttp3.HttpUrl;
 
@@ -14,4 +16,9 @@ public interface Urls {
         return urlBuilder.build();
     }
     // {{end:currentUrl}}
+
+    default HttpUrl host(HttpServerExchange exchange) {
+        HttpUrl url = HttpUrl.parse(exchange.getRequestURL());
+        return HttpUrls.host(url);
+    }
 }
