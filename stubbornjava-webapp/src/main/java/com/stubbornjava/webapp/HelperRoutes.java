@@ -5,7 +5,6 @@ import org.slf4j.LoggerFactory;
 
 import com.stubbornjava.common.Metrics;
 import com.stubbornjava.common.undertow.Exchange;
-import com.stubbornjava.utils.Logging;
 
 import io.undertow.server.HttpServerExchange;
 
@@ -16,10 +15,10 @@ public class HelperRoutes {
         Exchange.body().sendJson(exchange, Metrics.registry());
     }
 
-    public static void getLoggers(HttpServerExchange exchange) {
-        Response data = Response.fromExchange(exchange).with("loggers", Logging.getLoggers());
-        Exchange.body().sendHtmlTemplate(exchange, "templates/loggers", data);
-    }
+//    public static void getLoggers(HttpServerExchange exchange) {
+//        Response data = Response.fromExchange(exchange).with("loggers", Logging.getLoggers());
+//        Exchange.body().sendHtmlTemplate(exchange, "templates/loggers", data);
+//    }
 
 //    public static void getProperties(HttpServerExchange exchange) {
 //        boolean hidden = RequestUtil.getQueryParam(exchange, "hidden")

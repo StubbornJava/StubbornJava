@@ -15,7 +15,6 @@ ext {
         jool              : '0.9.12',      // Functional Utils
         hsqldb            : '2.3.4',       // In memory SQL db
         aws               : '1.11.98',     // AWS Java SDK
-        contentful        : '7.4.0',       // Contentful java sdk
         flyway            : '4.1.2',       // DB migrations
         connectorj        : '5.1.41',      // JDBC MYSQL driver
         jooq              : '3.9.1',       // jOOQ
@@ -58,7 +57,6 @@ ext {
         jool                      : "org.jooq:jool:$versions.jool",
         hsqldb                    : "org.hsqldb:hsqldb:$versions.hsqldb",
         s3                        : "com.amazonaws:aws-java-sdk-s3:$versions.aws",
-        contentful                : "com.contentful.java:java-sdk:$versions.contentful",
         flyway                    : "org.flywaydb:flyway-core:$versions.flyway",
         connectorj                : "mysql:mysql-connector-java:$versions.connectorj",
         jooq                      : "org.jooq:jooq:$versions.jooq",

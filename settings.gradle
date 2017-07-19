@@ -6,6 +6,6 @@ include ':stubbornjava-common'
 include ':stubbornjava-examples'
 include ':stubbornjava-webapp'
 
-def rootProjectDescriptor = settings.rootProject
-settings.createProjectDescriptor(rootProjectDescriptor, 'stubbornjava-private', file('../stubbornjava'))
+//def rootProjectDescriptor = settings.rootProject
+//settings.createProjectDescriptor(rootProjectDescriptor, 'stubbornjava-private', file('../stubbornjava'))
 // {{end:settings}}

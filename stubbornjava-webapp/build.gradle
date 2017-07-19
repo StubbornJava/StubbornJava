@@ -3,7 +3,7 @@ dependencies {
     // Project reference
     compile project(':stubbornjava-undertow')
     compile project(':stubbornjava-common')
-    compile project(':stubbornjava-private')
+    //compile project(':stubbornjava-private')
     
     compile libs.lombok
 

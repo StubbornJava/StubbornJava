@@ -1,0 +1,56 @@
+{{#assign "markdown"}}
+This guide is meant to be a resource for creating lightweight web servers in Java without a framework. You are expected to have Java and HTTP experience. It will cover the basics from a simple hello world server to a functional server side rendered website as well as a JSON web service. Along the way it will cover HTTP routing, verbs, query parameters, path parameters, headers, cookies, form data, json, logging and debugging techniques. Most topics will be split out into their own posts and this will serve as a directory / recommended reading order.
+
+We will be using several libraries from our [Recommended Java Libraries](https://www.stubbornjava.com/java-libraries "Recommended Java Libraries"). If there are any topics missing you would like covered [Suggest a topic](https://github.com/StubbornJava/StubbornJava#suggest-a-topic). To see how dependencies are managed check out [multi-project builds with gradle](https://www.stubbornjava.com/posts/multi-project-builds-with-gradle-and-fat-jars-with-shadow). This site is built with these exact same techniques and a lot of the shared classes.
+
+## Hello World
+For the impatient let's get a [minimal hello world](https://www.stubbornjava.com/posts/java-hello-world-embedded-http-server-using-undertow) up and running quickly. For whatever reason some developers like to see how few lines it takes to start a server. Let's see what that looks like.
+
+<pre class="line-numbers"><code class="language-java">public static void main(String[] args) {
+    Undertow.builder()
+            .addHttpListener(8080, "localhost")
+            .setHandler((exchange) -> exchange.getResponseSender().send("hello world"))
+            .build().start();
+}</code></pre>
+
+If we really wanted this could be a one liner. You can also pass the `HttpHandler` into the `addHttpListener` method as a third argument. This is required if you want different handlers to run on different ports.
+
+## Logging
+Why logging? Logging is a critical tool for understanding what is happening and extremely useful for debugging. It also happens to be overlooked quite frequently. When projects are several years old without proper logging you can't even compute the developer hours wasted debugging issues.
+
+- [Quick intro to SLF4J and Logback](https://www.stubbornjava.com/posts/logging-in-java-with-slf4j-and-logback)
+- [Access / Request logging with undertow](https://www.stubbornjava.com/posts/http-access-logging-with-undertow)
+
+## Undertow HttpHandlers
+`HttpHandler`'s are the building blocks of Undertow. They can be used to send responses, change status codes, log, meter / time, handle exceptions and much more. Undertow's simplicity is the main reason we use it. Try looking at mose frameworks and many of the concepts listed above have their own object models. Filtering / Interceptors often have strange APIs that only work before or after a request and you need to add both if you want to wrap a request. Exception handlers sometimes follow very different APIs and you don't have access to the same data you would expect. Undertow is simple. Most building blocks are simply HttpHandlers. Handlers are meant to be composed together. This allows you to use as little or as much functionality as you need. Does your web service have a special case where it is only a single route? Cut out the routing logic you don't need it!
+
+- [Creating custom HttpHandlers in Undertow](https://www.stubbornjava.com/posts/undertow-writing-custom-httphandlers) - This showcases a few different ways you can implement an `HttpHandler` thanks to Java8.
+- [Http Routing in Undertow](https://www.stubbornjava.com/posts/url-routing-with-undertow-embedded-http-server) - Undertow comes with many built in `HttpHandlers` the `RoutingHandler` provides a convienent way to group a HTTP verb with a URL template.
+- [Handling Exceptions in Undertow](https://www.stubbornjava.com/posts/handling-exceptions-in-undertow-with-composition)
+- [Middleware in Undertow](https://www.stubbornjava.com/posts/logging-gzip-blocking-exception-handling-metrics-middleware-chaining-in-undertow) - Logging, metrics, error handling, authentication and many other features are built as filters / interceptors. In Undertow we simply compose all of the logic we need and let each individual handler do its job.
+
+## Request Parameters
+So far most of our handlers have been fairly static. We want some dynamic content, let's explore using out HTTP parameters.
+
+- [Query and Path Parameters](/posts/query-parameters-and-path-parameters-in-undertow) - `/users/{pathParam}?sortBy=queryParam`
+- [Obfuscating and Shortening Sequential ids with HashIds](/posts/obfuscating-and-shortening-sequential-ids-with-hashids)
+
+## Sending Responses
+HTTP responses have some extremely crucial data. Status codes, content types, setting cookies, sending headers and much more. Often times large frameworks try to abstract this away from you by sending different `Entity` types back as the response. We are big boys here HTTP doesn't scare us.
+
+- [Sending Content Types with Undertow](https://www.stubbornjava.com/posts/handling-content-types-with-undertow)
+- [Sending HTTP Redirects with Undertow](https://www.stubbornjava.com/posts/http-redirects-with-undertow)
+
+## JSON Web Service
+We won't call it REST because we are not sticklers on naming / conventions. We use Jackson for all JSON serialization.
+
+- [Simple Jackson ObjectMapper Configuration](https://www.stubbornjava.com/posts/practical-jackson-objectmapper-configuration)
+- [Simple in memory REST (ehhhh web) Service](https://www.stubbornjava.com/posts/lightweight-embedded-java-rest-server-without-a-framework)
+- [OkHttp Example REST Client](https://www.stubbornjava.com/posts/okhttp-example-rest-client)
+
+## Server Side HTML with Handlebars
+SPAs are all the rage these days. However you can't beat the complicity and speed of building server side rendered web apps (Especially if you are a server side developer and aren't a js guru). SPAs make sense in a lot of use cases. However, they don't make sense in all cases. There is nothing wrong with going back to our roots.
+
+- [HTML Templating with Handlebars and Undertow](https://www.stubbornjava.com/posts/java-html-templating-with-handlebars-and-undertow)
+{{/assign}}
+{{md markdown}}
