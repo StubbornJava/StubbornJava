@@ -21,7 +21,7 @@ allprojects {
 
     // Using Jitpack so I need the repo name in the group to match.
     group = 'com.stubbornjava.StubbornJava'
-    version = '0.1.18-SNAPSHOT'
+    version = '0.1.19-SNAPSHOT'
 
     repositories { 
         mavenLocal()
