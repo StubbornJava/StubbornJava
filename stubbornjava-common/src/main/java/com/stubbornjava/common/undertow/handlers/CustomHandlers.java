@@ -29,6 +29,7 @@ import io.undertow.server.handlers.resource.ClassPathResourceManager;
 import io.undertow.server.handlers.resource.FileResourceManager;
 import io.undertow.server.handlers.resource.ResourceHandler;
 import io.undertow.server.handlers.resource.ResourceManager;
+import okhttp3.HttpUrl;
 
 public class CustomHandlers {
     private static final Logger log = LoggerFactory.getLogger(CustomHandlers.class);
@@ -77,6 +78,13 @@ public class CustomHandlers {
 
     public static void metrics(HttpServerExchange exchange) {
         Exchange.body().sendJson(exchange, Metrics.registry());
+    }
+
+    public static HttpHandler redirectToHost(String host) {
+        return exchange -> {
+            HttpUrl url = Exchange.urls().currentUrl(exchange);
+            Exchange.redirect().permanent(exchange, url.newBuilder().host(host).build().toString());
+        };
     }
 
     // {{start:health}}
