@@ -9,8 +9,8 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.ImmutableList;
 import com.stubbornjava.common.Json;
+import com.stubbornjava.common.Slugs;
 import com.stubbornjava.common.Templating;
-import com.stubbornjava.webapp.post.SlugUtil;
 
 public class Guides {
     private static final Logger log = LoggerFactory.getLogger(Guides.class);
@@ -28,7 +28,7 @@ public class Guides {
     }
 
     private static Guide buildGuide(String title) {
-        String slug = SlugUtil.toSlug(title);
+        String slug = Slugs.toSlug(title);
         String content = Templating.instance().renderTemplate("templates/src/guides/" + slug);
         Guide guide = new Guide(title, slug, content);
         return guide;

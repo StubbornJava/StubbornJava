@@ -1,9 +1,9 @@
-package com.stubbornjava.webapp.post;
+package com.stubbornjava.common;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class SlugUtil {
+public class Slugs {
     // Match any non "word" ([a-zA-Z_0-9]) character
     private static final Pattern pattern = Pattern.compile("\\W+");
 

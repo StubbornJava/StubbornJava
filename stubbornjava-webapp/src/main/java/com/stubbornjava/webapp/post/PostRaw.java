@@ -3,6 +3,7 @@ package com.stubbornjava.webapp.post;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.stubbornjava.common.Slugs;
 import com.stubbornjava.webapp.github.FileReference;
 
 import lombok.Builder;
@@ -24,6 +25,6 @@ public class PostRaw {
     @Singular private final List<FileReference> gitFileReferences;
 
     public String getSlug() {
-        return SlugUtil.toSlug(title);
+        return Slugs.toSlug(title);
     }
 }

@@ -29,6 +29,7 @@ import io.undertow.server.handlers.resource.ClassPathResourceManager;
 import io.undertow.server.handlers.resource.FileResourceManager;
 import io.undertow.server.handlers.resource.ResourceHandler;
 import io.undertow.server.handlers.resource.ResourceManager;
+import io.undertow.util.Headers;
 import okhttp3.HttpUrl;
 
 public class CustomHandlers {
@@ -113,5 +114,25 @@ public class CustomHandlers {
                 throw th;
             }
         });
+    }
+
+    public static HttpHandler loadbalancerHttpToHttps(HttpHandler next) {
+        return (HttpServerExchange exchange) -> {
+            HttpUrl currentUrl = Exchange.urls().currentUrl(exchange);
+            String protocolForward = Exchange.headers().getHeader(exchange, "X-Forwarded-Proto").orElse(null);
+            if (null != protocolForward && protocolForward.equalsIgnoreCase("http")) {
+                log.debug("non https switching to https {}", currentUrl.host());
+                HttpUrl newUrl = currentUrl.newBuilder()
+                   .scheme("https")
+                   .port(443)
+                   .build();
+                exchange.setStatusCode(301);
+                exchange.getResponseHeaders().put(Headers.LOCATION, newUrl.toString());
+                exchange.endExchange();
+                return;
+            }
+
+            next.handleRequest(exchange);
+        };
     }
 }
