@@ -116,7 +116,7 @@ public class CustomHandlers {
         });
     }
 
-    public static HttpHandler loadbalancerHttpToHttps(HttpHandler next) {
+    public static HttpHandler loadBalancerHttpToHttps(HttpHandler next) {
         return (HttpServerExchange exchange) -> {
             HttpUrl currentUrl = Exchange.urls().currentUrl(exchange);
             String protocolForward = Exchange.headers().getHeader(exchange, "X-Forwarded-Proto").orElse(null);
