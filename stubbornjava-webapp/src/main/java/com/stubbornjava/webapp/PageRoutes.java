@@ -66,6 +66,7 @@ public class PageRoutes {
         Exchange.body().sendHtmlTemplate(exchange, "templates/src/pages/home", response);
     }
 
+    // {{start:robots}}
     public static void robots(HttpServerExchange exchange) {
         String host = Exchange.urls().host(exchange).toString();
         List<String> sitemaps = StubbornJavaSitemapGenerator.getSitemap().getIndexNames();
@@ -74,6 +75,7 @@ public class PageRoutes {
                                     .with("host", host);
         Exchange.body().sendText(exchange, Templating.instance().renderTemplate("templates/src/pages/robots.txt", response));
     }
+    // {{end:robots}}
 
     public static void notFound(HttpServerExchange exchange) {
         exchange.setStatusCode(404);
