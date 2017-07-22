@@ -2,6 +2,7 @@ package com.stubbornjava.common.undertow.handlers;
 
 
 import java.io.File;
+import java.nio.file.Paths;
 import java.util.SortedMap;
 import java.util.concurrent.TimeUnit;
 
@@ -57,7 +58,7 @@ public class CustomHandlers {
     public static HttpHandler resource(String prefix) {
         ResourceManager resourceManager = null;
         if (Env.LOCAL == Env.get()) {
-            String path = AssetsConfig.assetsRoot() + "/" + prefix;
+            String path = Paths.get(AssetsConfig.assetsRoot(), prefix).toString();
             log.debug("using local file resource manager {}", path);
             resourceManager = new FileResourceManager(new File(path), 1024 * 1024);
         } else {
