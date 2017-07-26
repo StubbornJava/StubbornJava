@@ -1,0 +1,17 @@
+<p>XML sitemaps are a great way to expose your sites content to search engines especially when you do not have an internal or external linking structure built out yet. XML sitemaps in its simplest form is a directory of every unique url your website contains. This gives Google and other search engines a one stop shop for all pages they should index. XML sitemaps are restricted to 10MB or 50k links per sitemap but this limitation can be circumvented with sitemap indexes which link to multiple sitemaps. Sitemaps can also include additional metadata such as how frequently pages get updated or when was the last time a page was updated. After you design a site with <a href="/best-selling-html-css-themes-and-website-templates">HTML / CSS templates</a> make sure you include sitemaps to index the pages quicker.</p>
+
+<h2 class="anchored">XML Sitemap with Java</h2>
+<p>The <a href="https://github.com/dfabulich/sitemapgen4j">SitemapGen4J</a> library gives a nice object model for generating all urls required to build out a sitemap. Most likely you will need to write code that can generate all possible urls for your website. Another alternative is to build a generic crawler that can build a sitemap for any website. It's not too difficult to build all of the custom urls so we create a method for each page type. We section them all out because we plan on making a sitemap index later.</p>
+{{> templates/src/widgets/code/code-snippet file=sitemapGen section=sitemapGen.sections.sitemapgen}}
+
+<h2 class="anchored">XML Sitemap Index</h2>
+<p>SitemapGen4J was built to write the sitemaps to files on disk, however just want to keep ours in memory since it is fairly small. Unfortunately it looks like exposing the internal object model or additional rendering features was an after thought. There is an overriding for the individual sitemaps but not for the index. We should probably contribute an implementation or create a fully custom sitemap generator. Instead we need to build our own internal mapping. Sitemaps have a limit of 10MB or 50k urls per sitemap. This is why an index is needed.</p>
+{{> templates/src/widgets/code/code-snippet file=inMemorySitemap section=inMemorySitemap.sections.inMemorySitemap}}
+
+<h2 class="anchored">XML Sitemap Routes</h2>
+<p>With an internal representation of the sitemap we now need to expose it in our <a href="/java-libraries/Undertow">Undertow web server</a>. A cool feature of the <a href="/posts/url-routing-with-undertow-embedded-http-server">RoutingHandler</a> is that it allows you to combine two <code>RoutingHandlers</code> with the <code>addAll</code> method.</p>
+{{> templates/src/widgets/code/code-snippet file=routes section=routes.sections.SitemapRoutes}}
+
+<h2 class="anchored">Exposing the Sitemap</h2>
+<p>Ideally you can just expose a single sitemap index file that references all of the others. Since we had to hack around this a bit anohter option is to include all of the sitemap files in our robots.txt.</p>
+{{> templates/src/widgets/code/code-snippet file=robots section=robots.sections.robots}}
