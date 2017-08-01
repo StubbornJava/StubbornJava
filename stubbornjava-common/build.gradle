@@ -33,6 +33,7 @@ dependencies {
     compile libs.failsafe
     compile libs.jsoup
     compile libs.sitemapgen4j
+    compile libs.jbcrypt
     
     testCompile libs.junit
 }
