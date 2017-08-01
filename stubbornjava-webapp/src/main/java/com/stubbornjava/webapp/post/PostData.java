@@ -577,6 +577,24 @@ public class PostData {
           ))
           .build()
     );
+      posts.add(PostRaw.builder()
+          .postId(892208155060669739L)
+          .title("Hashing Passwords in Java with BCrypt")
+          .metaDesc("Java BCrypt example using jbcrypt with auto updating salted hashes. Secure password salted hashing in Java with BCrypt.")
+          .dateCreated(LocalDateTime.parse("2017-08-01T01:15:30"))
+          .dateUpdated(LocalDateTime.parse("2017-08-01T01:15:30"))
+          .javaLibs(Lists.newArrayList(JavaLib.jBCrypt, JavaLib.Logback))
+          .tags(Lists.newArrayList())
+          .gitFileReferences(Lists.newArrayList(
+              FileReference.stubbornJava(
+                 "hashing",
+                 "stubbornjava-common/src/main/java/com/stubbornjava/common/Hashing.java")
+              , FileReference.stubbornJava(
+                  "bcrypt",
+                  "stubbornjava-common/src/main/java/com/stubbornjava/common/UpdatableBCrypt.java")
+          ))
+          .build()
+        );
     }
 
     public static List<PostRaw> getPosts() {
