@@ -23,7 +23,8 @@ ext {
         jsoup             : '1.10.3',      // DOM parsing library
         lombok            : '1.16.16',     // Code gen
         sitemapgen4j      : '1.0.6',       // Sitemap generator for SEO
-
+        jbcrypt           : '0.4',         // BCrypt salted hashing library
+        
         junit             : '4.12',        // Unit Testing
     ]
     libs = [
@@ -66,7 +67,8 @@ ext {
         jsoup                     : "org.jsoup:jsoup:$versions.jsoup",
         lombok                    : "org.projectlombok:lombok:$versions.lombok",
         sitemapgen4j              : "com.github.dfabulich:sitemapgen4j:$versions.sitemapgen4j",
-
+        jbcrypt                   : "org.mindrot:jbcrypt:$versions.jbcrypt",
+        
         junit                     : "junit:junit:$versions.junit",
     ]
 }
