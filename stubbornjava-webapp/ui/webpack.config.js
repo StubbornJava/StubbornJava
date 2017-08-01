@@ -59,7 +59,13 @@ module.exports = {
     plugins: [
         new ExtractTextPlugin('css/[name].css'),
         new webpack.optimize.UglifyJsPlugin({minimize: true}),
-        new OptimizeCssAssetsPlugin(),
+        // This was breaking some java script that expected certain names
+        // Specifically the counter names for line-numbers
+        new OptimizeCssAssetsPlugin({
+          cssProcessorOptions: {
+            reduceIdents: false
+          },
+        }),
         new CopyWebpackPlugin([
             {
                 from: 'src/**/*.hbs',

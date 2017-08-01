@@ -4,14 +4,14 @@
     <div class="container">
       <div class="row">
         <div class="col-md-12 col-lg-9">
-          <h1>{{post.title}}</h1>
+          <h1 class="anchored">{{post.title}}</h1>
           <div class="post-meta">
             <span><i class="fa fa-calendar"></i>{{dateFormat post.dateCreated}}</span>
           </div>
           <div class="post-meta-block">
             <span class="bold">Tags/Libraries:</span> &nbsp;
             {{> templates/src/widgets/posts/tagOrLibs tagOrLibraries=post.tagOrLibraries}}
-            <div class="post-content">{{{post.content}}}</div>
+            <div class="post-content anchored-md">{{{post.content}}}</div>
           </div>
           <div id="disqus_thread"></div>
         </div>
@@ -21,6 +21,6 @@
         </div>
       </div>
     </div>
-    {{> templates/src/widgets/disqus/disqus id=post.slug}}
+    <!-- {{> templates/src/widgets/disqus/disqus id=post.slug}} -->
   {{/inline}}
 {{/ templates/src/common/_base-layout}}
