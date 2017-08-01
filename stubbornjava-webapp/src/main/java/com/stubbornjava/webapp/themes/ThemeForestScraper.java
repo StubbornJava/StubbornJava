@@ -1,7 +1,6 @@
 package com.stubbornjava.webapp.themes;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.jooq.lambda.Seq;
 import org.jsoup.Jsoup;
@@ -10,7 +9,7 @@ import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Strings;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.stubbornjava.common.HttpClient;
 import com.stubbornjava.common.Json;
 import com.stubbornjava.common.Retry;
@@ -36,25 +35,31 @@ public class ThemeForestScraper {
             () -> client.newCall(request).execute()
         );
 
-        Elements elements = Jsoup.parse(html).select(".product-list__column-detail");
-        List<HtmlCssTheme> themes = Seq.seq(elements).map(ThemeForestScraper::themeFromElement).toList();
+        Elements elements = Jsoup.parse(html).select("script");
+        Element script = Seq.seq(elements)
+                            .filter(e -> {
 
-        return themes;
+                                return e.html().startsWith("window.INITIAL_STATE=");
+                            })
+                            .findFirst().orElse(null);
+        String rawJson = script.html().substring("window.INITIAL_STATE=".length());
+        JsonNode node = Json.serializer().nodeFromJson(rawJson);
+        return Seq.seq(node.path("searchPage").path("results").path("matches"))
+                  .map(ThemeForestScraper::themeFromElement)
+                  .toList();
+
+                                        //.map(ThemeForestScraper::themeFromElement).toList();
+
     }
 
-    private static HtmlCssTheme themeFromElement(Element element) {
-        Element titleElement = element.select(".product-list__heading a").first();
-        String title = titleElement.text();
-        String url = HttpUrl.parse(HOST + titleElement.attr("href"))
+    private static HtmlCssTheme themeFromElement(JsonNode node) {
+        String title = node.path("name").textValue();
+        String url = HttpUrl.parse(node.path("url").asText())
                             .newBuilder()
                             .addQueryParameter("ref", affilaiteCode)
                             .build().toString();
-        String imageUrl = element.select(".item-thumbnail__image img").attr("data-preview-url");
-        int downloads = Optional.of(element.select(".product-list__info-sale").text())
-                                .filter(val -> !Strings.isNullOrEmpty(val))
-                                .map(val -> val.replace(" Sales", ""))
-                                .map(Integer::parseInt)
-                                .orElse(0);
+        String imageUrl = node.path("previews").path("landscape_preview").path("landscape_url").asText();
+        int downloads = node.path("number_of_sales").asInt();
         return new HtmlCssTheme(title, url, imageUrl, downloads);
     }
 
