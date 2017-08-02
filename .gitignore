@@ -10,7 +10,7 @@ logback-test.xml
 
 **/*.iml
 .idea/
-config.local.properties
+**/*.local.conf
 
 .gradle/
 gradlew
