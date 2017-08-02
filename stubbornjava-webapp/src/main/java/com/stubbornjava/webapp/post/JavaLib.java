@@ -112,6 +112,12 @@ public enum JavaLib {
         "https://github.com/dfabulich/sitemapgen4j",
         "SitemapGen4j is a library to generate XML sitemaps in Java."
     )
+    , jBCrypt(
+        "jBCrypt",
+        "http://www.mindrot.org/projects/jBCrypt/",
+        null,
+        "jBCrypt is a Java™ implementation of OpenBSD's Blowfish password hashing code, as described in \"A Future-Adaptable Password Scheme\" by Niels Provos and David Mazières."
+    )
     ;
 
     private final String name;
