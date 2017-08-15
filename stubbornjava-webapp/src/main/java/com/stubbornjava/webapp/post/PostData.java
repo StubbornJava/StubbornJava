@@ -597,7 +597,7 @@ public class PostData {
         );
       posts.add(PostRaw.builder()
           .postId(897427147384949867L)
-          .title("Typesafe Config Features and Example Usage.")
+          .title("Typesafe Config Features and Example Usage")
           .metaDesc("Using Typesafe Config fallback handlers, lists, memory helper, duration helper and configuration resolution.")
           .dateCreated(LocalDateTime.parse("2017-08-15T01:15:30"))
           .dateUpdated(LocalDateTime.parse("2017-08-15T01:15:30"))

@@ -1,0 +1,72 @@
+<div class="anchored-md">
+{{#assign "markdown"}}
+Previously we covered [environment aware configurations](/posts/environment-aware-configuration-with-typesafe-config) for building a simple default config with overrides for local development and production. Let's dive a little deeper and show examples with some of the more useful features built into [Typesafe Config](https://github.com/typesafehub/config). Some features include reading config values as lists, configuration resolution, fallback configs, memory helpers, duration helpers and boolean helpers.
+
+## Example Configs
+We will be using the following two configuration files `defaults.conf` and `overrides.conf`.
+### defaults.conf
+{{> templates/src/widgets/code/code-snippet file=defaults section=defaults.content}}
+### overrides.conf
+{{> templates/src/widgets/code/code-snippet file=overrides section=overrides.content}}
+
+## Loading a Typesafe Config from a resource
+Loading a Typesafe Config from a resource on the classpath is a simple one liner. Typesafe Config has several default configuration locations it looks when loading through `ConfigFactory.load();` but we are big fans of making everything explicit. It's preferred if the the configs that were being loaded are listed right there when we call it.
+{{> templates/src/widgets/code/code-snippet file=config section=config.sections.resource}}
+
+## Creating a Typesafe Config with fallbacks
+A great use case for this is environment specific overrides. You can set up one defaults file and have an override for local, dev, prod. This can be seen in our [environment aware configurations](/posts/environment-aware-configuration-with-typesafe-config). In this case we first load our `overrides.conf` then set a fallback of our `defaults.conf` from above. When searching for any property it will first search the original config then traverse down the fallbacks until a value is found. This can be chained many times. We will come back to the `resolve()` method a little later.
+
+{{> templates/src/widgets/code/code-snippet file=config section=config.sections.fallback}}
+
+## Loading a simple String config value
+Probably one of the most common cases for configs is loading simple strings. Let's see what happens when we request `name` and `title` from both configs. Each has an entry for `name` but only the `default.conf` has an entry for `title`.
+
+{{> templates/src/widgets/code/code-snippet file=config section=config.sections.text}}
+<pre class="line-numbers"><code class="language-text">2017-08-15 09:07:14.461 [main] INFO  TypesafeConfigExamples - name: default
+2017-08-15 09:07:14.466 [main] INFO  TypesafeConfigExamples - name: overrides
+2017-08-15 09:07:14.466 [main] INFO  TypesafeConfigExamples - title: Simple Title
+2017-08-15 09:07:14.466 [main] INFO  TypesafeConfigExamples - title: Simple Title</code></pre>
+
+As expected each config returned its own value for `name` but for `title` the fallback was called since `overrides.conf` does not have a config entry.
+
+## Config value resolution
+Sometimes its useful to reuse a config value inside of other config values. This is achieved through configuration resolution by calling the `resolve()` method on a Typesafe Config. An example of this use case could be if all hostnames are scoped per environment ({env}.yourdomain.com) it would be nicer to only override the `env` property and have all other values reference it. Let's use the above `name` and `title` again just for an example. If you look at the example configs we have the following `combined = ${conf.name} ${conf.title}`.
+
+{{> templates/src/widgets/code/code-snippet file=config section=config.sections.resolved}}
+<pre class="line-numbers"><code class="language-text">2017-08-15 09:07:14.466 [main] INFO  TypesafeConfigExamples - combined: overrides Simple Title
+</code></pre>
+
+## Duration helpers
+How often do you open a config and see something like `timeout = 300; // five minutes in seconds 5 * 60`. Typesafe Config is able to parse many durations and allow you to convert it to any other duration using `TimeUnit`. Example `ttl = 5 minutes` from the above configs.
+
+{{> templates/src/widgets/code/code-snippet file=config section=config.sections.durations}}
+<pre class="line-numbers"><code class="language-text">2017-08-15 09:07:14.472 [main] INFO  TypesafeConfigExamples - redis.ttl minutes: 5
+2017-08-15 09:07:14.472 [main] INFO  TypesafeConfigExamples - redis.ttl seconds: 300</code></pre>
+
+## Memory Size Helpers
+Just like durations its not uncommon to see confusing values for bytes. Typesafe Config provides us with the `getMemorySize` method which can read values like `maxChunkSize = 512k` and `maxFileSize = 5G`. Don't forget to call `toBytes()`.
+
+{{> templates/src/widgets/code/code-snippet file=config section=config.sections.memorySize}}
+<pre class="line-numbers"><code class="language-text">2017-08-15 09:07:14.479 [main] INFO  TypesafeConfigExamples - maxChunkSize bytes: 524288
+2017-08-15 09:07:14.479 [main] INFO  TypesafeConfigExamples - maxFileSize bytes: 5368709120</code></pre>
+
+## Handling Lists / Arrays
+A quick example of for a list of config options would be a configurable whitelist / blacklist.
+
+{{> templates/src/widgets/code/code-snippet file=config section=config.sections.whitelist}}
+<pre class="line-numbers"><code class="language-text">2017-08-15 09:07:14.480 [main] INFO  TypesafeConfigExamples - whitelist: [1, 22, 34]
+2017-08-15 09:07:14.480 [main] INFO  TypesafeConfigExamples - whitelist as Strings: [1, 22, 34]</code></pre>
+
+## Boolean Helpers
+This one is a little questionable, do we really need to allow values such as `yes` and `no` instead of `true` or `false`? It's there if you prefer it.
+
+{{> templates/src/widgets/code/code-snippet file=config section=config.sections.booleans}}
+<pre class="line-numbers"><code class="language-text">2017-08-15 09:07:14.480 [main] INFO  TypesafeConfigExamples - yes: true
+2017-08-15 09:07:14.480 [main] INFO  TypesafeConfigExamples - true: true</code></pre>
+
+## Summary
+Typesafe Config has many useful features out of the box for free. There are more than the ones simply listed here. A more advanced one could be shown in our [Database Connection Pooling in Java with HikariCP](/posts/database-connection-pooling-in-java-with-hikaricp) example which uses configuration inheritance to create two similair config objects and only override a few properties.
+
+{{/assign}}
+{{md markdown}}
+</div>
