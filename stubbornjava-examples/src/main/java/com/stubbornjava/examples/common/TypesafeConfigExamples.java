@@ -14,13 +14,15 @@ public class TypesafeConfigExamples {
     private static final Logger log = LoggerFactory.getLogger("TypesafeConfigExamples");
 
     public static void main(String[] args) {
-        // {{start:configs}}
+        // {{start:resource}}
         Config defaultConfig = ConfigFactory.parseResources("defaults.conf");
+        // {{end:resource}}
 
+        // {{start:fallback}}
         Config fallbackConfig = ConfigFactory.parseResources("overrides.conf")
                                              .withFallback(defaultConfig)
                                              .resolve();
-        // {{end:configs}}
+        // {{end:fallback}}
 
         // {{start:text}}
         log.info("name: {}", defaultConfig.getString("conf.name"));

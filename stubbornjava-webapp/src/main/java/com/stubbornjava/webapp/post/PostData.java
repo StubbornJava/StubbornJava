@@ -607,6 +607,12 @@ public class PostData {
               FileReference.stubbornJava(
                  "config",
                  "stubbornjava-examples/src/main/java/com/stubbornjava/examples/common/TypesafeConfigExamples.java")
+              , FileReference.stubbornJava(
+                  "defaults",
+                  "stubbornjava-examples/src/main/resources/defaults.conf")
+              , FileReference.stubbornJava(
+                  "overrides",
+                  "stubbornjava-examples/src/main/resources/overrides.conf")
               ))
           .build()
         );
