@@ -18,6 +18,7 @@ import javax.net.ssl.X509TrustManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import okhttp3.Dispatcher;
 import okhttp3.Interceptor;
 import okhttp3.Interceptor.Chain;
 import okhttp3.JavaNetCookieJar;
@@ -56,12 +57,20 @@ public class HttpClient {
     }
 
     // {{start:client}}
-    private static final OkHttpClient client = new OkHttpClient.Builder()
-        .connectTimeout(2, TimeUnit.SECONDS)
-        .writeTimeout(1, TimeUnit.MINUTES)
-        .readTimeout(1, TimeUnit.MINUTES)
-        .addNetworkInterceptor(loggingInterceptor)
-        .build()
+    private static final OkHttpClient client;
+    static {
+        Dispatcher dispatcher = new Dispatcher();
+        dispatcher.setMaxRequestsPerHost(15);
+
+        client = new OkHttpClient.Builder()
+            .connectTimeout(2, TimeUnit.SECONDS)
+            .writeTimeout(1, TimeUnit.MINUTES)
+            .readTimeout(1, TimeUnit.MINUTES)
+            .dispatcher(dispatcher)
+            .addNetworkInterceptor(loggingInterceptor)
+            .build();
+    }
+
     ;
 
     /*

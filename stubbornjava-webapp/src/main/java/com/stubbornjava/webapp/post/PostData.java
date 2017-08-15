@@ -595,6 +595,21 @@ public class PostData {
           ))
           .build()
         );
+      posts.add(PostRaw.builder()
+          .postId(897427147384949867L)
+          .title("Typesafe Config Features and Example Usage.")
+          .metaDesc("Using Typesafe Config fallback handlers, lists, memory helper, duration helper and configuration resolution.")
+          .dateCreated(LocalDateTime.parse("2017-08-15T01:15:30"))
+          .dateUpdated(LocalDateTime.parse("2017-08-15T01:15:30"))
+          .javaLibs(Lists.newArrayList(JavaLib.TypesafeConfig, JavaLib.Logback))
+          .tags(Lists.newArrayList(Tags.Configuration))
+          .gitFileReferences(Lists.newArrayList(
+              FileReference.stubbornJava(
+                 "config",
+                 "stubbornjava-examples/src/main/java/com/stubbornjava/examples/common/TypesafeConfigExamples.java")
+              ))
+          .build()
+        );
     }
 
     public static List<PostRaw> getPosts() {
