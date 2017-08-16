@@ -11,12 +11,15 @@ Check out [issues](https://github.com/StubbornJava/StubbornJava/issues) to sugge
 # Getting Started
 A [guide for building your own minimal embedded Java web server](https://www.stubbornjava.com/guides/embedded-java-web-server). A simple in order intro to a lot of uses cases for simple web development.
 
+# HTML / CSS Themes and Templates for rapid prototyping
+* [HTML / CSS Themes and Templates](https://www.stubbornjava.com/best-selling-html-css-themes-and-website-templates)
+
 # Libraries
 ## [SLF4J and Logback for Logging](https://www.stubbornjava.com/posts/logging-in-java-with-slf4j-and-logback)
 SLF4J is fairly standard and we chose to use Logback as our underlying implementation.
 
 ## [Typesafe Config For Configuration](https://www.stubbornjava.com/posts/environment-aware-configuration-with-typesafe-config)
-Typesafe config is a clean lightweight immutable configuration library. It offers several formats such as `.properties`, `.yml`, `.json` as well as a human friendly json super set. It handles configuration inheritance, includes, data types (string, boolean, int, long, double, durations, arrays, ...), variabe substitution and many more features.
+Typesafe config is a clean lightweight immutable configuration library. It offers several formats such as `.properties`, `.yml`, `.json` as well as a human friendly json super set. It handles configuration inheritance, includes, data types (string, boolean, int, long, double, durations, arrays, ...), variabe substitution and many more features. [Typesafe Config examples](https://www.stubbornjava.com/posts/typesafe-config-features-and-example-usage)
 
 ## Jackson for JSON
 * [Practical Jackson ObjectMapper Configuration](https://www.stubbornjava.com/posts/practical-jackson-objectmapper-configuration)
@@ -35,6 +38,7 @@ Undertow is a very fast low level non blocking web server written in Java. It is
 * [OkHttp Example REST client](https://www.stubbornjava.com/posts/okhttp-example-rest-client)
 * [OkHttp Logging Interceptors](https://www.stubbornjava.com/posts/okhttpclient-logging-configuration-with-interceptors)
 * [OkHttpClient Trust All SSL Certificates](https://www.stubbornjava.com/posts/okhttpclient-trust-all-ssl-certificates)
+* [Web Scraping with OkHttp and jsoup](https://www.stubbornjava.com/posts/web-scraping-in-java-using-jsoup-and-okhttp)
 
 ## [HikariCP for JDBC Connection Pooling](https://www.stubbornjava.com/posts/database-connection-pooling-in-java-with-hikaricp)
 HikariCP is a very fast lightweight Java connection pool. The API and overall codebase is relatively small (A good thing) and highly optimized. It also does not cut corners for performance like many other Java connection pool implementations.
@@ -44,5 +48,6 @@ HikariCP is a very fast lightweight Java connection pool. The API and overall co
 * [QuickDraw](https://quickdraw.onsightdigitalsolutions.com/about)
 * [DeckHandHQ](https://www.deckhandhq.com)
 
-## Tools
-* [HTML / CSS Themes and Templates](https://www.stubbornjava.com/best-selling-html-css-themes-and-website-templates)
+## Uility Classes / Extras
+* [Password Hashing with BCrypt](https://www.stubbornjava.com/posts/hashing-passwords-in-java-with-bcrypt)
+* [XML sitemaps for SEO](https://www.stubbornjava.com/posts/creating-xml-sitemaps-in-java)
