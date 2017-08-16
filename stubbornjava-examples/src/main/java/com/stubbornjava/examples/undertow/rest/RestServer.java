@@ -16,7 +16,7 @@ import io.undertow.server.RoutingHandler;
 public class RestServer {
 
     // {{start:routes}}
-    private static final HttpHandler ROUTES = new RoutingHandler()
+    public static final RoutingHandler ROUTES = new RoutingHandler()
         .get("/users", timed("listUsers", UserRoutes::listUsers))
         .get("/users/{email}", timed("getUser", UserRoutes::getUser))
         .get("/users/{email}/exception", timed("getUser", UserRoutes::getUserThrowNotFound))
@@ -38,7 +38,7 @@ public class RestServer {
         ROUTES.handleRequest(exchange);
     };
 
-    private static final HttpHandler ROOT = CustomHandlers.exception(EXCEPTION_THROWER)
+    public static final HttpHandler ROOT = CustomHandlers.exception(EXCEPTION_THROWER)
         .addExceptionHandler(ApiException.class, ApiHandlers::handleApiException)
         .addExceptionHandler(Throwable.class, ApiHandlers::serverError)
     ;

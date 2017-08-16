@@ -2,7 +2,6 @@ package com.stubbornjava.examples.undertow.contenttypes;
 
 import com.stubbornjava.common.undertow.SimpleServer;
 
-import io.undertow.server.HttpHandler;
 import io.undertow.server.RoutingHandler;
 
 public class ContentTypesServer {
@@ -17,7 +16,7 @@ public class ContentTypesServer {
      * to be a CSI cyber crimes specialist ripping apart some code for a clue to
      * whatever it does.
      */
-    private static final HttpHandler ROUTES = new RoutingHandler()
+    public static final RoutingHandler ROUTES = new RoutingHandler()
         .get("/helloWorldText", ContentTypeHandlers::helloWorldText)
         .get("/helloWorldHtml", ContentTypeHandlers::helloWorldHtml)
         .get("/helloWorldFileDownload", ContentTypeHandlers::helloWorldFileDownload)
