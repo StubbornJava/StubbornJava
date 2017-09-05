@@ -616,6 +616,21 @@ public class PostData {
               ))
           .build()
         );
+          posts.add(PostRaw.builder()
+              .postId(897667693920523259L)
+              .title("Sharing routes and running multiple Java services in a single JVM with Undertow")
+              .metaDesc("Build out microservice ready codebases but deploy as a monolith. Don't ride the hype train.")
+              .dateCreated(LocalDateTime.parse("2017-09-04T01:15:30"))
+              .dateUpdated(LocalDateTime.parse("2017-09-04T01:15:30"))
+              .javaLibs(Lists.newArrayList(JavaLib.Undertow))
+              .tags(Lists.newArrayList(Tags.Microservice, Tags.Monolith))
+              .gitFileReferences(Lists.newArrayList(
+                  FileReference.stubbornJava(
+                     "services",
+                     "stubbornjava-examples/src/main/java/com/stubbornjava/examples/undertow/MicroMonolith.java")
+                  ))
+              .build()
+            );
     }
 
     public static List<PostRaw> getPosts() {

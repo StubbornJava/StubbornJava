@@ -1,0 +1,104 @@
+<div class="anchored-md">
+{{#assign "markdown"}}
+Microservices has become an industry standard term and everyone is jumping aboard the hype train. There are definitely pros and cons in both building and maintaining microservices, however, they will not be discussed in this article, just remember [you are not Google](https://blog.bradfieldcs.com/you-are-not-google-84912cf44afb). We are going to show some options for sharing endpoints across services as well as run multiple services in a single JVM.
+
+## Services
+Since we are talking about code reuse, let's grab our `RouteHandler`'s from two previous examples to demonstrate. We will be using our [lightweight REST server example](/posts/lightweight-embedded-java-rest-server-without-a-framework#routing-server) as well as the simple [content types example](/posts/handling-content-types-with-undertow#content-type-routes). To start we are going to run each of them as their own stand alone service on their own port.
+
+{{> templates/src/widgets/code/code-snippet file=services section=services.sections.restServer}}
+<pre class="line-numbers"><code class="language-text">curl -X POST "localhost:8080/users" -d '
+{
+  "email": "user1@test.com",
+  "roles": ["USER"]
+}
+';
+{
+  "email" : "user1@test.com",
+  "roles" : [ "USER" ],
+  "dateCreated" : "2017-09-04"
+}
+
+curl -X GET "localhost:8080/users/user1@test.com"
+{
+  "email" : "user1@test.com",
+  "roles" : [ "USER" ],
+  "dateCreated" : "2017-09-04"
+}</code></pre>
+
+{{> templates/src/widgets/code/code-snippet file=services section=services.sections.contentTypesServer}}
+<pre class="line-numbers"><code class="language-text">curl localhost:8081/helloWorldText
+Hello World</code></pre>
+Everything looks good we are in business.
+
+## Combining RoutingHandlers
+A simple use case for shared routes would be ping / healthchecks / server status that all of your services might share. We don't have one prepared so use your imagination with our existing services. With `RoutingHandler.addAll` we can combine both `RoutingHandler`'s into a single `RoutingHandler` and have a server listen to all of the routes on a single port. This allows us to combine common code across routing handlers or even run multiple micro services together under a single port (see next section for some reasons why you might want to do this).
+
+{{> templates/src/widgets/code/code-snippet file=services section=services.sections.combinedServer}}
+<pre class="line-numbers"><code class="language-text">curl -X POST "localhost:8082/users" -d '
+{
+  "email": "user1@test.com",
+  "roles": ["USER"]
+}
+';
+{
+  "email" : "user1@test.com",
+  "roles" : [ "USER" ],
+  "dateCreated" : "2017-09-04"
+}
+
+curl -X GET "localhost:8082/users/user1@test.com"
+{
+  "email" : "user1@test.com",
+  "roles" : [ "USER" ],
+  "dateCreated" : "2017-09-04"
+}</code></pre>
+<pre class="line-numbers"><code class="language-text">curl localhost:8082/helloWorldText
+Hello World</code></pre>
+Once again everything is working but under a single port this time.
+
+## One Server Listening on Multiple Ports
+Testing microservices, especially ones that depend on other services to be up can be quite the pain. You either need to run N services in your IDE / command line or possibly set up something like docker so it is easy to reproduce. With each of these sometimes you need to remember which order to start each service in, yikes lots of fun. If all of our services are Java based and use the same dependencies we have another option. We already showed that the services could be combined into a single `RoutingHandler`. Maybe this doesn't meet your needs and each service is split by port and expects everything to work that way. Undertow has you covered, we can run multiple ports in a single undertow instance.
+
+Note: If you have proper loose coupling both of the servers shouldn't be accessible from the same maven / gradle project so what do we do? Just make a new module that includes both server modules. This is not ideal and not necessarily recommended for prod since there could be some dependency issues. However if the dependencies line up across services (not such a bad thing to enforce especially on smaller teams / code bases) we can make such a shortcut. Whether you run this way in prod to reduce OPS work or only run this mode in development to save time is up to you. If you have a low traffic app running them together might make perfect sense. You would essentially have microservice ready code which can easily be split out into its own service when needed but for now it just shares the same CI pipeline, deploy script, and servers.
+
+{{> templates/src/widgets/code/code-snippet file=services section=services.sections.multiPortServer}}
+<pre class="line-numbers"><code class="language-text">curl -X POST "localhost:8083/users" -d '
+{
+  "email": "user1@test.com",
+  "roles": ["USER"]
+}
+';
+{
+  "email" : "user1@test.com",
+  "roles" : [ "USER" ],
+  "dateCreated" : "2017-09-04"
+}
+
+curl -X GET "localhost:8083/users/user1@test.com"
+{
+  "email" : "user1@test.com",
+  "roles" : [ "USER" ],
+  "dateCreated" : "2017-09-04"
+}</code></pre>
+<pre class="line-numbers"><code class="language-text">curl localhost:8084/helloWorldText
+Hello World</code></pre>
+Surprise, its all working under a single Undertow instance but listening on multiple ports.
+
+
+## MicroserviceService
+Let's take it one step too far just for fun. What if our service itself spun up new services inside the same JVM listening on new ports. Totally useless? probably, possible? Totally!
+
+{{> templates/src/widgets/code/code-snippet file=services section=services.sections.microserviceService}}
+<pre class="line-numbers"><code class="language-text">curl localhost:9000
+curl: (7) Failed to connect to localhost port 9000: Connection refused</code></pre>
+<pre class="line-numbers"><code class="language-text">curl localhost:8085/?port=9000
+server with port 9000 created</code></pre>
+<pre class="line-numbers"><code class="language-text">curl localhost:9000
+web server with port 9000</code></pre>
+
+### Bonus
+All of the above examples are inside of a single main method and all run together in the same JVM. Click any of the github links to view the source.
+
+{{/assign}}
+{{md markdown}}
+</div>

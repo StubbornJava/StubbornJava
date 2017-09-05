@@ -22,6 +22,8 @@ public class Tags {
     public static final Tag Webpack = addTag(new Tag(876957148741446344L, "Webpack"));
     public static final Tag NPM = addTag(new Tag(876957148739332593L, "NPM"));
     public static final Tag SEO = addTag(new Tag(880770018813220697L, "SEO"));
+    public static final Tag Microservice = addTag(new Tag(897667693917183622L, "Microservice"));
+    public static final Tag Monolith = addTag(new Tag(897667693920667427L, "Monolith"));
 
     private static Tag addTag(Tag tag) {
         TAGS.add(tag);
