@@ -31,7 +31,7 @@ Hello World</code></pre>
 Everything looks good we are in business.
 
 ## Combining RoutingHandlers
-A simple use case for shared routes would be ping / healthchecks / server status that all of your services might share. We don't have one prepared so use your imagination with our existing services. With `RoutingHandler.addAll` we can combine both `RoutingHandler`'s into a single `RoutingHandler` and have a server listen to all of the routes on a single port. This allows us to combine common code across routing handlers or even run multiple micro services together under a single port (see next section for some reasons why you might want to do this).
+A simple use case for shared routes would be ping / healthchecks / server status that all of your services might share. We don't have one prepared so use your imagination with our existing services. With `RoutingHandler.addAll` we can combine both `RoutingHandler`'s into a single `RoutingHandler` and have a server listen to all of the routes on a single port. This allows us to combine common code across routing handlers or even run multiple micro services together under a single port (see next section for some reasons why you might want to do this). The biggest concern here would be conflicting routes across `RoutingHandler`'s may overwrite other routes if they share the same verb / path.
 
 {{> templates/src/widgets/code/code-snippet file=services section=services.sections.combinedServer}}
 <pre class="line-numbers"><code class="language-text">curl -X POST "localhost:8082/users" -d '

@@ -51,7 +51,7 @@ public class MicroMonolith {
             Integer port = Exchange.queryParams()
                                    .queryParamAsInteger(exchange, "port")
                                    .orElse(null);
-            if (null != port) {
+            if (port != null) {
                 try {
                     HttpHandler handler = new ConstantStringHandler("web server with port " + port);
                     Undertow.builder()
