@@ -2,6 +2,12 @@
 {{#assign "markdown"}}
 Lazy loading and caching are extremely useful tools in the developer toolbox, like most tools they can be often overused / abused so use them sparingly. Lazy loading can be useful when creating a singleton with any variety of double checked locking, static holder class, enum singleton pattern, ect. Lazy loading is also great for expensive operations that you only need to handle some of the time. Hibernate heavily utilizes lazy loading. Lazy loading can either be request scoped or in a more global scope. Google's Guava provides an extremely convenient way to create lazy loaded values as well as caching individual values with or without an expiration.
 
+## Supplier
+We will be using a very simple "hello world" `Supplier` that will log every time it is called.
+
+{{> templates/src/widgets/code/code-snippet file=suppliers section=suppliers.sections.supplier}}
+
+
 ## Suppliers.memoize
 `Suppliers.memoize` is a simple method that takes a `Supplier` and returns a new `Supplier` that caches the value returned from the supplied `Supplier.get()` method. This convenient helper allows us to turn any `Supplier` into a lazily loaded cached value. The returned `Supplier` is thread-safe backed with double checked locking and volatile fields. It even allows the original `Supplier` to be garbage collected once it has been called. If you are utilizing this pattern for code that is not multi-threaded it might be useful to make a non thread-safe version.
 
