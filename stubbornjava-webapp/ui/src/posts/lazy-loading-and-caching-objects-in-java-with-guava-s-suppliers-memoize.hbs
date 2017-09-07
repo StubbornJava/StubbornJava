@@ -1,6 +1,6 @@
 <div class="anchored-md">
 {{#assign "markdown"}}
-Lazy loading and caching are extremely useful tools in the developer toolbox, like most tools they can be often overused / abused so use them sparingly. Lazy loading can be useful when creating a singleton with any variety of double checked locking, static holder class, enum singleton pattern, ect. Lazy loading is also great for expensive operations that you only need to handle some of the time. Hibernate heavily utilizes lazy loading. Lazy loading can either be request scoped or in a more global scope. Google's Guava provides an extremely convenient way to create lazy loaded values as well as caching individual values with or without an expiration.
+Lazy loading and caching are extremely useful tools in the developer toolbox, like most tools they can be often overused / abused so use them sparingly. Lazy loading can be useful when creating a singleton with any variety of double checked locking, static holder class, enum singleton pattern, etc. Lazy loading is also great for expensive operations that you only need to handle some of the time. Hibernate heavily utilizes lazy loading. Lazy loading can either be request scoped or in a more global scope. Google's Guava provides an extremely convenient way to create lazy loaded values as well as caching individual values with or without an expiration.
 
 ## Supplier
 We will be using a very simple "hello world" `Supplier` that will log every time it is called.
