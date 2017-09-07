@@ -1,0 +1,33 @@
+<div class="anchored-md">
+{{#assign "markdown"}}
+Lazy loading and caching are extremely useful tools in the developer toolbox, like most tools they can be often overused / abused so use them sparingly. Lazy loading can be useful when creating a singleton with any variety of double checked locking, static holder class, enum singleton pattern, ect. Lazy loading is also great for expensive operations that you only need to handle some of the time. Hibernate heavily utilizes lazy loading. Lazy loading can either be request scoped or in a more global scope. Google's Guava provides an extremely convenient way to create lazy loaded values as well as caching individual values with or without an expiration.
+
+## Suppliers.memoize
+`Suppliers.memoize` is a simple method that takes a `Supplier` and returns a new `Supplier` that caches the value returned from the supplied `Supplier.get()` method. This convenient helper allows us to turn any `Supplier` into a lazily loaded cached value. The returned `Supplier` is thread-safe backed with double checked locking and volatile fields. It even allows the original `Supplier` to be garbage collected once it has been called. If you are utilizing this pattern for code that is not multi-threaded it might be useful to make a non thread-safe version.
+
+{{> templates/src/widgets/code/code-snippet file=suppliers section=suppliers.sections.memoize}}
+<pre class="line-numbers"><code class="language-text">2017-09-06 08:50:58.069 [main] INFO  c.s.e.common.SuppliersExamples - Memoized
+2017-09-06 08:50:58.156 [main] INFO  c.s.e.common.SuppliersExamples - supplying
+2017-09-06 08:50:58.157 [main] INFO  c.s.e.common.SuppliersExamples - hello world
+2017-09-06 08:50:58.157 [main] INFO  c.s.e.common.SuppliersExamples - hello world</code></pre>
+
+## Suppliers.memoizeWithExpiration
+`Suppliers.memoizeWithExpiration` is also straight forward. It allows us to memoize a value from a given `Supplier` but have it update anytime we exceed the expiration time. This is a great caching mechanism for any data you know changes infrequently. A minor drawback is if the operation is expensive you may see a hiccup every time the object needs to be reloaded. Often times this is not a major concern. If it is an issue you can investigate refreshing the object asynchronously with a background thread. `Suppliers.memoizeWithExpiration` is used to cache the scraped results for our [HTML / CSS Themes](https://www.stubbornjava.com/best-selling-html-css-themes-and-website-templates) page and can be seen in the [Web scraping in Java with jsoup and OkHttp](/posts/web-scraping-in-java-using-jsoup-and-okhttp#theme-service-layer).
+
+{{> templates/src/widgets/code/code-snippet file=suppliers section=suppliers.sections.memoizeWithExpiration}}
+<pre class="line-numbers"><code class="language-text">2017-09-06 08:50:58.157 [main] INFO  c.s.e.common.SuppliersExamples - Memoized with Expiration
+2017-09-06 08:50:58.171 [main] INFO  c.s.e.common.SuppliersExamples - supplying
+2017-09-06 08:50:58.171 [main] INFO  c.s.e.common.SuppliersExamples - hello world
+2017-09-06 08:50:58.171 [main] INFO  c.s.e.common.SuppliersExamples - hello world
+2017-09-06 08:50:58.171 [main] INFO  c.s.e.common.SuppliersExamples - sleeping
+2017-09-06 08:50:58.272 [main] INFO  c.s.e.common.SuppliersExamples - supplying
+2017-09-06 08:50:58.272 [main] INFO  c.s.e.common.SuppliersExamples - hello world
+2017-09-06 08:50:58.272 [main] INFO  c.s.e.common.SuppliersExamples - hello world
+2017-09-06 08:50:58.272 [main] INFO  c.s.e.common.SuppliersExamples - sleeping
+2017-09-06 08:50:58.377 [main] INFO  c.s.e.common.SuppliersExamples - supplying
+2017-09-06 08:50:58.377 [main] INFO  c.s.e.common.SuppliersExamples - hello world
+2017-09-06 08:50:58.377 [main] INFO  c.s.e.common.SuppliersExamples - hello world</code></pre>
+
+{{/assign}}
+{{md markdown}}
+</div>

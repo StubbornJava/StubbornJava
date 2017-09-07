@@ -24,6 +24,7 @@ public class Tags {
     public static final Tag SEO = addTag(new Tag(880770018813220697L, "SEO"));
     public static final Tag Microservice = addTag(new Tag(897667693917183622L, "Microservice"));
     public static final Tag Monolith = addTag(new Tag(897667693920667427L, "Monolith"));
+    public static final Tag Caching = addTag(new Tag(905411988101360294L, "Caching"));
 
     private static Tag addTag(Tag tag) {
         TAGS.add(tag);

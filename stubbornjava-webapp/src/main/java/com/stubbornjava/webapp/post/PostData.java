@@ -631,6 +631,21 @@ public class PostData {
                   ))
               .build()
             );
+          posts.add(PostRaw.builder()
+              .postId(905411988100628470L)
+              .title("Lazy loading and caching objects in Java with Guava's Suppliers.memoize")
+              .metaDesc("Use Guava's Suppliers.memoize to lazy load and cache objects. Use Suppliers.memoizeWithExpiration to have an expireable cached object in Java.")
+              .dateCreated(LocalDateTime.parse("2017-09-06T01:15:30"))
+              .dateUpdated(LocalDateTime.parse("2017-09-06T01:15:30"))
+              .javaLibs(Lists.newArrayList(JavaLib.Guava))
+              .tags(Lists.newArrayList(Tags.Caching))
+              .gitFileReferences(Lists.newArrayList(
+                  FileReference.stubbornJava(
+                     "suppliers",
+                     "stubbornjava-examples/src/main/java/com/stubbornjava/examples/common/SuppliersExamples.java")
+                  ))
+              .build()
+            );
     }
 
     public static List<PostRaw> getPosts() {
