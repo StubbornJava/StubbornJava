@@ -52,3 +52,5 @@ HikariCP is a very fast lightweight Java connection pool. The API and overall co
 ## Uility Classes / Extras
 * [Password Hashing with BCrypt](https://www.stubbornjava.com/posts/hashing-passwords-in-java-with-bcrypt)
 * [XML sitemaps for SEO](https://www.stubbornjava.com/posts/creating-xml-sitemaps-in-java)
+* [Lazy loading and caching objects in Java with Guava's Suppliers.memoize](https://www.stubbornjava.com/posts/lazy-loading-and-caching-objects-in-java-with-guava-s-suppliers-memoize)
+* [Reading File Resources with Guava](https://www.stubbornjava.com/posts/reading-file-resources-with-guava)
