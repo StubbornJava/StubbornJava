@@ -46,7 +46,7 @@ module.exports = {
             }, {
                 test:    /\.js$/,
                 // Some of the 3rd party libs are in ES6 so we need to run babel
-                //exclude: /(node_modules|bower_components)\/[^s]/, //^shared
+                exclude: /(node_modules|bower_components)\//, //^shared
                 loader:  'babel-loader',
                 query:   {
                     presets: ['es2015']
