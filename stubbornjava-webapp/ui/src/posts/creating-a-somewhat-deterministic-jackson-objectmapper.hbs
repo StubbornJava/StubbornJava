@@ -1,0 +1,37 @@
+<div class="anchored-md">
+{{#assign "s1"}}
+JSON is a pretty versatile data format. It's human readable, doesn't add a lot of unnecessary syntax, has very few rules and a simple format. JSON is pretty dominant as the data transfer protocol for web services, excellent for logging / debugging, and even found its way into many config file formats. Since we already have this great textual representation of our data it's not a far leap to assume you can easily utilize JSON for making a md5 checkusm of an object or possibly easily diffing two objects of the same type. Making this assumption at least in Java may take you down quite the rabbit hole. Expanding from our [practical Jackson ObjectMapper configuration](/posts/practical-jackson-objectmapper-configuration) we will explore how to make it deterministic-ish.
+
+## The Problem
+JSON serialization is not required to be deterministic. If you throw together a few quick unit tests you might not run into any issues, however once you start reading / writing from a data store or using collections with non deterministic iteration order you will begin to have a bad day.
+
+## Sort the keys!
+Your unit tests are passing and everything seems to be working on the surface so your checksum / diffing code is deployed to prod. Next thing you know bugs are coming in, equivalent objects are showing that they are no longer the same based on the checksum / diff. After some debugging you notice that sometimes the fields are serialized in different orders for the same object types. Google to the rescue! In about 30 seconds you find the Jackson feature `ObjectMapper.configure(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY, true)`, problem solved! A few days later the same bug is reported again! You know it was fixed, it can't possibly be the code. After some head scratching and more Google searches you discover that the previous feature does not apply to `Map` keys, enter `ObjectMapper.configure(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS, true)`.
+
+## Sort the values!
+Several days of smooth sailing go by when suddenly your inbox alerts "JIRA BUG - Things randomly not working - REOPENED". Great. All the unit tests are still passing and you verified the recent fixes are still there. After finally reproducing the issue you now have two sublime tabs open with fairly large JSON objects in them. At first glance they look exactly the same but the code says they are not. You flip from tab to tab back and forth at various locations in the files (or if you are smart just run a quick command line diff). THERE IT IS! something is different! Of the 20mb JSON payload the difference comes down to `"items": [1, 2, 3],` and `"items": [1,3,2],`. The POJO you serialized is using a `Set<Integer>` and doesn't always serialize in the same order. Since you already sorted the keys, you decide to just sort the values of all collections! You find a way to hack Jackson to sort all collections which of course was not as easy as it sounded (More on that in the sample code, it involves infinite recursion).
+
+## Sort the unsortable values!
+It's now Friday at 5pm and you are enjoying your first beer of the evening. Ding! "JIRA BUG - Things randomly not working - REOPENED AGAIN". It's not mission critical and sounds like a job for Monday so you finish the beer and run out of the office before anyone notices. Turns out the feature was somewhat useful and was being incorporated to other sections of the application. Up until now the JSON blobs were fairly straight forward, all collections only contained primitive values. You are now looking at a stack trace stating you are trying to sort an object that is not an instance of comparable. `Set<MyPojo>` is now part of the object in question. You decide its better to hack the deterministic object mapper instead of forcing the POJO to be comparable incase it needs a different comparable implementation in the future. Now every POJO that is run through the deterministic `ObjectMapper` needs a custom comparator. Is it ideal? No. But it works.
+
+## Sort the values better!
+Ding! Do you need to guess what bug was just reopened again? Upon even further investigation you find another exception. `String cannot be cast to Integer` What? You start digging through the sorting implementation you hacked together and notice that you take the first element from the collection and if it is `Comparable` you sort the collection. If it is not `Comparable` you use the passed in custom `Comparator` implementations. Everything is still working and all unit tests still passing. You find the suspect code `Set<Object> troll` which has a JSON value of `"troll": [1, 2, "three"]`. Immediate facepalm. Since there was actually a use case for this you need a work around. Lightbulb! You don't actually care about the sort order, just that the order is deterministic. You decide to sort all collections first by class name then by its `Comparator`. Brilliant!
+
+## The sample monstrosity of a semi-determinsitic ObjectMapper
+There may be, and hopefully is a better way to do this but for now.
+
+{{/assign}}
+{{md s1}}
+
+{{> templates/src/widgets/code/code-snippet file=deterministicMapper section=deterministicMapper.sections.mapper}}
+
+{{#assign "s2"}}
+### Out of Scope
+This only covers basic collections and several caveats. If you use Arrays, Iterators or anything else you may need even further customization.
+{{/assign}}
+{{md s2}}
+
+{{> templates/src/widgets/code/code-snippet file=deterministicMapperTest section=deterministicMapperTest.sections.test}}
+
+
+</div>

@@ -646,6 +646,24 @@ public class PostData {
                   ))
               .build()
             );
+          posts.add(PostRaw.builder()
+              .postId(1L)
+              .title("Creating a somewhat deterministic Jackson ObjectMapper")
+              .metaDesc("Example determinsitic ObjectMapper that can be useful for md5 sums or diffing.")
+              .dateCreated(LocalDateTime.parse("2017-09-26T01:15:30"))
+              .dateUpdated(LocalDateTime.parse("2017-09-26T01:15:30"))
+              .javaLibs(Lists.newArrayList(JavaLib.Jackson, JavaLib.jOOλ))
+              .tags(Lists.newArrayList(Tags.JSON))
+              .gitFileReferences(Lists.newArrayList(
+                  FileReference.stubbornJava(
+                     "deterministicMapperTest",
+                     "stubbornjava-common/src/test/java/com/stubbornjava/common/DeterministicObjectMapperTest.java")
+                  , FileReference.stubbornJava(
+                      "deterministicMapper",
+                      "stubbornjava-common/src/main/java/com/stubbornjava/common/DeterministicObjectMapper.java")
+                  ))
+              .build()
+            );
     }
 
     public static List<PostRaw> getPosts() {
