@@ -1,22 +1,20 @@
-<nav class="navbar navbar-inverse fixed-top" role="navigation">
+<nav class="navbar navbar-inverse navbar-expand fixed-top" role="navigation">
   <a class="navbar-brand logo" href="/">
     <span class="align-middle"><img src="/images/PenguinHQ.png" height="40px"> Stubborn<span class="java">Java</span></span>
     {{!-- Add this SVG instead later. I can't get CSS to work --}}
     {{!-- <span>{{> templates/src/widgets/nav/logo }} Stubborn<span class="java">Java</span></span> --}}
   </a>
-  <div class="navbar-collapse filler" id="navbarNavDropdown">
-    <ul class="navbar-nav">
-      <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          Guides
-        </a>
-        <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-          {{#each guideTitles}}
-          <a class="dropdown-item" href="/guides/{{slug}}">{{title}}</a>
-          {{/each}}
-        </div>
-      </li>
-    </ul>
+  <div class="navbar-nav mr-auto">
+    <div class="dropdown">
+      <a class="nav-item nav-link dropdown-toggle" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        Guides
+      </a>
+      <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+        {{#each guideTitles}}
+        <a class="dropdown-item" href="/guides/{{slug}}">{{title}}</a>
+        {{/each}}
+      </div>
+    </div>
   </div>
 
   <!-- Collect the nav links, forms, and other content for toggling -->

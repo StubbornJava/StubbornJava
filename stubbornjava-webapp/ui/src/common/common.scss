@@ -35,16 +35,16 @@ pre {
 }
 
 .success-text {
-  color: $brand-success;
+  color: theme-color("success");
 }
 .info-text {
-  color: $brand-info;
+  color: theme-color("info");
 }
 .warning-text {
-  color: $brand-warning;
+  color: theme-color("warning");
 }
 .danger-text {
-  color: $brand-danger;
+  color: theme-color("danger");
 }
 
 ul.no-bullet {

@@ -1,3 +1,4 @@
+@import '~bootstrap/scss/_functions.scss';
 @import '~bootstrap/scss/_variables.scss';
 
 $theme      : #609cec;
@@ -5,6 +6,9 @@ $theme-dark : darken($theme,10%);
 $white      : #ffffff;
 $black      : #555555;
 $gold       : #ffbb17;
+
+$gray-lighter: $gray-200;
+$gray-light: #636c72;
 
 $title-bg   : lighten($gray-lighter, 5%);
 $title-bg-border: $gray-lighter;

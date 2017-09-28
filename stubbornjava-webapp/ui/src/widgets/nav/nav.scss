@@ -3,20 +3,21 @@
 
 .navbar-inverse {
   background-color: $theme;
-  flex-direction: row;
+  //flex-direction: row;
 
   .navbar-brand {
     padding: 0;
+    color: $white;
   }
 
   .java {
     color: $gold;
   }
 
-  .filler {
-    display: flex;
-    width: 100%;
-  }
+  // .filler {
+  //   display: flex;
+  //   width: 100%;
+  // }
 
   .navbar-nav {
     .nav-link {

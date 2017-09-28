@@ -3,6 +3,7 @@ import AnchorJS from 'anchor-js';
 
 // Bootstrap
 import 'bootstrap/scss/bootstrap.scss';
+import 'bootstrap/js/dist/util.js';
 import 'bootstrap/js/dist/dropdown.js';
 
 // PrismJs for code highlighting
