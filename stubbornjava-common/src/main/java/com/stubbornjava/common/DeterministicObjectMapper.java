@@ -22,7 +22,7 @@ import com.fasterxml.jackson.databind.ser.std.StdDelegatingSerializer;
 import com.fasterxml.jackson.databind.util.Converter;
 import com.fasterxml.jackson.databind.util.StdConverter;
 
-// {{start:DeterministicObjectMapper}}
+// {{start:mapper}}
 public class DeterministicObjectMapper {
 
     private DeterministicObjectMapper() { }
@@ -154,4 +154,4 @@ public class DeterministicObjectMapper {
         }
     }
 }
-// {{end:DeterministicObjectMapper}}
+// {{end:mapper}}

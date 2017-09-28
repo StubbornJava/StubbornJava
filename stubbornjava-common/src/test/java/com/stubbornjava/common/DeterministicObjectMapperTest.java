@@ -19,7 +19,7 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.stubbornjava.common.DeterministicObjectMapper.CustomComparators;
 
-// {{start:DeterministicObjectMapperTest}}
+// {{start:test}}
 public class DeterministicObjectMapperTest {
 
     private ObjectMapper mapper;
@@ -152,4 +152,5 @@ public class DeterministicObjectMapperTest {
         }
     }
 }
-// {{end:DeterministicObjectMapperTest}}
+
+// {{end:test}}
