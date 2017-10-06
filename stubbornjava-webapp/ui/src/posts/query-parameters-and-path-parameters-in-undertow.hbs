@@ -1,7 +1,7 @@
 <p>Query Parameters and Path Parameters are also fairly straight forward in Undertow. There is some slight boilerplate because technically query and path params can have multiple values. We are using some helper functions (<a href="https://github.com/StubbornJava/StubbornJava/blob/master/stubbornjava-undertow/src/main/java/com/stubbornjava/undertow/exchange/PathParams.java">PathParameters.java</a> and <a href="https://github.com/StubbornJava/StubbornJava/blob/master/stubbornjava-undertow/src/main/java/com/stubbornjava/undertow/exchange/QueryParams.java">QueryParameters.java</a></p>
 
 <h2 class="anchored">Path Parameter and Query Parameter RoutingHandler</h2>
-<p>Fairly standard path param syntax. Undertow uses {param} you may be used to :param from other frameworks.</p>
+<p>Fairly standard path param syntax. Undertow uses {param} you may be used to :param from other frameworks. Path parameters are a great way to have human readable urls which can benefit users and SEO. <a href="https://toon.style">ToonStyle</a>'s URL for the page on <a href="https://toon.style/franchise/kung-fu-panda">Kung Fu Panda Merchandise</a> can be constructed by slugifying the franchise name into the following url <code>/franchise/{franchiseName}</code>. </p>
 {{> templates/src/widgets/code/code-snippet file=server section=server.sections.routes}}
 
 <h2 class="anchored">Path Parameter and Query Parameter HttpHandlers</h2>
