@@ -44,14 +44,14 @@ Undertow is a very fast low level non blocking web server written in Java. It is
 ## [HikariCP for JDBC Connection Pooling](https://www.stubbornjava.com/posts/database-connection-pooling-in-java-with-hikaricp)
 HikariCP is a very fast lightweight Java connection pool. The API and overall codebase is relatively small (A good thing) and highly optimized. It also does not cut corners for performance like many other Java connection pool implementations.
 
-## Sites Built With This Method
-* [StubbornJava](https://www.stubbornjava.com/)
-* [QuickDraw](https://quickdraw.onsightdigitalsolutions.com/about)
-* [DeckHandHQ](https://www.deckhandhq.com)
-
 ## Uility Classes / Extras
 * [Password Hashing with BCrypt](https://www.stubbornjava.com/posts/hashing-passwords-in-java-with-bcrypt)
 * [XML sitemaps for SEO](https://www.stubbornjava.com/posts/creating-xml-sitemaps-in-java)
 * [Lazy loading and caching objects in Java with Guava's Suppliers.memoize](https://www.stubbornjava.com/posts/lazy-loading-and-caching-objects-in-java-with-guava-s-suppliers-memoize)
 * [Reading File Resources with Guava](https://www.stubbornjava.com/posts/reading-file-resources-with-guava)
 * [Somewhat Deterministic ObjectMapper](https://www.stubbornjava.com/posts/creating-a-somewhat-deterministic-jackson-objectmapper)
+
+## Sites Built With This Method
+* [StubbornJava](https://www.stubbornjava.com/)
+* [QuickDraw](https://quickdraw.onsightdigitalsolutions.com/about)
+* [DeckHandHQ](https://www.deckhandhq.com)
