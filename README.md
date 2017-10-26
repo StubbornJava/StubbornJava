@@ -26,6 +26,7 @@ Typesafe config is a clean lightweight immutable configuration library. It offer
 
 ## Jackson for JSON
 * [Practical Jackson ObjectMapper Configuration](https://www.stubbornjava.com/posts/practical-jackson-objectmapper-configuration)
+* [Somewhat Deterministic ObjectMapper](https://www.stubbornjava.com/posts/creating-a-somewhat-deterministic-jackson-objectmapper)
 
 ## [Embedded Undertow Web Server](https://www.stubbornjava.com/posts/java-hello-world-embedded-http-server-using-undertow)
 Undertow is a very fast low level non blocking web server written in Java. It is very lightweight and has a very clean API that should be relatively easy for anyone who knows HTTP to pick up. Most custom code will be in the form of an HttpHandler which is a simple interface that can be used in a variety of ways.
@@ -52,7 +53,6 @@ HikariCP is a very fast lightweight Java connection pool. The API and overall co
 * [XML sitemaps for SEO](https://www.stubbornjava.com/posts/creating-xml-sitemaps-in-java)
 * [Lazy loading and caching objects in Java with Guava's Suppliers.memoize](https://www.stubbornjava.com/posts/lazy-loading-and-caching-objects-in-java-with-guava-s-suppliers-memoize)
 * [Reading File Resources with Guava](https://www.stubbornjava.com/posts/reading-file-resources-with-guava)
-* [Somewhat Deterministic ObjectMapper](https://www.stubbornjava.com/posts/creating-a-somewhat-deterministic-jackson-objectmapper)
 
 # Sites Built With This Method
 * [StubbornJava](https://www.stubbornjava.com/)
