@@ -5,6 +5,47 @@ https://www.stubbornjava.com/
 
 This is very much a work in progress and in the early stages. No code will be pushed to maven or supported in any way currently. Feel free to clone and install locally. Currently the website itself is not open souced but that is the eventual plan. The website is built using all the methods described on the site and in the examples. There is no backing blog framework.
 
+## Quick Example (full example [Simple REST server in Undertow](https://www.stubbornjava.com/posts/lightweight-embedded-java-rest-server-without-a-framework))
+
+```java
+public static void createUser(HttpServerExchange exchange) {
+    User userInput = userRequests.user(exchange);
+    User user = userDao.create(userInput.getEmail(), userInput.getRoles());
+    if (null == user) {
+        ApiHandlers.badRequest(exchange, String.format("User %s already exists.", userInput.getEmail()));
+        return;
+    }
+    exchange.setStatusCode(StatusCodes.CREATED);
+    Exchange.body().sendJson(exchange, user);
+}
+
+public static void getUser(HttpServerExchange exchange) {
+    String email = userRequests.email(exchange);
+    User user = userDao.get(email);
+    if (null == user) {
+        ApiHandlers.notFound(exchange, String.format("User %s not found.", email));
+        return;
+    }
+    Exchange.body().sendJson(exchange, user);
+}
+    
+public static final RoutingHandler ROUTES = new RoutingHandler()
+    .get("/users/{email}", timed("getUser", UserRoutes::getUser))
+    .post("/users", timed("createUser", UserRoutes::createUser))
+    .get("/metrics", timed("metrics", CustomHandlers::metrics))
+    .get("/health", timed("health", CustomHandlers::health))
+    .setFallbackHandler(timed("notFound", RoutingHandlers::notFoundHandler));
+
+public static final HttpHandler ROOT = CustomHandlers.exception(EXCEPTION_THROWER)
+    .addExceptionHandler(ApiException.class, ApiHandlers::handleApiException)
+    .addExceptionHandler(Throwable.class, ApiHandlers::serverError);
+
+public static void main(String[] args) {
+    SimpleServer server = SimpleServer.simpleServer(Middleware.common(ROOT));
+    server.start();
+}
+```
+
 # Suggest a Topic
 Check out [issues](https://github.com/StubbornJava/StubbornJava/issues) to suggest topics, bug fixes, errors, or vote on issues. Reactions / comments may influence the order topics are added but no guarantees. Several topics will not be accepted here such as larger frameworks (Spring, Play, Jersey ...) as well as dependency injection. We will be more focused on rolling things yourself and solving practical problems. The coding style here may not fit with the norm but it should be very easy to convert any of the classes to be DI friendly.
 
