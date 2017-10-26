@@ -1,7 +1,7 @@
 @import './skin.scss';
 @import '../widgets/common/depth.scss';
 
-pre[class*=language-] {
+pre[class*=language-]>code {
   border-left-color: $theme;
 
   @extend .z-depth-1;
