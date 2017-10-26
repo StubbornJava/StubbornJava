@@ -1,0 +1,70 @@
+<div class="anchored-md">
+{{#assign "markdown"}}
+Creating a simple and reliable development environment is essential to developer productivity as well as on-boarding new team members. It's far too common for companies to have extremely intricate and fragile development environments. Teams should constantly be improving their local development environments. Small annoyances here and there may not seem like much but remember it impacts every developer using that code base. Let's take a look at one of the most more difficult parts of a developer environment, data stores. We will see how to manage them cross platform utilizing [Docker Compose](https://docs.docker.com/compose/).
+
+## What is Docker?
+According to their website "[Docker](https://www.docker.com/) is an open platform for developers and sysadmins to build, ship, and run distributed applications, whether on laptops, data center VMs, or the cloud." In layman's terms it's basically an image containing a low level OS and all software preconfigured. Essentially a much more lightweight VM image. Multiple docker containers can run in a single OS unlike VMs where each VM runs an OS of its own eating up resources. Containers can be anything along the lines of a database, document store, message broker, search service, an existing application, or anything else you can think of. Our use case is quite simple, we want [MySQL](https://www.mysql.com/) and [Elasticsearch](https://www.elastic.co/) running in our development environment without the need to manually install them. This also gives us flexibility to have different docker compose files for different applications and have no need to worry about naming conflicts or different versions of a dependency across projects.
+
+### Docker Hub
+[Docker Hub](https://hub.docker.com/) is a repository of shared docker containers you can readily import. We will be using it as the base for our MySQL and Elasticsearch containers.
+
+### Docker Compose
+[Docker Compose](https://docs.docker.com/compose/) is a tool for defining and running multi-container Docker applications. Each application we have can have it's own docker compose file for a single command boot up of our development environment. Below is our StubbornJava docker compose file. We will take a look at each container later.
+
+{{> templates/src/widgets/code/code-snippet file=dockerCompose section=dockerCompose.content language=yml}}
+
+## MySQL Container
+We are starting with a base MySQL docker image from Docker Hub and adding some customizations to the `my.cnf` file. Mainly we want to support full unicode using `utf8mb4` see [MySQL 8.0: When to use utf8mb3 over utf8mb4?](http://mysqlserverteam.com/mysql-8-0-when-to-use-utf8mb3-over-utf8mb4/) for more info.
+
+### MySQL Dockerfile
+Starting with our base docker image we then apply our custom `my.cnf` file as well as run a script to help configure things such as creating databases or users.
+
+{{> templates/src/widgets/code/code-snippet file=mysql section=mysql.content}}
+
+### MySQL my.cnf
+Our custom mysql config file.
+
+{{> templates/src/widgets/code/code-snippet file=mysqlcnf section=mysqlcnf.content}}
+
+### MySQL Setup script
+Create databases and users or anything else needed to bootstrap.
+
+{{> templates/src/widgets/code/code-snippet file=mysqlSetup section=mysqlSetup.content}}
+
+## Elasticsearch Contianer
+Since we are just using the default ES container we don't need a separate Dockerfile here. All of the configuration can be passed in directly from the docker compose file. Take note this is a single server set up which is probably ok for local development or small projects but you will probably want a better setup for non local environments.
+
+## Running the dev environment
+Simply change directory to where the docker compose file lives and run `docker-compose up`. You should see logs coming from both containers and you should be up and running.
+
+<pre class="line-numbers"><code class="language-bash">mysql -u root --host=localhost --protocol=tcp -e 'SHOW DATABASES';
++--------------------+
+| Database           |
++--------------------+
+| information_schema |
+| mysql              |
+| performance_schema |
+| stubbornjava       |
+| sys                |
++--------------------+</code></pre>
+You need to specify `protocol=tcp` since mysql is running in a container. You can also share a socket file between the volume and local OS.
+
+<pre class="line-numbers"><code class="language-bash">curl localhost:9200
+{
+  "name" : "stubbornjava",
+  "cluster_name" : "stubbornjava-cluster",
+  "cluster_uuid" : "-2ALiVFtTr6iJZkip8KXzA",
+  "version" : {
+    "number" : "5.6.1",
+    "build_hash" : "667b497",
+    "build_date" : "2017-09-14T19:22:05.189Z",
+    "build_snapshot" : false,
+    "lucene_version" : "6.6.1"
+  },
+  "tagline" : "You Know, for Search"
+}</code></pre>
+
+Both MySQL and Elasticsearch are up and running.
+{{/assign}}
+{{md markdown}}
+</div>

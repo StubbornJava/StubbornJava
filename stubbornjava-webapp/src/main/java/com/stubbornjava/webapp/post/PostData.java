@@ -664,6 +664,30 @@ public class PostData {
                   ))
               .build()
             );
+          posts.add(PostRaw.builder()
+              .postId(1L)
+              .title("Creating a local development environment with Docker Compose")
+              .metaDesc("Setting up MySQL and Elasticsearch locally with Docker Compose to simplify your development environment.")
+              .dateCreated(LocalDateTime.parse("2017-10-24T01:15:30"))
+              .dateUpdated(LocalDateTime.parse("2017-10-24T01:15:30"))
+              .javaLibs(Lists.newArrayList())
+              .tags(Lists.newArrayList(Tags.Docker, Tags.MySQL, Tags.Elasticsearch))
+              .gitFileReferences(Lists.newArrayList(
+                  FileReference.stubbornJava(
+                     "dockerCompose",
+                     "docker/docker-compose.yml")
+                  , FileReference.stubbornJava(
+                     "mysql",
+                     "docker/mysql/Dockerfile")
+                  , FileReference.stubbornJava(
+                     "mysqlcnf",
+                     "docker/mysql/mysqld.cnf")
+                  , FileReference.stubbornJava(
+                     "mysqlSetup",
+                     "docker/mysql/setup.sh")
+                  ))
+              .build()
+            );
     }
 
     public static List<PostRaw> getPosts() {

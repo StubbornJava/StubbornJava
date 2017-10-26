@@ -3,7 +3,7 @@ services:
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:5.6.1
     restart: always
-    container_name: elasticsearch
+    container_name: stubbornjava_elasticsearch
     environment:
       - node.name=stubbornjava
       - cluster.name=stubbornjava-cluster
@@ -22,22 +22,23 @@ services:
         soft: -1
         hard: -1
     volumes:
-      - esdata:/usr/share/elasticsearch/data
+      - stubbornjava_esdata:/usr/share/elasticsearch/data
     ports:
       - 9200:9200
   mysql:
     build: mysql
     restart: always
+    container_name: stubbornjava_mysql
     environment:
       - MYSQL_ROOT_PASSWORD=
       - MYSQL_ALLOW_EMPTY_PASSWORD=yes
     ports:
       - "3306:3306"
     volumes:
-      - mysql:/var/lib/mysql
+      - stubbornjava_mysql:/var/lib/mysql
 
 volumes:
-  esdata:
+  stubbornjava_esdata:
     driver: local
-  mysql:
+  stubbornjava_mysql:
     driver: local

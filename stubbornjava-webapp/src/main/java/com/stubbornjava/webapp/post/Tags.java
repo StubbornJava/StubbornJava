@@ -25,6 +25,9 @@ public class Tags {
     public static final Tag Microservice = addTag(new Tag(897667693917183622L, "Microservice"));
     public static final Tag Monolith = addTag(new Tag(897667693920667427L, "Monolith"));
     public static final Tag Caching = addTag(new Tag(905411988101360294L, "Caching"));
+    public static final Tag Docker = addTag(new Tag(922789907642700121L, "Docker"));
+    public static final Tag MySQL = addTag(new Tag(922794262771082027L, "MySQL"));
+    public static final Tag Elasticsearch = addTag(new Tag(922794262770139008L, "Elasticsearch"));
 
     private static Tag addTag(Tag tag) {
         TAGS.add(tag);
