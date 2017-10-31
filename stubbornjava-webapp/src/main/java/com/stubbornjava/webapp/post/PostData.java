@@ -667,7 +667,7 @@ public class PostData {
           posts.add(PostRaw.builder()
               .postId(1L)
               .title("Creating a local development environment with Docker Compose")
-              .metaDesc("Setting up MySQL and Elasticsearch locally with Docker Compose to simplify your development environment.")
+              .metaDesc("Setting up MySQL and Elasticsearch locally with Docker Compose to simplify your development environment. Docker compose mysql example and docker compose elasticsearch example.")
               .dateCreated(LocalDateTime.parse("2017-10-24T01:15:30"))
               .dateUpdated(LocalDateTime.parse("2017-10-24T01:15:30"))
               .javaLibs(Lists.newArrayList())

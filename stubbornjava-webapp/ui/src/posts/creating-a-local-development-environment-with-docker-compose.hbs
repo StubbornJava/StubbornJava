@@ -13,7 +13,7 @@ According to their website "[Docker](https://www.docker.com/) is an open platfor
 
 {{> templates/src/widgets/code/code-snippet file=dockerCompose section=dockerCompose.content language=yml}}
 
-## MySQL Container
+## Docker Compose MySQL Container Example
 We are starting with a base MySQL docker image from Docker Hub and adding some customizations to the `my.cnf` file. Mainly we want to support full unicode using `utf8mb4` see [MySQL 8.0: When to use utf8mb3 over utf8mb4?](http://mysqlserverteam.com/mysql-8-0-when-to-use-utf8mb3-over-utf8mb4/) for more info.
 
 ### MySQL Dockerfile
@@ -31,7 +31,7 @@ Create databases and users or anything else needed to bootstrap.
 
 {{> templates/src/widgets/code/code-snippet file=mysqlSetup section=mysqlSetup.content}}
 
-## Elasticsearch Contianer
+## Docker Compose Elasticsearch Contianer Example
 Since we are just using the default ES container we don't need a separate Dockerfile here. All of the configuration can be passed in directly from the docker compose file. Take note this is a single server set up which is probably ok for local development or small projects but you will probably want a better setup for non local environments.
 
 ## Running the dev environment
