@@ -34,6 +34,8 @@ dependencies {
     compile libs.jsoup
     compile libs.sitemapgen4j
     compile libs.jbcrypt
+    compile libs.jooq
+    compile libs.jooqCodegen
     
     testCompile libs.junit
 }
