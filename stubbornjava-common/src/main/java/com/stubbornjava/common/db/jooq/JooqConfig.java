@@ -24,17 +24,9 @@ public class JooqConfig {
 
     public static List<ForcedType> defaultForcedTypes() {
         return Lists.newLinkedList(Arrays.asList(new ForcedType[] {
-            forcedType("BOOLEAN", "tinyint", Boolean.class),
-            forcedType("LocalDate", "date", LocalDateConverter.class),
-            forcedType("LocalDateTime", "datetime", LocalDateTimeConverter.class)
+                new ForcedType()
+                    .withName("BOOLEAN")
+                    .withTypes("tinyint")
         }));
-    }
-
-    private static ForcedType forcedType(String name, String types, Class<?> clazz) {
-        ForcedType type = new ForcedType();
-        type.setName(name);
-        type.setTypes(types);
-        type.setConverter(clazz.getName());
-        return type;
     }
 }
