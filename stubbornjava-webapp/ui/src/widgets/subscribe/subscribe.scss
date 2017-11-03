@@ -1,0 +1,21 @@
+@import '~bootstrap/scss/_functions.scss';
+@import '~bootstrap/scss/_mixins.scss';
+@import '~bootstrap/scss/_variables.scss';
+@import '~bootstrap/scss/_buttons.scss';
+@import '~bootstrap/scss/_input-group.scss';
+
+@import '../../common/skin.scss';
+
+.subscribe-btn {
+  @extend .btn;
+  @extend .btn-block;
+  background-color: $theme;
+  color: $white;
+  &:hover {
+    cursor: pointer;
+  }
+}
+
+.subscribe-email {
+  margin-bottom: 5px;
+}

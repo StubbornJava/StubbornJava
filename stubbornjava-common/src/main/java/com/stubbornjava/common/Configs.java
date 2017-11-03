@@ -1,7 +1,9 @@
 package com.stubbornjava.common;
 
 import java.util.List;
+import java.util.Map;
 
+import org.jooq.lambda.Seq;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,6 +30,11 @@ public class Configs {
 
     public static Config properties() {
         return properties;
+    }
+
+    public static Map<String, Object> asMap(Config config) {
+        return Seq.seq(config.entrySet())
+                  .toMap(e -> e.getKey(), e -> e.getValue().unwrapped());
     }
 
     public static class Builder {

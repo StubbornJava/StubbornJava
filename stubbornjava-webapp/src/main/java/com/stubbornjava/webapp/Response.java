@@ -6,6 +6,7 @@ import java.util.Map;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import com.stubbornjava.common.Configs;
 import com.stubbornjava.webapp.guide.GuideTitle;
 import com.stubbornjava.webapp.guide.Guides;
 import com.stubbornjava.webapp.post.Posts;
@@ -23,7 +24,8 @@ public class Response {
     public static Response fromExchange(HttpServerExchange exchange) {
         List<GuideTitle> guideTitles = Guides.findTitles();
         return new Response()
-                    .with("guideTitles", guideTitles);
+                    .with("guideTitles", guideTitles)
+                    .with("emailLists", Configs.asMap(Configs.properties().getConfig("mailchimp.lists")));
     }
 
     @JsonAnyGetter
