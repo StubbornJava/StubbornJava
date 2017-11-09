@@ -1,0 +1,10 @@
+[program:{{app_name}}]
+directory={{app_directory}}
+command={{app_command}}
+user={{app_user}}
+autostart=true
+autorestart=true
+redirect_stderr=True
+stdout_logfile={{app_directory}}/out.log
+stderr_logfile={{app_directory}}/err.log
+environment=USER="{{app_user}}"

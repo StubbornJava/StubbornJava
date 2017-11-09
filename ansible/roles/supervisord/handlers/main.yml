@@ -1,0 +1,8 @@
+---
+- name: restart supervisord
+  service: name=supervisord state=restarted
+
+- name: "supervisorctl restart {{app_name}}"
+  command: "supervisorctl restart {{app_name}}"
+# TODO: Don't always restart supervisord. We can reload configs
+# or even just the app when we deploy new code. Restarting it all is overkill.

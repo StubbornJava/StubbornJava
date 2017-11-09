@@ -1,0 +1,5 @@
+---
+  db:
+    url: "{{_vault['db']['url']}}"
+    user: "{{_vault['db']['user']}}"
+    password: "{{_vault['db']['password']}}"
