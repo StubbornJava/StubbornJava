@@ -3,3 +3,7 @@
     url: "{{_vault['db']['url']}}"
     user: "{{_vault['db']['user']}}"
     password: "{{_vault['db']['password']}}"
+
+  github:
+    client_id: "{{_vault['github']['client_id']}}"
+    client_secret: "{{_vault['github']['client_secret']}}"

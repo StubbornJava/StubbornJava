@@ -1,4 +1,4 @@
-<configuration debug="true"> 
+<configuration> 
 
   <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender"> 
     <!-- encoders are  by default assigned the type
@@ -8,11 +8,14 @@
     </encoder>
   </appender>
 
-  <root level="WARN">
+  <root level="INFO">
     <appender-ref ref="STDOUT" />
   </root>
   
+  <!-- 
+  Careful setting com.stubbornjava.common.Configs to DEBUG since it
+  can log sensitive info like database passwords.
+   -->
   <logger name="com.stubbornjava" level="INFO" />
-  
 
 </configuration>
