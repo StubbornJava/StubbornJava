@@ -30,13 +30,13 @@ public class SimpleServer {
         Undertow undertow = undertowBuilder.build();
         undertow.start();
         /*
-         *  Undertow logs this on its own but we generally set 3rd party
-         *  default logger levels to warn so we log it here. If it wasn't using the
+         *  Undertow logs this on debug but we generally set 3rd party
+         *  default logger levels to info so we log it here. If it wasn't using the
          *  io.undertow context we could turn on just that logger but no big deal.
          */
         undertow.getListenerInfo()
                 .stream()
-                .forEach(listenerInfo -> logger.debug(listenerInfo.toString()));
+                .forEach(listenerInfo -> logger.info(listenerInfo.toString()));
     }
 
     public static SimpleServer simpleServer(HttpHandler handler) {

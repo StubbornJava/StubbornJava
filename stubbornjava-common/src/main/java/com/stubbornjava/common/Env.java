@@ -19,7 +19,7 @@ public enum Env {
     }
 
     // {{start:logger}}
-    private static final Logger logger = LoggerFactory.getLogger(Env.class);
+    private static final Logger log = LoggerFactory.getLogger(Env.class);
     private static final Env currentEnv;
     static {
         String env = "local";
@@ -27,7 +27,7 @@ public enum Env {
             env = Configs.system().getString("env");
         }
         currentEnv = Env.valueOf(env.toUpperCase());
-        logger.debug("Current Env: {}", currentEnv.getName());
+        log.info("Current Env: {}", currentEnv.getName());
     }
 
     public static Env get() {
@@ -35,7 +35,8 @@ public enum Env {
     }
 
     public static void main(String[] args) {
-        Env env = currentEnv.get();
+        Env env = Env.get();
+        log.debug(env.toString());
     }
     // {{end:logger}}
 }

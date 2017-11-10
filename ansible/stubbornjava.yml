@@ -8,6 +8,6 @@
     - {
         role: apps/app_base,
         app_name: stubbornjava,
-        app_command: java8 -Denv=prod -Xmx640m -cp 'stubbornjava-all.jar' com.stubbornjava.webapp.StubbornJavaWebApp,
+        app_command: "java8 -Denv={{env}} -server -Xmx640m -cp 'stubbornjava-all.jar' com.stubbornjava.webapp.StubbornJavaWebApp",
         become: true
       }
