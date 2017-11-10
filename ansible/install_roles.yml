@@ -1,0 +1,4 @@
+# ansible-galaxy install -r install_roles.yml
+
+- src: geerlingguy.java
+  version: 1.7.4

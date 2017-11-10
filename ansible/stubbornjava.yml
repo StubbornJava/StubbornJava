@@ -1,0 +1,13 @@
+# ansible-playbook --vault-password-file .vault_pw.txt -i inventories/production stubbornjava.yml
+---
+- hosts: stubbornjava
+  become: true
+  roles:
+    - { role: common, become: true }
+    - { role: java, become: true }
+    - {
+        role: apps/app_base,
+        app_name: stubbornjava,
+        app_command: java8 -Denv=prod -Xmx640m -cp 'stubbornjava-all.jar' com.stubbornjava.webapp.StubbornJavaWebApp,
+        become: true
+      }

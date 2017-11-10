@@ -1,0 +1,4 @@
+---
+  app_directory: "/apps/{{app_name}}"
+  app_user: "{{app_name}}"
+  app_user_group: "{{app_name}}"

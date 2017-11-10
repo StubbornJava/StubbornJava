@@ -1,0 +1,40 @@
+---
+  - name: Including Supervisord
+    include_role:
+      name: supervisord
+
+  - name: "Creating {{app_user_group}} Group"
+    group:
+      name: "{{app_user_group}}"
+      state: present
+
+  - name: "Creating {{app_user}} User"
+    user:
+      name: "{{app_user}}"
+      group: "{{app_user_group}}"
+
+  - name: "Creating {{app_directory}} Directory"
+    file:
+      path: "{{app_directory}}"
+      state: directory
+      mode: 0755
+      owner: "{{app_user}}"
+      group: "{{app_user_group}}"
+
+  - name: Supervisor stubbornjava script
+    template:
+      src: supervisorapp.conf.j2
+      dest: "/etc/supervisor.d/{{app_name}}.conf"
+    notify: restart supervisord
+
+  # If we start refreshing configs in the app we can
+  # turn off the restart. For now we load configs once
+  # at boot. So restart the app any time it changes.
+  - name: Copying stubbornjava secure.conf
+    template:
+      src: secure.conf.j2
+      dest: "{{app_directory}}/secure.conf"
+      owner: "{{app_user}}"
+      group: "{{app_user_group}}"
+      mode: u=r,g=r,o=
+    notify: restart supervisord

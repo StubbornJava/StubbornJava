@@ -1,0 +1,29 @@
+# ansible-playbook --vault-password-file .vault_pw.txt -i inventories/production deploy.yml
+---
+- hosts: localhost
+  vars:
+    project_directory: ".."
+  tasks:
+    - name: build jar
+      command: "../gradlew -p {{project_directory}} clean shadowJar"
+
+- hosts: stubbornjava
+  vars:
+    app_name: stubbornjava
+  tasks:
+    - name: Copy to server
+      copy:
+        src: ../stubbornjava-webapp/build/libs/stubbornjava-all.jar
+        dest: /apps/stubbornjava
+        owner: stubbornjava
+        group: stubbornjava
+        mode: u=r,g=r,o=
+      # would be nice to get this to work
+      # notify: "supervisorctl restart {{app_name}}"
+      become: true
+    - name: "supervisorctl restart {{app_name}}"
+      command: "supervisorctl restart {{app_name}}"
+  serial:
+    - 1
+    - 5
+    - "25%"

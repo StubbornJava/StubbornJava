@@ -3,5 +3,5 @@
 # Ideally it would keep versioned jars and symlink the current version for easy rollbacks
 # Another option is to use AWS code build / deploy eventually
 cd .. && gradle clean shadowJar &&
-ansible -i ../stubbornjava/ansible/hosts stubbornjava -m copy -a "src=stubbornjava-webapp/build/libs/stubbornjava-all.jar dest=~/" &&
-ansible -i ../stubbornjava/ansible/hosts stubbornjava -m command -a "supervisorctl restart all"
+ansible --vault-password-file ansible/.vault_pw.txt -b -i ansible/inventories/production stubbornjava -m copy -a "src=stubbornjava-webapp/build/libs/stubbornjava-all.jar dest=/apps/stubbornjava owner=stubbornjava group=stubbornjava" &&
+ansible --vault-password-file ansible/.vault_pw.txt -i ansible/inventories/production stubbornjava -m command -a "supervisorctl restart stubbornjava"

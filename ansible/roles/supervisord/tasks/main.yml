@@ -1,0 +1,19 @@
+---
+- name: Supervisor init script
+  copy: src=supervisord dest=/etc/init.d/supervisord mode=0755
+  notify: restart supervisord
+
+- name: Supervisor conf
+  copy: src=supervisord.conf dest=/etc/supervisord.conf
+  notify: restart supervisord
+
+- name: Supervisor conf dir
+  file: path=/etc/supervisor.d/ state=directory
+  notify: restart supervisord
+
+- name: Install supervisord
+  easy_install: name=supervisor
+  notify: restart supervisord
+
+# TODO: Don't always restart supervisord. We can reload configs
+# or even just the app when we deploy new code. Restarting it all is overkill.
