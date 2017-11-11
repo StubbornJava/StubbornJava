@@ -1,4 +1,10 @@
 ---
+  - name: Install Java
+    include_role:
+      name: geerlingguy.java
+      java_packages:
+        - java-1.8.0-openjdk
+
   - name: Including Supervisord
     include_role:
       name: supervisord
@@ -21,7 +27,7 @@
       owner: "{{app_user}}"
       group: "{{app_user_group}}"
 
-  - name: Supervisor stubbornjava script
+  - name: "Copying supervisor {{app_name}}.conf"
     template:
       src: supervisorapp.conf.j2
       dest: "/etc/supervisor.d/{{app_name}}.conf"
