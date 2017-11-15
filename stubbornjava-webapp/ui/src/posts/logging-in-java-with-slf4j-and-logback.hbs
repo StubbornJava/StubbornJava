@@ -58,5 +58,8 @@ java.lang.RuntimeException: What happened?
 	at com.stubbornjava.examples.logback.LogbackExamples.logException(LogbackExamples.java:60)
 	at com.stubbornjava.examples.logback.LogbackExamples.main(LogbackExamples.java:72)</code></pre>
 
+<h3 class="anchored">Third Party Logging</h3>
+One of the biggest benefits of a logging library like SLF4J is that it is widely used across third party apis. Although step through debugging is a great tool it can also be significantly more time consuming than simple debug logging for many use cases. Look at the level of detail you can get from <a href="/posts/okhttpclient-logging-configuration-with-interceptors">OkHttp's Logging</a>.
+
 <h3 class="anchored">Monitoring</h3>
 <p>Often times even with proper logging your application can be spewing errors / exceptions in production and no one will notice for extended periods of time. Utilizing <a href="/posts/monitoring-your-jvm-with-dropwizard-metrics#logging-level-hit-counts">Dropwizard Metrics SLF4J Instrumented Appender</a> you can easiy set up graphs or alerts on warn / error rates.
