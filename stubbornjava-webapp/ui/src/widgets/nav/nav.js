@@ -1,2 +1,2 @@
 import './nav.scss';
-import './PenguinHQ.png';
+import './PenguinHQ_compressed.png';
