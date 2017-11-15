@@ -22,9 +22,11 @@ import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
 import io.undertow.server.handlers.ExceptionHandler;
 import io.undertow.server.handlers.accesslog.AccessLogHandler;
+import io.undertow.server.handlers.cache.DirectBufferCache;
 import io.undertow.server.handlers.encoding.ContentEncodingRepository;
 import io.undertow.server.handlers.encoding.EncodingHandler;
 import io.undertow.server.handlers.encoding.GzipEncodingProvider;
+import io.undertow.server.handlers.resource.CachingResourceManager;
 import io.undertow.server.handlers.resource.ClassPathResourceManager;
 import io.undertow.server.handlers.resource.FileResourceManager;
 import io.undertow.server.handlers.resource.ResourceHandler;
@@ -64,7 +66,12 @@ public class CustomHandlers {
             resourceManager = new FileResourceManager(new File(path), 1024 * 1024);
         } else {
             log.debug("using classpath file resource manager");
-            resourceManager = new ClassPathResourceManager(CustomHandlers.class.getClassLoader(), prefix);
+            ResourceManager classPathManager = new ClassPathResourceManager(CustomHandlers.class.getClassLoader(), prefix);
+            resourceManager =
+                    new CachingResourceManager(100, 65536,
+                                               new DirectBufferCache(1024, 10, 10480),
+                                               classPathManager,
+                                               cacheTime);
         }
         ResourceHandler handler = new ResourceHandler(resourceManager);
         handler.setCacheTime(cacheTime);
