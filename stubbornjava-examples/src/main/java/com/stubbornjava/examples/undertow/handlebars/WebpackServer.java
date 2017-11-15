@@ -2,6 +2,8 @@ package com.stubbornjava.examples.undertow.handlebars;
 
 import static com.stubbornjava.common.undertow.handlers.CustomHandlers.timed;
 
+import java.util.concurrent.TimeUnit;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -82,7 +84,7 @@ public class WebpackServer {
     private static final HttpHandler ROUTES = new RoutingHandler()
         .get("/", timed("home", WebpackServer::home))
         .get("/hello", timed("hello", WebpackServer::hello))
-        .get("/static*", timed("static", CustomHandlers.resource("")))
+        .get("/static*", timed("static", CustomHandlers.resource("", (int)TimeUnit.HOURS.toSeconds(4))))
         .setFallbackHandler(timed("notfound", WebpackServer::notFound))
     ;
 
