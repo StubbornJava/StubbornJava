@@ -51,7 +51,9 @@ public class CustomHandlers {
                       // This 1000 is a priority, not exactly sure what it does.
                       new GzipEncodingProvider(), 1000,
                       // Anything under a content-length of 20 will not be gzipped
-                      Predicates.parse("max-content-size(20)")))
+                      Predicates.truePredicate()
+                      //Predicates.parse("max-content-size(20)") // https://issues.jboss.org/browse/UNDERTOW-1234
+                      ))
                   .setNext(next);
     }
 
