@@ -30,6 +30,7 @@
     "style-loader": "^0.13.1",
     "url-loader": "^0.5.7",
     "webpack": "^2.2.1",
+    "webpack-clean-obsolete-chunks": "^0.3.0",
     "webpack-config": "^7.0.0"
   },
   "scripts": {}

@@ -4,7 +4,6 @@ package com.stubbornjava.common.undertow.handlers;
 import java.io.File;
 import java.nio.file.Paths;
 import java.util.SortedMap;
-import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,7 +56,7 @@ public class CustomHandlers {
                   .setNext(next);
     }
 
-    public static HttpHandler resource(String prefix) {
+    public static HttpHandler resource(String prefix, int cacheTime) {
         ResourceManager resourceManager = null;
         if (Env.LOCAL == Env.get()) {
             String path = Paths.get(AssetsConfig.assetsRoot(), prefix).toString();
@@ -68,7 +67,7 @@ public class CustomHandlers {
             resourceManager = new ClassPathResourceManager(CustomHandlers.class.getClassLoader(), prefix);
         }
         ResourceHandler handler = new ResourceHandler(resourceManager);
-        handler.setCacheTime((int)TimeUnit.HOURS.toSeconds(4));
+        handler.setCacheTime(cacheTime);
         return handler;
     }
 

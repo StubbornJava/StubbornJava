@@ -1,9 +1,11 @@
 var ExtractTextPlugin = require('extract-text-webpack-plugin');
 var CopyWebpackPlugin = require('copy-webpack-plugin');
 var OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
+var CleanObsoleteChunks = require('webpack-clean-obsolete-chunks');
 
 var webpack = require('webpack');
 var path = require('path');
+var fs = require('fs');
 
 module.exports = {
     // The standard entry point and output config
@@ -16,8 +18,8 @@ module.exports = {
     },
     output: {
         path: __dirname + '/assets',
-        filename: 'js/[name].js',
-        chunkFilename: '[id].js',
+        filename: 'js/[name]-[hash].js',
+        chunkFilename: '[id]-[hash].js',
         publicPath: '/assets/'
     },
     module: {
@@ -57,7 +59,8 @@ module.exports = {
 
     // Use the plugin to specify the resulting filename (and add needed behavior to the compiler)
     plugins: [
-        new ExtractTextPlugin('css/[name].css'),
+        new CleanObsoleteChunks({deep: true}),
+        new ExtractTextPlugin('css/[name]-[hash].css'),
         new webpack.optimize.UglifyJsPlugin({minimize: true}),
         // This was breaking some java script that expected certain names
         // Specifically the counter names for line-numbers
@@ -69,7 +72,7 @@ module.exports = {
         new CopyWebpackPlugin([
             {
                 from: 'src/**/*.hbs',
-                to: './templates/'
+                to: './templates/',
             }
         ]),
         new webpack.ProvidePlugin({
@@ -82,7 +85,34 @@ module.exports = {
           Popper: ['popper.js', 'default'],
           Util: "exports-loader?Util!bootstrap/js/dist/util",
           Dropdown: "exports-loader?Dropdown!bootstrap/js/dist/dropdown",
-       })
+       }),
+       // TODO: Fix this copied from https://github.com/webpack/webpack/issues/86#issuecomment-179957661
+       function () {
+            this.plugin("done", function (stats) {
+                var replaceInFile = function (filePath, toReplace, replacement) {
+                    var replacer = function (match) {
+                        console.log('Replacing in %s: %s => %s', filePath, match, replacement);
+                        return replacement
+                    };
+                    var str = fs.readFileSync(filePath, 'utf8');
+                    var out = str.replace(new RegExp(toReplace, 'g'), replacer);
+                    fs.writeFileSync(filePath, out);
+                };
+
+                var hash = stats.hash; // Build's hash, found in `stats` since build lifecycle is done.
+
+                replaceInFile(
+                  path.join(module.exports.output.path, 'templates/src/common/scripts.hbs'),
+                  'common(?:\-.+)?\.js',
+                  'common-' + hash + '.js'
+                );
+                replaceInFile(
+                  path.join(module.exports.output.path, 'templates/src/common/head.hbs'),
+                  'common(?:\-.+)?\.css',
+                  'common-' + hash + '.css'
+                );
+            });
+        }
     ],
 
     devtool: '#sourcemap',

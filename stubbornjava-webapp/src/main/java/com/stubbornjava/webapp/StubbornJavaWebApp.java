@@ -2,6 +2,8 @@ package com.stubbornjava.webapp;
 
 import static com.stubbornjava.common.undertow.handlers.CustomHandlers.timed;
 
+import java.util.concurrent.TimeUnit;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,7 +45,7 @@ public class StubbornJavaWebApp {
         .get("/", timed("getHome", PageRoutes::home))
         .get("/ping", timed("ping", PageRoutes::ping))
 
-        .get("/favicon.ico", timed("favicon", CustomHandlers.resource("images/")))
+        .get("/favicon.ico", timed("favicon", CustomHandlers.resource("images/", (int)TimeUnit.DAYS.toSeconds(30))))
         .get("robots.txt", timed("robots", PageRoutes::robots))
 
         .get("/posts/{slug}", timed("getPost", PostRoutes::getPost))
@@ -67,10 +69,7 @@ public class StubbornJavaWebApp {
     ;
 
     private static final HttpHandler staticRoutes = new PathHandler(basicRoutes)
-        .addPrefixPath("/css", timed("getCss", CustomHandlers.resource("css/")))
-        .addPrefixPath("/js", timed("getJs", CustomHandlers.resource("js/")))
-        .addPrefixPath("/assets/fonts", timed("getJs", CustomHandlers.resource("fonts/")))
-        .addPrefixPath("/images", timed("getImages", CustomHandlers.resource("images/")))
+        .addPrefixPath("/assets", timed("getAssets", CustomHandlers.resource("", (int)TimeUnit.DAYS.toSeconds(30))))
     ;
 
     private static void startServer() {
