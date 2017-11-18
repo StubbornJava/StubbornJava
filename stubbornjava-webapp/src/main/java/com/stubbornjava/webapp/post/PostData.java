@@ -690,7 +690,7 @@ public class PostData {
             );
           posts.add(PostRaw.builder()
               .postId(3L)
-              .title("Installing Java, supervisord and other service dependencies with Ansible")
+              .title("Installing Java, supervisord, and other service dependencies with Ansible")
               .metaDesc("Example using Ansible to install java8, supervisord, users, groups and file structures in a repeatable way. Configuring AWS EC2 instances with Ansible example.")
               .dateCreated(LocalDateTime.parse("2017-11-17T01:15:30"))
               .dateUpdated(LocalDateTime.parse("2017-11-17T01:15:30"))
