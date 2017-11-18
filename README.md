@@ -54,6 +54,7 @@ A [guide for building your own minimal embedded Java web server](https://www.stu
 
 # Dev Tools
 * [Creating a local development environment with Docker Compose](https://www.stubbornjava.com/posts/creating-a-local-development-environment-with-docker-compose) (MySQL, Elasticsearch)
+* [Configuring servers with Ansible](https://www.stubbornjava.com/posts/installing-java-supervisord-and-other-service-dependencies-with-ansible)
 
 # HTML / CSS Themes and Templates for rapid prototyping
 * [HTML / CSS Themes and Templates](https://www.stubbornjava.com/best-selling-html-css-themes-and-website-templates)
