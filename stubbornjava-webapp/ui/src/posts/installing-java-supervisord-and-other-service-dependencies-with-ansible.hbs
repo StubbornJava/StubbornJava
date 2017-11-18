@@ -1,0 +1,144 @@
+<div class="anchored-md">
+{{#assign "md1"}}
+Let's say you spent the past 18 months building your MVP application complete with several microservices, SQL, NoSQL, Kafka, Redis, Elasticsearch, service discovery, and on demand configuration updates. You are the bleeding edge of technology and are prepared to scale to millions of users overnight. Your only problem? everything is running locally and nothing has been set up in AWS. Go hire a dev ops engineer and delay your launch another month or two, good luck.
+
+Let's try that again and rewind 17 months. You decided to go with a single Java monolith app which you build a single [deployable jar with Gradle using the shadowjar plugin](/posts/multi-project-builds-with-gradle-and-fat-jars-with-shadow). Sure, monoliths aren't sexy but they work. Realistically speaking they can scale pretty far, remember when Twitter was still on monoliths with millions of tweets a day? Our goal is to get the app up and running in as little effort as possible but keeping in mind we may want to be able to scale out to more than one server. No we don't need auto scaling just yet! and probably won't for a long while if ever.
+
+Head over to [Amazon Web Services](https://aws.amazon.com/) and spin up a single server. Maybe even a `t2.micro` will be good enough for your use case. It can always be resized later. Next it would be nice to have a way to reliably install all of the dependencies for our app. Enter [Ansible](https://www.ansible.com/), Ansible is a SSH based automation solution for provisioning, configuring, and deploying applications using YAML. Take some time for a brief introduction [getting started with ansible](http://docs.ansible.com/ansible/latest/intro_getting_started.html) so we can dive right in. We will be following the second directory structure from [Ansible best practices](http://docs.ansible.com/ansible/latest/playbooks_best_practices.html).
+
+## Ansible Playbook to configure our EC2 instance with Java and Supervisord
+An Ansible Playbook is often the main entry point to some task / process / configuration. It can contain which hosts specific commands are to be run on and include all of the reusable modules (roles) for the task at hand. We can also provide variables or variable overrides here. Our playbook will include everything our app needs to be running on our newly spun up EC2 instance. This includes the current version of Java and Supervisord which we will use to run and make sure the processes gets restarted if it crashes.
+{{/assign}}
+{{md md1}}
+{{> templates/src/widgets/code/code-snippet file=serverPlaybook section=serverPlaybook.content}}
+
+{{#assign "md2"}}
+### Ansible Hosts
+The hosts property allows us to specify which hosts we want to execute the roles / tasks in this section on. In this case we are choosing our server group `stubbornjava`.
+{{/assign}}
+{{md md2}}
+{{> templates/src/widgets/code/code-snippet file=hosts section=hosts.content}}
+
+{{#assign "md3"}}
+### Ansible custom Java application base role
+The `common` role is pretty trivial and just sets a time zone and enables the EPEL repo so we will skip it. The next role `jvm_app_base` is where most of our configuration happens. We are passing two parameters into our `jvm_app_base` role. Our `app_name` which is just an identifier for our app that will be used throughout the role and `app_command` the actual command we want to run.
+
+#### Java application base variables
+Our base role includes the following variables. As you can see we are reusing the `app_name` passed in from the playbook to define some additional variables.
+{{/assign}}
+{{md md3}}
+{{> templates/src/widgets/code/code-snippet file=appBaseVars section=appBaseVars.content}}
+
+{{#assign "md4"}}
+#### Java application base role
+Roles are one of Ansible primary building blocks. A role can be collections of tasks, variables, templates, files at its core. Our role is fairly generic so we can use it for multiple different Java applications if we want. Like a Playbook roles can also include other roles. We are using a public open source role [geerlingguy.java](https://galaxy.ansible.com/geerlingguy/java/) to install Java for us. We are also including another custom role for Supervisord. Next we will use some built in Ansible modules to create a user and group for our app as well as the directory structure we want. Notice the use of variables cascading down and so far mostly being populated by just our `app_name`. Finally we wrap up with adding our Supervisord config file for this app. This file tells us where to put logs, what command to run and any other Supervisord specific settings we care about. Finally we are copying over our environment specific configuration with all of our secrets using Ansible Vault.
+{{/assign}}
+{{md md4}}
+{{> templates/src/widgets/code/code-snippet file=appBaseTasks section=appBaseTasks.content}}
+
+{{#assign "md8"}}
+As you can see the our config file with secrets is very bare bones. Most of our production config can live in our normal code base. The only thing we want split out is our secrets. We want them stored more securely. Also, we want our configs that change the most frequently to just be part of the build / deploy. Since our secrets change much less frequently it's reasonable to split it out.
+{{/assign}}
+{{md md8}}
+{{> templates/src/widgets/code/code-snippet file=appBaseTemplatesConf section=appBaseTemplatesConf.content}}
+
+
+{{#assign "md5"}}
+#### Supervisord
+In the previous role we mentioned including the Supervisord role as well as setting up the app specific conf file. Here is a quick look at the role with some files excluded, you can view them all [here](https://github.com/StubbornJava/StubbornJava/tree/master/ansible/roles/supervisord). The tasks should be fairly straight forward.
+{{/assign}}
+{{md md5}}
+{{> templates/src/widgets/code/code-snippet file=supervisord section=supervisord.content}}
+{{#assign "md6"}}
+Next we have our Supervisord handlers. Ansible handlers are like tasks but with a very special property. They are triggered by `notify` and only run once each at the end of all tasks. Changing the database passwords, changing supervisor conf, changing JVM properties or any of our roles can trigger a handler with notify. Whether its triggered one or N times it will only run once after all of the tasks have completed. This is to prevent you from accidentally restarting your service N times when updating commands.
+{{/assign}}
+{{md md6}}
+{{> templates/src/widgets/code/code-snippet file=supervisordHandlers section=supervisordHandlers.content}}
+
+{{#assign "md7"}}
+Lastly for Supervisord here is the app specific config file that was referenced above in the jvm app role. Our `app_command` variable all the way from the playbook is what is getting passed here as the executing command.
+{{/assign}}
+{{md md7}}
+{{> templates/src/widgets/code/code-snippet file=appBaseTemplatesSupervisord section=appBaseTemplatesSupervisord.content}}
+
+
+{{#assign "md9"}}
+### Running our Playbook
+All thats left is to run our playbook. By the end of the execution our server should be fully configured and only missing the actual JAR file to execute. We will cover that with a deploy script in another post. If we decide we need some redundancy or larger servers simply update the Ansible hosts file with the new hosts and run the playbook again and all the servers should then be configured. There are even dynamic inventories for cloud infrastructure like AWS where you can target all instances based on their tags. There are also options to stagger the commands across servers so not all of them are updating at once.
+{{/assign}}
+{{md md9}}
+
+<pre class="line-numbers"><code class="language-bash">ansible-playbook --vault-password-file .vault_pw.txt -i inventories/production stubbornjava.yml
+
+PLAY [stubbornjava] ************************************************************
+
+TASK [setup] *******************************************************************
+ok: [54.84.142.75]
+
+TASK [common : EPEL] ***********************************************************
+ok: [54.84.142.75]
+
+TASK [common : New York Time Zone] *********************************************
+ok: [54.84.142.75]
+
+TASK [geerlingguy.java : Include OS-specific variables.] ***********************
+ok: [54.84.142.75]
+
+TASK [geerlingguy.java : Include OS-specific variables for Fedora.] ************
+skipping: [54.84.142.75]
+
+TASK [geerlingguy.java : Include version-specific variables for Ubuntu.] *******
+skipping: [54.84.142.75]
+
+TASK [geerlingguy.java : Define java_packages.] ********************************
+ok: [54.84.142.75]
+
+TASK [geerlingguy.java : include] **********************************************
+included: /usr/local/etc/ansible/roles/geerlingguy.java/tasks/setup-RedHat.yml for 54.84.142.75
+
+TASK [geerlingguy.java : Ensure Java is installed.] ****************************
+ok: [54.84.142.75] => (item=[u'java-1.7.0-openjdk'])
+
+TASK [geerlingguy.java : include] **********************************************
+skipping: [54.84.142.75]
+
+TASK [geerlingguy.java : include] **********************************************
+skipping: [54.84.142.75]
+
+TASK [geerlingguy.java : Set JAVA_HOME if configured.] *************************
+skipping: [54.84.142.75]
+
+TASK [supervisord : Supervisor init script] ************************************
+ok: [54.84.142.75]
+
+TASK [supervisord : Supervisor conf] *******************************************
+ok: [54.84.142.75]
+
+TASK [supervisord : Supervisor conf dir] ***************************************
+ok: [54.84.142.75]
+
+TASK [supervisord : Install supervisord] ***************************************
+ok: [54.84.142.75]
+
+TASK [apps/jvm_app_base : Creating stubbornjava Group] *************************
+ok: [54.84.142.75]
+
+TASK [apps/jvm_app_base : Creating stubbornjava User] **************************
+ok: [54.84.142.75]
+
+TASK [apps/jvm_app_base : Creating /apps/stubbornjava Directory] ***************
+ok: [54.84.142.75]
+
+TASK [apps/jvm_app_base : Copying supervisor stubbornjava.conf] ****************
+changed: [54.84.142.75]
+
+TASK [apps/jvm_app_base : Copying stubbornjava secure.conf] ********************
+ok: [54.84.142.75]
+
+RUNNING HANDLER [supervisord : restart supervisord] ****************************
+changed: [54.84.142.75]
+
+PLAY RECAP *********************************************************************
+54.84.142.75               : ok=17   changed=2    unreachable=0    failed=0</code></pre>
+
+</div>

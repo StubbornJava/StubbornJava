@@ -53,7 +53,7 @@ public class CustomHandlers {
                       new GzipEncodingProvider(), 1000,
                       // Anything under a content-length of 20 will not be gzipped
                       Predicates.truePredicate()
-                      //Predicates.parse("max-content-size(20)") // https://issues.jboss.org/browse/UNDERTOW-1234
+                      //Predicates.maxContentSize(20) // https://issues.jboss.org/browse/UNDERTOW-1234
                       ))
                   .setNext(next);
     }
