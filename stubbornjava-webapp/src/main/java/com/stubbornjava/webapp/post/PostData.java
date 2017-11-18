@@ -665,7 +665,7 @@ public class PostData {
               .build()
             );
           posts.add(PostRaw.builder()
-              .postId(1L)
+              .postId(2L)
               .title("Creating a local development environment with Docker Compose")
               .metaDesc("Setting up MySQL and Elasticsearch locally with Docker Compose to simplify your development environment. Docker compose mysql example and docker compose elasticsearch example.")
               .dateCreated(LocalDateTime.parse("2017-10-24T01:15:30"))
@@ -689,7 +689,7 @@ public class PostData {
               .build()
             );
           posts.add(PostRaw.builder()
-              .postId(1L)
+              .postId(3L)
               .title("Installing Java, supervisord and other service dependencies with Ansible")
               .metaDesc("Example using Ansible to install java8, supervisord, users, groups and file structures in a repeatable way. Configuring AWS EC2 instances with Ansible example.")
               .dateCreated(LocalDateTime.parse("2017-11-17T01:15:30"))
