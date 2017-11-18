@@ -1,46 +1,46 @@
 ---
-  - name: Install Java
-    include_role:
-      name: geerlingguy.java
-      java_packages:
-        - java-1.8.0-openjdk
+- name: Install Java
+  include_role:
+    name: geerlingguy.java
+    java_packages:
+      - java-1.8.0-openjdk
 
-  - name: Including Supervisord
-    include_role:
-      name: supervisord
+- name: Including Supervisord
+  include_role:
+    name: supervisord
 
-  - name: "Creating {{app_user_group}} Group"
-    group:
-      name: "{{app_user_group}}"
-      state: present
+- name: "Creating {{app_user_group}} Group"
+  group:
+    name: "{{app_user_group}}"
+    state: present
 
-  - name: "Creating {{app_user}} User"
-    user:
-      name: "{{app_user}}"
-      group: "{{app_user_group}}"
+- name: "Creating {{app_user}} User"
+  user:
+    name: "{{app_user}}"
+    group: "{{app_user_group}}"
 
-  - name: "Creating {{app_directory}} Directory"
-    file:
-      path: "{{app_directory}}"
-      state: directory
-      mode: 0755
-      owner: "{{app_user}}"
-      group: "{{app_user_group}}"
+- name: "Creating {{app_directory}} Directory"
+  file:
+    path: "{{app_directory}}"
+    state: directory
+    mode: 0755
+    owner: "{{app_user}}"
+    group: "{{app_user_group}}"
 
-  - name: "Copying supervisor {{app_name}}.conf"
-    template:
-      src: supervisorapp.conf.j2
-      dest: "/etc/supervisor.d/{{app_name}}.conf"
-    notify: restart supervisord
+- name: "Copying supervisor {{app_name}}.conf"
+  template:
+    src: supervisorapp.conf.j2
+    dest: "/etc/supervisor.d/{{app_name}}.conf"
+  notify: restart supervisord
 
-  # If we start refreshing configs in the app we can
-  # turn off the restart. For now we load configs once
-  # at boot. So restart the app any time it changes.
-  - name: Copying stubbornjava secure.conf
-    template:
-      src: secure.conf.j2
-      dest: "{{app_directory}}/secure.conf"
-      owner: "{{app_user}}"
-      group: "{{app_user_group}}"
-      mode: u=r,g=r,o=
-    notify: restart supervisord
+# If we start refreshing configs in the app we can
+# turn off the restart. For now we load configs once
+# at boot. So restart the app any time it changes.
+- name: Copying stubbornjava secure.conf
+  template:
+    src: secure.conf.j2
+    dest: "{{app_directory}}/secure.conf"
+    owner: "{{app_user}}"
+    group: "{{app_user_group}}"
+    mode: u=r,g=r,o=
+  notify: restart supervisord

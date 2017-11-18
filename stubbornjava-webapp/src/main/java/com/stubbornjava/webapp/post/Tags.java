@@ -28,6 +28,8 @@ public class Tags {
     public static final Tag Docker = addTag(new Tag(922789907642700121L, "Docker"));
     public static final Tag MySQL = addTag(new Tag(922794262771082027L, "MySQL"));
     public static final Tag Elasticsearch = addTag(new Tag(922794262770139008L, "Elasticsearch"));
+    public static final Tag Ansible = addTag(new Tag(922794262770139008L, "Ansible"));
+    public static final Tag Supervisord = addTag(new Tag(922794262770139008L, "Supervisord"));
 
     private static Tag addTag(Tag tag) {
         TAGS.add(tag);

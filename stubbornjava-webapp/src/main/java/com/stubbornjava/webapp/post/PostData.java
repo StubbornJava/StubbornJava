@@ -688,6 +688,42 @@ public class PostData {
                   ))
               .build()
             );
+          posts.add(PostRaw.builder()
+              .postId(1L)
+              .title("Installing Java, supervisord and other service dependencies with Ansible")
+              .metaDesc("Example using Ansible to install java8, supervisord, users, groups and file structures in a repeatable way. Configuring AWS EC2 instances with Ansible example.")
+              .dateCreated(LocalDateTime.parse("2017-11-11T01:15:30"))
+              .dateUpdated(LocalDateTime.parse("2017-11-11T01:15:30"))
+              .javaLibs(Lists.newArrayList())
+              .tags(Lists.newArrayList(Tags.Ansible, Tags.Supervisord))
+              .gitFileReferences(Lists.newArrayList(
+                  FileReference.stubbornJava(
+                      "serverPlaybook",
+                      "ansible/stubbornjava.yml")
+                  , FileReference.stubbornJava(
+                      "hosts",
+                      "ansible/inventories/production/hosts")
+                  , FileReference.stubbornJava(
+                      "appBaseTasks",
+                      "ansible/roles/apps/jvm_app_base/tasks/main.yml")
+                  , FileReference.stubbornJava(
+                      "appBaseVars",
+                      "ansible/roles/apps/jvm_app_base/vars/main.yml")
+                  , FileReference.stubbornJava(
+                      "appBaseTemplatesSupervisord",
+                      "ansible/roles/apps/jvm_app_base/templates/supervisorapp.conf.j2")
+                  , FileReference.stubbornJava(
+                      "appBaseTemplatesConf",
+                      "ansible/roles/apps/jvm_app_base/templates/secure.conf.j2")
+                  , FileReference.stubbornJava(
+                      "supervisord",
+                      "ansible/roles/supervisord/tasks/main.yml")
+                  , FileReference.stubbornJava(
+                      "supervisordHandlers",
+                      "ansible/roles/supervisord/handlers/main.yml")
+                  ))
+              .build()
+            );
     }
 
     public static List<PostRaw> getPosts() {

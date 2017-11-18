@@ -4,8 +4,6 @@
   become: true
   roles:
     - role: common
-      become: true
     - role: apps/jvm_app_base
       app_name: stubbornjava
       app_command: "java8 -Denv={{env}} -Xmx640m -cp 'stubbornjava-all.jar' com.stubbornjava.webapp.StubbornJavaWebApp"
-      become: true
