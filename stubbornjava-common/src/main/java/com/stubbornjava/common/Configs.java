@@ -30,6 +30,11 @@ public class Configs {
         return properties;
     }
 
+    // This should return the current executing user path
+    public static String getExecutionDirectory() {
+        return system.getString("user.dir");
+    }
+
     public static Map<String, Object> asMap(Config config) {
         return Seq.seq(config.entrySet())
                   .toMap(e -> e.getKey(), e -> e.getValue().unwrapped());
@@ -66,14 +71,16 @@ public class Configs {
         }
 
         public Builder withSecureConf() {
-            return withOptionalFile("./secure.conf");
+            return withOptionalFile(getExecutionDirectory() + "/secure.conf");
         }
 
         public Config build() {
             // Resolve substitutions.
             conf = conf.resolve();
-            log.debug("Logging properties. Make sure sensitive data such as passwords or secrets are not logged!");
-            log.debug(conf.root().render(ConfigRenderOptions.concise().setFormatted(true)));
+            if (log.isDebugEnabled()) {
+                log.debug("Logging properties. Make sure sensitive data such as passwords or secrets are not logged!");
+                log.debug(conf.root().render(ConfigRenderOptions.concise().setFormatted(true)));
+            }
             return conf;
         }
 
