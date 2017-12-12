@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.sql.DataSource;
 
+import org.jooq.Configuration;
 import org.jooq.SQLDialect;
 import org.jooq.impl.DataSourceConnectionProvider;
 import org.jooq.impl.DefaultConfiguration;
@@ -14,11 +15,14 @@ import com.google.common.collect.Lists;
 
 public class JooqConfig {
 
-    public static DefaultConfiguration defaultConfigFromDataSource(DataSource ds) {
+    public static Configuration defaultConfigFromDataSource(DataSource ds) {
         DataSourceConnectionProvider dcp = new DataSourceConnectionProvider(ds);
-        DefaultConfiguration jooqConfig = new DefaultConfiguration();
+        Configuration jooqConfig = new DefaultConfiguration();
         jooqConfig.set(SQLDialect.MYSQL);
         jooqConfig.set(dcp);
+        //jooqConfig.set(new ThreadLocalTransactionProvider(dcp));
+        jooqConfig.settings()
+                  .withExecuteWithOptimisticLockingExcludeUnversioned(true);
         return jooqConfig;
     }
 
