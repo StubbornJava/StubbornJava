@@ -28,7 +28,7 @@ public class ConnectionPools {
             return dataSource;
         }
     }
-    public static HikariDataSource getTransactionalDataSource() {
+    private static HikariDataSource getTransactionalDataSource() {
         return Transactional.INSTANCE.getDataSource();
     }
 
@@ -43,7 +43,7 @@ public class ConnectionPools {
         }
     }
 
-    public static HikariDataSource getProcessingDataSource() {
+    private static HikariDataSource getProcessingDataSource() {
         return Processing.INSTANCE.getDataSource();
     }
 
