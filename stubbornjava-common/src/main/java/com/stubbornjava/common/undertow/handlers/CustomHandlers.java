@@ -14,6 +14,13 @@ import com.stubbornjava.common.Env;
 import com.stubbornjava.common.HealthChecks;
 import com.stubbornjava.common.Metrics;
 import com.stubbornjava.common.undertow.Exchange;
+import com.stubbornjava.undertow.handlers.MiddlewareBuilder;
+import com.stubbornjava.undertow.handlers.ReferrerPolicyHandlers;
+import com.stubbornjava.undertow.handlers.ReferrerPolicyHandlers.ReferrerPolicy;
+import com.stubbornjava.undertow.handlers.StrictTransportSecurityHandlers;
+import com.stubbornjava.undertow.handlers.XContentTypeOptionsHandler;
+import com.stubbornjava.undertow.handlers.XFrameOptionsHandlers;
+import com.stubbornjava.undertow.handlers.XXssProtectionHandlers;
 import com.stubbornjava.undertow.handlers.accesslog.Slf4jAccessLogReceiver;
 
 import io.undertow.Handlers;
@@ -143,5 +150,20 @@ public class CustomHandlers {
 
             next.handleRequest(exchange);
         };
+    }
+
+    public static HttpHandler securityHeaders(HttpHandler next, ReferrerPolicy policy) {
+        MiddlewareBuilder security = MiddlewareBuilder
+            .begin(XFrameOptionsHandlers::deny)
+            .next(XXssProtectionHandlers::enableAndBlock)
+            .next(XContentTypeOptionsHandler::nosniff)
+            .next(handler -> ReferrerPolicyHandlers.policy(handler, policy));
+
+        // TODO: Only add HSTS if we are not local. We should probably
+        // use a self signed cert locally for a better test env
+        if (Env.LOCAL != Env.get()) {
+            security = security.next(handler -> StrictTransportSecurityHandlers.hstsIncludeSubdomains(handler, 31536000L));
+        }
+        return security.complete(next);
     }
 }
