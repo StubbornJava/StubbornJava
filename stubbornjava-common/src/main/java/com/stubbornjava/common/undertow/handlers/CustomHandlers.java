@@ -157,7 +157,7 @@ public class CustomHandlers {
             .begin(XFrameOptionsHandlers::deny)
             .next(XXssProtectionHandlers::enableAndBlock)
             .next(XContentTypeOptionsHandler::nosniff)
-            .next(handler -> ReferrerPolicyHandlers.policy(next, policy));
+            .next(handler -> ReferrerPolicyHandlers.policy(handler, policy));
 
         // TODO: Only add HSTS if we are not local. We should probably
         // use a self signed cert locally for a better test env
