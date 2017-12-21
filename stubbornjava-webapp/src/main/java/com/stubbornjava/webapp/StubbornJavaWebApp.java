@@ -11,6 +11,7 @@ import com.stubbornjava.common.seo.SitemapRoutes;
 import com.stubbornjava.common.undertow.SimpleServer;
 import com.stubbornjava.common.undertow.handlers.CustomHandlers;
 import com.stubbornjava.undertow.handlers.MiddlewareBuilder;
+import com.stubbornjava.undertow.handlers.ReferrerPolicyHandlers.ReferrerPolicy;
 import com.stubbornjava.webapp.guide.GuideRoutes;
 import com.stubbornjava.webapp.post.JavaLibRoutes;
 import com.stubbornjava.webapp.post.PostRoutes;
@@ -30,14 +31,15 @@ public class StubbornJavaWebApp {
            .addExceptionHandler(Throwable.class, PageRoutes::error);
     }
 
-    private static HttpHandler wrapWithMiddleware(HttpHandler handler) {
+    private static HttpHandler wrapWithMiddleware(HttpHandler next) {
         return MiddlewareBuilder.begin(PageRoutes::redirector)
-                                .next(BlockingHandler::new)
+                                .next(handler -> CustomHandlers.securityHeaders(handler, ReferrerPolicy.STRICT_ORIGIN_WHEN_CROSS_ORIGIN))
                                 .next(CustomHandlers::gzip)
+                                .next(BlockingHandler::new)
                                 .next(ex -> CustomHandlers.accessLog(ex, logger))
                                 .next(CustomHandlers::statusCodeMetrics)
                                 .next(StubbornJavaWebApp::exceptionHandler)
-                                .complete(handler);
+                                .complete(next);
     }
 
     // These routes do not require any authentication
