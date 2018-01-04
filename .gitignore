@@ -21,3 +21,6 @@ gradlew.bat
 
 .vault_pw.txt
 **.retry
+
+terraform.tfstate*
+.terraform/
