@@ -6,8 +6,5 @@
 - src: geerlingguy.jenkins
   version: 3.2.1
 
-- src: savoirfairelinux.nexus3-oss
-  version: v1.4
-
 - src: jdauphant.nginx
   version: v2.12.3
