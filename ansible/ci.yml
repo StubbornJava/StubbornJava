@@ -1,0 +1,17 @@
+# Run with ANSIBLE_ROLES_PATH=$ANSIBLE_ROLES_PATH:ansible/galaxy_roles ansible-playbook -i ansible/hosts ansible/ci.yml
+---
+- hosts: tag_Role_ci
+  become: true
+  vars:
+    java_home: "/usr/lib/jvm/jre-1.8.0-openjdk.x86_64"
+    java_packages:
+      - java-1.8.0-openjdk
+    nginx_sites:
+     default:
+         - listen 80
+         - server_name _
+         - return 301 https://jenkins.stubbornjava.com$request_uri
+  roles:
+    - galaxy_roles/geerlingguy.java
+    - galaxy_roles/geerlingguy.jenkins
+    - galaxy_roles/jdauphant.nginx
