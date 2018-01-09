@@ -30,7 +30,6 @@ public class ContentSecurityPolicyHandler {
     // https://scotthelme.co.uk/content-security-policy-an-introduction/#whatcanweprotect
     public static class Builder {
         private final Map<String, String> policyMap;
-        private HttpHandler delegate;
 
         public Builder() {
             this.policyMap = new HashMap<>();
