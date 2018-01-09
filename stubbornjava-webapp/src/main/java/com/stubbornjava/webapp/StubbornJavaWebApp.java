@@ -10,6 +10,8 @@ import org.slf4j.LoggerFactory;
 import com.stubbornjava.common.seo.SitemapRoutes;
 import com.stubbornjava.common.undertow.SimpleServer;
 import com.stubbornjava.common.undertow.handlers.CustomHandlers;
+import com.stubbornjava.undertow.handlers.ContentSecurityPolicyHandler;
+import com.stubbornjava.undertow.handlers.ContentSecurityPolicyHandler.ContentSecurityPolicy;
 import com.stubbornjava.undertow.handlers.MiddlewareBuilder;
 import com.stubbornjava.undertow.handlers.ReferrerPolicyHandlers.ReferrerPolicy;
 import com.stubbornjava.webapp.guide.GuideRoutes;
@@ -31,9 +33,20 @@ public class StubbornJavaWebApp {
            .addExceptionHandler(Throwable.class, PageRoutes::error);
     }
 
+    private static HttpHandler contentSecurityPolicy(HttpHandler delegate) {
+        return new ContentSecurityPolicyHandler.Builder()
+                .defaultSrc(ContentSecurityPolicy.SELF)
+                .scriptSrc("'self'", "https://www.google-analytics.com")
+                .imgSrc("'self'", "https://www.google-analytics.com")
+                .connectSrc("'self'", "https://www.google-analytics.com")
+                .styleSrc(ContentSecurityPolicy.SELF.getValue(), ContentSecurityPolicy.UNSAFE_INLINE.getValue())
+                .build(delegate);
+    }
+
     private static HttpHandler wrapWithMiddleware(HttpHandler next) {
         return MiddlewareBuilder.begin(PageRoutes::redirector)
                                 .next(handler -> CustomHandlers.securityHeaders(handler, ReferrerPolicy.STRICT_ORIGIN_WHEN_CROSS_ORIGIN))
+                                .next(StubbornJavaWebApp::contentSecurityPolicy)
                                 .next(CustomHandlers::gzip)
                                 .next(BlockingHandler::new)
                                 .next(ex -> CustomHandlers.accessLog(ex, logger))
