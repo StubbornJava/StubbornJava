@@ -1,5 +1,7 @@
 import $ from 'jquery';
 
+import './google-analytics.js';
+
 import './3rdparty.js';
 
 import './common.scss';
