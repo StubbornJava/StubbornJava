@@ -36,9 +36,11 @@ public class StubbornJavaWebApp {
     private static HttpHandler contentSecurityPolicy(HttpHandler delegate) {
         return new ContentSecurityPolicyHandler.Builder()
                 .defaultSrc(ContentSecurityPolicy.SELF)
-                .scriptSrc("'self'", "https://www.google-analytics.com")
-                .imgSrc("'self'", "https://www.google-analytics.com")
-                .connectSrc("'self'", "https://www.google-analytics.com")
+                .scriptSrc(ContentSecurityPolicy.SELF.getValue(), "https://www.google-analytics.com")
+                // Drop the wildcard when we host our own images.
+                .imgSrc(ContentSecurityPolicy.SELF.getValue(), "https://www.google-analytics.com", "*")
+                .connectSrc(ContentSecurityPolicy.SELF.getValue(), "https://www.google-analytics.com")
+                .fontSrc(ContentSecurityPolicy.SELF.getValue(), "data:")
                 .styleSrc(ContentSecurityPolicy.SELF.getValue(), ContentSecurityPolicy.UNSAFE_INLINE.getValue())
                 .build(delegate);
     }
