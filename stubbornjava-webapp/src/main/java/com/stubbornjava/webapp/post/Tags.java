@@ -30,6 +30,7 @@ public class Tags {
     public static final Tag Elasticsearch = addTag(new Tag(922794262770139008L, "Elasticsearch"));
     public static final Tag Ansible = addTag(new Tag(922794262770139008L, "Ansible"));
     public static final Tag Supervisord = addTag(new Tag(922794262770139008L, "Supervisord"));
+    public static final Tag Security = addTag(new Tag(953801444178362856L, "Security"));
 
     private static Tag addTag(Tag tag) {
         TAGS.add(tag);

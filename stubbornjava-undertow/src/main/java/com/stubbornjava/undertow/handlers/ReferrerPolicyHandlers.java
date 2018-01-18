@@ -3,6 +3,7 @@ package com.stubbornjava.undertow.handlers;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.handlers.SetHeaderHandler;
 
+// {{start:handler}}
 public class ReferrerPolicyHandlers {
     private static final String REFERRER_POLICY_STRING = "Referrer-Policy";
 
@@ -30,3 +31,4 @@ public class ReferrerPolicyHandlers {
         return new SetHeaderHandler(next, REFERRER_POLICY_STRING, policy.getValue());
     }
 }
+// {{end:handler}}

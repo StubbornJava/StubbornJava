@@ -152,6 +152,7 @@ public class CustomHandlers {
         };
     }
 
+    // {{start:securityHeaders}}
     public static HttpHandler securityHeaders(HttpHandler next, ReferrerPolicy policy) {
         MiddlewareBuilder security = MiddlewareBuilder
             .begin(XFrameOptionsHandlers::deny)
@@ -166,4 +167,5 @@ public class CustomHandlers {
         }
         return security.complete(next);
     }
+    // {{end:securityHeaders}}
 }

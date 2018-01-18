@@ -7,6 +7,7 @@ import io.undertow.server.HttpServerExchange;
 import io.undertow.server.handlers.SetHeaderHandler;
 import io.undertow.util.HttpString;
 
+// {{start:handler}}
 public class XFrameOptionsHandlers {
     private static final String X_FRAME_OPTIONS_STRING = "X-Frame-Options";
     private static final HttpString X_FRAME_OPTIONS = new HttpString(X_FRAME_OPTIONS_STRING);
@@ -32,3 +33,4 @@ public class XFrameOptionsHandlers {
         };
     }
 }
+// {{end:handler}}

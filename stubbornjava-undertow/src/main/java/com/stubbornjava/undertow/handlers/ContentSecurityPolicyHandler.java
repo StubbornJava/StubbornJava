@@ -8,6 +8,7 @@ import java.util.stream.Stream;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.handlers.SetHeaderHandler;
 
+// {{start:handler}}
 public class ContentSecurityPolicyHandler {
     private static final String CSP_HEADER = "Content-Security-Policy";
 
@@ -193,3 +194,4 @@ public class ContentSecurityPolicyHandler {
         }
     }
 }
+// {{end:handler}}

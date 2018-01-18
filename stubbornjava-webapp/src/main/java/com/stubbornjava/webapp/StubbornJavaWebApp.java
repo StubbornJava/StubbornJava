@@ -33,6 +33,7 @@ public class StubbornJavaWebApp {
            .addExceptionHandler(Throwable.class, PageRoutes::error);
     }
 
+    // {{start:csp}}
     private static HttpHandler contentSecurityPolicy(HttpHandler delegate) {
         return new ContentSecurityPolicyHandler.Builder()
                 .defaultSrc(ContentSecurityPolicy.SELF)
@@ -44,6 +45,7 @@ public class StubbornJavaWebApp {
                 .styleSrc(ContentSecurityPolicy.SELF.getValue(), ContentSecurityPolicy.UNSAFE_INLINE.getValue())
                 .build(delegate);
     }
+    // {{end:csp}}
 
     private static HttpHandler wrapWithMiddleware(HttpHandler next) {
         return MiddlewareBuilder.begin(PageRoutes::redirector)
