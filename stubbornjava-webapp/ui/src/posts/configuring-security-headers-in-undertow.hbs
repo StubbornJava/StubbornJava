@@ -1,0 +1,52 @@
+<div class="anchored-md">
+{{#assign "markdown"}}
+Security headers are an excellent way to reduce exploitations of your website. There are several important headers with varying levels of difficulty to implement. Implementing them with the strictest policies on new projects will help enforce better practices. Adding security headers to legacy projects can be a bit more work if you want to set a strict content security policy or your legacy site doesn't support HTTPS everywhere. It's fairly common to handle all security headers in a central load balancer or a proxy server like HAProxy or NGINX. This makes it much easier to maintain if you have different tech stacks and want a simple way to keep everything consistent. Since we only use Java and Undertow let's look at how we added simple implementations for this site which can be seen at the following PR's [CSP](https://github.com/StubbornJava/StubbornJava/pull/63/) and [Security Headers](https://github.com/StubbornJava/StubbornJava/pull/61). Scott Helme's [securityheaders.io](https://securityheaders.io/) is a great online tool for verifying if you have implemented the headers correctly. The previous PR's brought our score from `F` to `A+`.
+
+## Strict-Transport-Security (HSTS)
+The `Strict-Transport-Security` header essentially tells the browser that once it has connected to a host over TLS and receives this header, all subsequent requests should be forced to be TLS as well up until the expiration. Since we should all be sending our traffic over HTTPS these days this is a no brainer and very simple to implement if you already support HTTPS everywhere. For a much more detailed explanation see [HSTS the missing link in tls](https://scotthelme.co.uk/hsts-the-missing-link-in-tls/).
+
+{{> templates/src/widgets/code/code-snippet file=hstsHandler section=hstsHandler.sections.handler}}
+
+## Referrer-Policy
+On the surface it doesn't seem like a referring url has much to do with security but it could potentially leak some internal information. It's important to set the `Referrer-Policy` on internal sites. For example as a tech blog occasionally we see referrer's from applications like Jira, Github, or even internal tools like Amazons' internal code review tool. Most of these urls are internal only and cannot be accessed externally from the network. However, especially with vanity urls they may give away the company that is linking to us, a project name, and sometimes specifics about a particular bug. Couple this with a landing page and you can get more info than you might expect. A real example allowed us to identify a company (which could be figured out by the url) had a bug related to enum parsing since the Jira task mentioned it was a bug in the URL and the landing page was [Java Enum Lookup by Name or Field Without Throwing Exceptions](/posts/java-enum-lookup-by-name-or-field-without-throwing-exceptions). For the most part who really cares, but you could be leaking more information than you intend. What if you are linking from internal admin pages now attackers have some information to go off of. Find out specifics about each policy [here](https://scotthelme.co.uk/a-new-security-header-referrer-policy/). If you are a public facing site who drives traffic to external sites there are a few options to choose from that allow you to keep some information if you choose.
+
+{{> templates/src/widgets/code/code-snippet file=referrerHandler section=referrerHandler.sections.handler}}
+
+## X-Content-Type-Options
+This header only has one valid value of `nosniff`. It basically tells the browser not to try and guess the content-type
+of a file and only trust the value the server sends ([More Information on X-Content-Type-Options](https://scotthelme.co.uk/hardening-your-http-response-headers/#x-content-type-options)).
+
+{{> templates/src/widgets/code/code-snippet file=contentTypeHandler section=contentTypeHandler.sections.handler}}
+
+## X-Frame-Options (iframe control)
+The `X-Frame-Options` allows you to tell the browser which hosts are allowed to load your site in an iframe. This can be important because an attacker could purchase a domain similar to your own, load your entire site in an iframe, then use CSS / JS to add overlaid forms or intercept certain events ([more details](https://scotthelme.co.uk/hardening-your-http-response-headers/#x-frame-options)). If you do not rely on iframes it is probably safe to set this to always deny which will prevent other sites from loading your site in an iframe. The `ALLOW-FROM` option only supports a single host, if you need it to support multiple hosts you will need a dynamic solution along the lines of checking the referrer against a whitelist and dynamically allowing it.
+
+{{> templates/src/widgets/code/code-snippet file=iframeHandler section=iframeHandler.sections.handler}}
+
+## X-Xss-Protection
+This header will enable some built in browser XSS protection with [varying modes](https://scotthelme.co.uk/hardening-your-http-response-headers/#x-xss-protection).
+
+{{> templates/src/widgets/code/code-snippet file=xssHandler section=xssHandler.sections.handler}}
+
+
+
+## Content-Security-Policy (CSP)
+The `Content-Security-Policy` header is a way to lock down what types of resources are allowed to be loaded from specific sources. This can be very finely controlled or use broader defaults [available CSP options](https://scotthelme.co.uk/content-security-policy-an-introduction/). This header is great to set for early stage projects but can be quite a bit more of a chore for legacy sites. In order to set very strict rules you need to ensure your site doesn't have any inline scripting (including Google Analytics! [see here](https://github.com/StubbornJava/StubbornJava/pull/63/files#diff-ffe78c1d67e97b7efc7f76fca84476a3)) as well as no inline CSS styles (yikes!). Since this header can be quite verbose, make sure it is only set on pages that load HTML documents. This header is essentially useless on things like JSON APIs and can add quite a few bytes per request which could add up for high traffic endpoints.
+
+{{> templates/src/widgets/code/code-snippet file=cspHandler section=cspHandler.sections.handler}}
+
+Here are is the CSP for [StubbornJava](/).
+
+{{> templates/src/widgets/code/code-snippet file=webserver section=webserver.sections.csp}}
+
+Here is our convenience `HttpHandler` for setting security headers across our applications. CSP was left out since it's more likey to be customized.
+
+{{> templates/src/widgets/code/code-snippet file=securityHeadersHandler section=securityHeadersHandler.sections.securityHeaders}}
+
+Both our CSP handler and security headers handler can be seen early on in our [Middleware](/posts/logging-gzip-blocking-exception-handling-metrics-middleware-chaining-in-undertow).
+
+{{> templates/src/widgets/code/code-snippet file=webserver section=webserver.sections.middleware}}
+
+{{/assign}}
+{{md markdown}}
+</div>

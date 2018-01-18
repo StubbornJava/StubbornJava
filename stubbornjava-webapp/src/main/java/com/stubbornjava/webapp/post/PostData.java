@@ -724,6 +724,42 @@ public class PostData {
                   ))
               .build()
             );
+          posts.add(PostRaw.builder()
+              .postId(4L)
+              .title("Configuring Security Headers in Undertow")
+              .metaDesc("Control iFrame options, referer header options XSS protection, HSTS, and content type options in Underow.")
+              .dateCreated(LocalDateTime.parse("2018-01-17T01:15:30"))
+              .dateUpdated(LocalDateTime.parse("2018-01-17T01:15:30"))
+              .javaLibs(Lists.newArrayList(JavaLib.Undertow))
+              .tags(Lists.newArrayList(Tags.WebServer, Tags.Security, Tags.Middleware))
+              .gitFileReferences(Lists.newArrayList(
+                  FileReference.stubbornJava(
+                      "webserver",
+                      "stubbornjava-webapp/src/main/java/com/stubbornjava/webapp/StubbornJavaWebApp.java")
+                  , FileReference.stubbornJava(
+                      "cspHandler",
+                      "stubbornjava-undertow/src/main/java/com/stubbornjava/undertow/handlers/ContentSecurityPolicyHandler.java")
+                  , FileReference.stubbornJava(
+                      "securityHeadersHandler",
+                      "stubbornjava-common/src/main/java/com/stubbornjava/common/undertow/handlers/CustomHandlers.java")
+                  , FileReference.stubbornJava(
+                      "referrerHandler",
+                      "stubbornjava-undertow/src/main/java/com/stubbornjava/undertow/handlers/ReferrerPolicyHandlers.java")
+                  , FileReference.stubbornJava(
+                      "hstsHandler",
+                      "stubbornjava-undertow/src/main/java/com/stubbornjava/undertow/handlers/StrictTransportSecurityHandlers.java")
+                  , FileReference.stubbornJava(
+                      "contentTypeHandler",
+                      "stubbornjava-undertow/src/main/java/com/stubbornjava/undertow/handlers/XContentTypeOptionsHandler.java")
+                  , FileReference.stubbornJava(
+                      "iframeHandler",
+                      "stubbornjava-undertow/src/main/java/com/stubbornjava/undertow/handlers/XFrameOptionsHandlers.java")
+                  , FileReference.stubbornJava(
+                      "xssHandler",
+                      "stubbornjava-undertow/src/main/java/com/stubbornjava/undertow/handlers/XXssProtectionHandlers.java")
+                  ))
+              .build()
+            );
     }
 
     public static List<PostRaw> getPosts() {
