@@ -47,6 +47,7 @@ public class StubbornJavaWebApp {
     }
     // {{end:csp}}
 
+    // {{start:middleware}}
     private static HttpHandler wrapWithMiddleware(HttpHandler next) {
         return MiddlewareBuilder.begin(PageRoutes::redirector)
                                 .next(handler -> CustomHandlers.securityHeaders(handler, ReferrerPolicy.STRICT_ORIGIN_WHEN_CROSS_ORIGIN))
@@ -58,6 +59,7 @@ public class StubbornJavaWebApp {
                                 .next(StubbornJavaWebApp::exceptionHandler)
                                 .complete(next);
     }
+    // {{end:middleware}}
 
     // These routes do not require any authentication
     private static final HttpHandler basicRoutes = new RoutingHandler()
