@@ -1,4 +1,4 @@
-package com.stubbornjava.common.db.jooq;
+package com.stubbornjava.common.db;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -18,12 +18,12 @@ import org.jooq.UniqueKey;
 import org.jooq.UpdatableRecord;
 import org.jooq.impl.TableImpl;
 
-public class TableCrud<Rec extends UpdatableRecord<Rec>, T, Table extends TableImpl<Rec>> {
-    private final Table table;
+public class TableCrud<Rec extends UpdatableRecord<Rec>, T> {
+    private final TableImpl<Rec> table;
     private final RecordMapper<Record, T> mapper;
     private final RecordUnmapper<T, Rec> unmapper;
     private final Supplier<DSLContext> configSupplier;
-    public TableCrud(Table table,
+    public TableCrud(TableImpl<Rec> table,
                      RecordMapper<Rec, T> mapper,
                      RecordUnmapper<T, Rec> unmapper,
                      Supplier<DSLContext> configSupplier) {
@@ -103,15 +103,15 @@ public class TableCrud<Rec extends UpdatableRecord<Rec>, T, Table extends TableI
         }
     }
 
-    public T findOne(Function<Table, Condition> func) {
+    public T findOne(Function<TableImpl<Rec>, Condition> func) {
         return configSupplier.get().fetchOne(table, func.apply(table)).map(mapper);
     }
 
-    public List<T> find(Function<Table, Condition> func) {
+    public List<T> find(Function<TableImpl<Rec>, Condition> func) {
         return configSupplier.get().fetch(table, func.apply(table)).map(mapper);
     }
 
-    public int deleteWhere(Function<Table, Condition> func) {
+    public int deleteWhere(Function<TableImpl<Rec>, Condition> func) {
         return configSupplier.get().deleteFrom(table).where(func.apply(table)).execute();
     }
 

@@ -38,5 +38,6 @@ dependencies {
     compile libs.jooqCodegen
     
     testCompile libs.junit
+    testCompile libs.hsqldb
 }
 // {{end:dependencies}}

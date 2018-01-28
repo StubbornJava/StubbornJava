@@ -1,4 +1,4 @@
-package com.stubbornjava.common.db.jooq;
+package com.stubbornjava.common.db;
 
 import java.util.function.Supplier;
 
