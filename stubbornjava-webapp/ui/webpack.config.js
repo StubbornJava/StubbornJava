@@ -51,7 +51,7 @@ module.exports = {
                 exclude: /(node_modules|bower_components)\//, //^shared
                 loader:  'babel-loader',
                 query:   {
-                    presets: ['es2015']
+                    presets: ['env']
                 }
             }
         ]
