@@ -10,6 +10,7 @@ import com.stubbornjava.common.HealthChecks;
 import com.stubbornjava.common.Metrics;
 import com.stubbornjava.common.db.ConnectionPool;
 import com.typesafe.config.Config;
+import com.zaxxer.hikari.HikariDataSource;
 
 // {{start:pools}}
 public class ConnectionPools {
@@ -27,15 +28,15 @@ public class ConnectionPools {
      */
     private enum Transactional {
         INSTANCE(ConnectionPool.getDataSourceFromConfig(conf.getConfig("pools.transactional"), Metrics.registry(), HealthChecks.getHealthCheckRegistry()));
-        private final DataSource dataSource;
-        private Transactional(DataSource dataSource) {
+        private final HikariDataSource dataSource;
+        private Transactional(HikariDataSource dataSource) {
             this.dataSource = dataSource;
         }
-        public DataSource getDataSource() {
+        public HikariDataSource getDataSource() {
             return dataSource;
         }
     }
-    public static DataSource getTransactional() {
+    public static HikariDataSource getTransactional() {
         return Transactional.INSTANCE.getDataSource();
     }
 
@@ -55,16 +56,16 @@ public class ConnectionPools {
      */
     private enum Processing {
         INSTANCE(ConnectionPool.getDataSourceFromConfig(conf.getConfig("pools.processing"), Metrics.registry(), HealthChecks.getHealthCheckRegistry()));
-        private final DataSource dataSource;
-        private Processing(DataSource dataSource) {
+        private final HikariDataSource dataSource;
+        private Processing(HikariDataSource dataSource) {
             this.dataSource = dataSource;
         }
-        public DataSource getDataSource() {
+        public HikariDataSource getDataSource() {
             return dataSource;
         }
     }
 
-    public static DataSource getProcessing() {
+    public static HikariDataSource getProcessing() {
         return Processing.INSTANCE.getDataSource();
     }
 
