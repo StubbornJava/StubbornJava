@@ -27,6 +27,8 @@ public class CircuitBreakerHandler implements HttpHandler {
     public void handleRequest(HttpServerExchange exchange) throws Exception {
         Failsafe.with(circuitBreaker)
                 .withFallback(() -> failureHandler.handleRequest(exchange))
+                // We need to call get here instead of execute so we can return the
+                // mutated exchange to run checks on it
                 .get(() -> {
                     delegate.handleRequest(exchange);
                     return exchange;
