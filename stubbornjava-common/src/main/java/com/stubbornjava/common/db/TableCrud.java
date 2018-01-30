@@ -24,12 +24,13 @@ public class TableCrud<Rec extends UpdatableRecord<Rec>, T> {
     private final RecordUnmapper<T, Rec> unmapper;
     private final Supplier<DSLContext> configSupplier;
     public TableCrud(TableImpl<Rec> table,
-                     RecordMapper<Rec, T> mapper,
+                     // Ideally this would be RecordMapper<Rec, T> mapper but hitting generic issues
+                     RecordMapper<Record, T> mapper,
                      RecordUnmapper<T, Rec> unmapper,
                      Supplier<DSLContext> configSupplier) {
         super();
         this.table = table;
-        this.mapper = (RecordMapper<Record, T>) mapper;
+        this.mapper = mapper;
         this.unmapper = unmapper;
         this.configSupplier = configSupplier;
     }
