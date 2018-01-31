@@ -1,7 +1,7 @@
-<p>HttpHandlers are the building blocks of Undertow. Luckily they are extremly easy to write. Here are a few different approaches that will be used throughout posts on this site.</p>
+<p>HttpHandlers are the building blocks of Undertow. Luckily they are extremely easy to write. Here are a few different approaches that will be used throughout posts on this site.</p>
 
 <h2 class="anchored">Custom Class Implementing HttpHandler</h2>
-<p>This is generally the best option when writing middleware / filtering HttpHandlers that delegate reponsibility to other handlers or handlers with lots of code or complex logic.</p>
+<p>This is generally the best option when writing middleware / filtering HttpHandlers that delegate responsibility to other handlers or handlers with lots of code or complex logic.</p>
 {{> templates/src/widgets/code/code-snippet file=handler section=handler.sections.handler}}
 <p>Sometimes it is nice to then couple classes with static factory methods than can reduce boiler plate or group common handlers together. This will be used extensively in later posts. This is also used in Undertow Core's <a href="https://github.com/undertow-io/undertow/blob/master/core/src/main/java/io/undertow/Handlers.java#L71">Handlers.java</a>.</p>
 {{> templates/src/widgets/code/code-snippet file=handlers section=handlers.sections.handler}}
