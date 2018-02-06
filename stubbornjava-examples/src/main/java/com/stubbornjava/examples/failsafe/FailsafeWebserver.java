@@ -24,7 +24,32 @@ import okhttp3.Request;
 public class FailsafeWebserver {
     private static final Logger log = LoggerFactory.getLogger(FailsafeWebserver.class);
 
+    // {{start:breaker}}
+    private static final CircuitBreaker CIRCUIT_BREAKER = new CircuitBreaker()
+        // Trigger circuit breaker failure on exceptions or bad requests
+        .failIf((HttpServerExchange exchange, Throwable ex) -> {
+            boolean badRequest = exchange != null && StatusCodes.BAD_REQUEST == exchange.getStatusCode();
+            return badRequest || ex != null;
+        })
+        // If 7 out of 10 requests fail Open the circuit
+        .withFailureThreshold(7, 10)
+        // When half open if 3 out of 5 requests succeed close the circuit
+        .withSuccessThreshold(3, 5)
+        // Delay this long before half opening the circuit
+        .withDelay(2, TimeUnit.SECONDS)
+        .onClose(() -> log.info("Circuit Closed"))
+        .onOpen(() -> log.info("Circuit Opened"))
+        .onHalfOpen(() -> log.info("Circuit Half-Open"));
+    // {{end:breaker}}
+
     // {{start:handlers}}
+    // Actual Circuit Breaker Handler
+    private static final HttpHandler CIRCUIT_BREAKER_HANDLER =
+            new CircuitBreakerHandler(CIRCUIT_BREAKER,
+                                      FailsafeWebserver::circuitClosed,
+                                      FailsafeWebserver::serverError);
+
+    // Handler return a 500 server error
     private static final void serverError(HttpServerExchange exchange) {
         exchange.setStatusCode(StatusCodes.INTERNAL_SERVER_ERROR);
         Exchange.body().sendText(exchange, "500 - Internal Server Error");
@@ -42,29 +67,6 @@ public class FailsafeWebserver {
         } else {
             Exchange.body().sendText(exchange, "Circuit is open everything is functioning properly.");
         }
-    }
-
-    private static final HttpHandler CIRCUIT_BREAKER_HANDLER;
-    static {
-        CircuitBreaker breaker = new CircuitBreaker()
-             // Trigger circuit breaker failure on exceptions or bad requests
-            .failIf((HttpServerExchange exchange, Throwable ex) -> {
-                return (exchange != null && StatusCodes.BAD_REQUEST == exchange.getStatusCode())
-                        || ex != null;
-            })
-            // If 7 out of 10 requests fail Open the circuit
-            .withFailureThreshold(7, 10)
-            // When half open if 3 out of 5 requests succeed close the circuit
-            .withSuccessThreshold(3, 5)
-            // Delay this long before half opening the circuit
-            .withDelay(2, TimeUnit.SECONDS)
-            .onClose(() -> log.info("Circuit Closed"))
-            .onOpen(() -> log.info("Circuit Opened"))
-            .onHalfOpen(() -> log.info("Circuit Half-Open"));
-
-        CIRCUIT_BREAKER_HANDLER = new CircuitBreakerHandler(breaker,
-                                                            FailsafeWebserver::circuitClosed,
-                                                            FailsafeWebserver::serverError);
     }
     // {{end:handlers}}
 
