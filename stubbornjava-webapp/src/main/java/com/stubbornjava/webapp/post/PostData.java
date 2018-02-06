@@ -762,7 +762,7 @@ public class PostData {
             );
           posts.add(PostRaw.builder()
               .postId(5L)
-              .title("Increasing Resiliency with Circuit Breakers in your Undertow Webserver with Failsafe")
+              .title("Increasing Resiliency with Circuit Breakers in your Undertow Web Server with Failsafe")
               .metaDesc("Utilize circuit breakers to fail fast and recover quickly with a CircuitBreakerHandler in Undertow. Shutoff misbehaving endpoints to allow other endpoints to proceede normally.")
               .dateCreated(LocalDateTime.parse("2018-02-05T01:15:30"))
               .dateUpdated(LocalDateTime.parse("2018-02-05T01:15:30"))
