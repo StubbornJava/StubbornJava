@@ -81,6 +81,7 @@ Undertow is a very fast low level non blocking web server written in Java. It is
 * [Webpack and npm with Java](https://www.stubbornjava.com/posts/webpack-and-npm-for-simple-java-8-web-apps)
 * [Sharing routes and running multiple webservers in a single JVM](https://www.stubbornjava.com/posts/sharing-routes-and-running-multiple-java-services-in-a-single-jvm-with-undertow)
 * [Configuring Security Headers in Undertow](https://www.stubbornjava.com/posts/configuring-security-headers-in-undertow)
+* [Circuit Breaking HttpHandler](https://www.stubbornjava.com/posts/increasing-resiliency-with-circuit-breakers-in-your-undertow-webserver-with-failsafe)
 
 ## OkHttp for HTTP Client
 * [OkHttp Example REST client](https://www.stubbornjava.com/posts/okhttp-example-rest-client)
