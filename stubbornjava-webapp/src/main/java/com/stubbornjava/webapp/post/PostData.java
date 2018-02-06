@@ -760,6 +760,24 @@ public class PostData {
                   ))
               .build()
             );
+          posts.add(PostRaw.builder()
+              .postId(5L)
+              .title("Increasing Resiliency with Circuit Breakers in your Undertow Webserver with Failsafe")
+              .metaDesc("Utilize circuit breakers to fail fast and recover quickly with a CircuitBreakerHandler in Undertow. Shutoff misbehaving endpoints to allow other endpoints to proceede normally.")
+              .dateCreated(LocalDateTime.parse("2018-02-05T01:15:30"))
+              .dateUpdated(LocalDateTime.parse("2018-02-05T01:15:30"))
+              .javaLibs(Lists.newArrayList(JavaLib.Undertow, JavaLib.Failsafe, JavaLib.OkHttp))
+              .tags(Lists.newArrayList(Tags.WebServer, Tags.Resiliency))
+              .gitFileReferences(Lists.newArrayList(
+                  FileReference.stubbornJava(
+                      "handler",
+                      "stubbornjava-common/src/main/java/com/stubbornjava/common/undertow/handlers/CircuitBreakerHandler.java")
+                  , FileReference.stubbornJava(
+                      "example",
+                      "stubbornjava-examples/src/main/java/com/stubbornjava/examples/failsafe/FailsafeWebserver.java")
+                  ))
+              .build()
+            );
     }
 
     public static List<PostRaw> getPosts() {

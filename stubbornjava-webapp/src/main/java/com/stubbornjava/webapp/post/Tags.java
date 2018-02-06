@@ -31,6 +31,7 @@ public class Tags {
     public static final Tag Ansible = addTag(new Tag(922794262770139008L, "Ansible"));
     public static final Tag Supervisord = addTag(new Tag(922794262770139008L, "Supervisord"));
     public static final Tag Security = addTag(new Tag(953801444178362856L, "Security"));
+    public static final Tag Resiliency = addTag(new Tag(958330984838442254L, "Resiliency"));
 
     private static Tag addTag(Tag tag) {
         TAGS.add(tag);

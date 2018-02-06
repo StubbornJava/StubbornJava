@@ -71,7 +71,7 @@ public class FailsafeWebserver {
     // {{end:handlers}}
 
     // {{start:request}}
-    private static void request(boolean error, boolean exception) {
+    private static void request(String message, boolean error, boolean exception) {
         HttpUrl url = HttpUrl.parse("http://localhost:8080")
                              .newBuilder()
                              .addQueryParameter("error", String.valueOf(error))
@@ -80,7 +80,7 @@ public class FailsafeWebserver {
 
         Request request = new Request.Builder().get().url(url).build();
         try {
-            log.info(HttpClient.globalClient().newCall(request).execute().body().string());
+            log.info(message + " " + HttpClient.globalClient().newCall(request).execute().body().string());
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -101,28 +101,30 @@ public class FailsafeWebserver {
         // Warm-up the circuit breaker it needs to hit at least max executions
         // Before it will reject anything. This will make that easier.
         for (int i = 0; i < 10; i++) {
-            request(false, false);
+            request("warmup", false, false);
         }
         ScheduledExecutorService schedExec = Executors.newScheduledThreadPool(1);
 
         // A simple request that should always succeed
-        schedExec.scheduleAtFixedRate(() -> request(false, false), 0, 500, TimeUnit.MILLISECONDS);
+        schedExec.scheduleAtFixedRate(() -> request("ping", false, false), 0, 500, TimeUnit.MILLISECONDS);
 
         // Send a batch of 15 bad requests to trigger the circuit breaker
         Runnable errors = () -> {
-            log.info("Executing bad requests!");
+            log.info("Start: Executing bad requests!");
             for (int i = 0; i < 15; i++) {
-                request(true, false);
+                request("bad request", true, false);
             }
+            log.info("End: Executing bad requests!");
         };
         schedExec.schedule(errors, 1, TimeUnit.SECONDS);
 
         // Send a batch of 15 requests that throw exceptions
         Runnable exceptions = () -> {
-            log.info("Executing requests that throw exceptions!");
+            log.info("Start: Executing requests that throw exceptions!");
             for (int i = 0; i < 15; i++) {
-                request(false, true);
+                request("exception request", false, true);
             }
+            log.info("End: Executing requests that throw exceptions!");
         };
         schedExec.schedule(exceptions, 5, TimeUnit.SECONDS);
     }

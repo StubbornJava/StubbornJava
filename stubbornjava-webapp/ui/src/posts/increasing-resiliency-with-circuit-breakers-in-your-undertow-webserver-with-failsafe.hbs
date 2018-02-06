@@ -1,0 +1,113 @@
+<div class="anchored-md">
+{{#assign "markdown"}}
+It's inevitable that your system will have failures whether they are caused by bugs, network partitions, load, etc. What is important is being able to recover and recovering quickly. There have been some great resiliency libraries released in Java over the past few years. We found Netflix's [Hystrix](https://github.com/Netflix/Hystrix) to have a higher learning curve and a bit more complicated to use. We opted for [Failsafe](https://github.com/jhalterman/failsafe) which has more of an opt in model to only use what you want. We will outline how to circuit break your web server to help fail fast and recover quicker.
+
+## What is a Circuit Breaker?
+The Wikipedia definition of a [circuit breaker](https://en.wikipedia.org/wiki/Circuit_breaker). "A circuit breaker is an automatically operated electrical switch designed to protect an electrical circuit from damage caused by overcurrent, typically resulting from an overload or short circuit. Its basic function is to interrupt current flow after a fault is detected. Unlike a fuse, which operates once and then must be replaced, a circuit breaker can be reset (either manually or automatically) to resume normal operation." In software we can think of this as a fail fast mechanism that will stop a code path once it notices a certain failure rate. This will hopefully give the system time to recover or at least allow other code paths to function while this one is down.
+
+### Example Failsafe Circuit Breaker
+{{> templates/src/widgets/code/code-snippet file=example section=example.sections.breaker}}
+
+## Circuit Breaker HttpHandler
+Let's utilize a `CircuitBreaker` to create a reusable `HttpHandler` that can circuit break based on a passed in `CircuitBreaker`. This could be useful if some resource pool is constrained and we want to help relieve some back-pressure by not sending any new requests. Another use case is potentially we have some bug such as forgetting to paginate a SQL query and just one specific endpoint is hanging non stop. Utilizing a `CircuitBreaker` we can automatically start shutting off individual endpoints or maybe an entire service as a whole using [middleware](/posts/logging-gzip-blocking-exception-handling-metrics-middleware-chaining-in-undertow). Keep in mind that techniques such as this can hurt you just as much as they help you if they are not configured well.
+
+{{> templates/src/widgets/code/code-snippet file=handler section=handler.sections.handler}}
+
+## Example Handlers
+Here we have a `HttpHandler` that we can easily mimic some errors in as well as a `HttpHander` that returns a 500 - server error.
+
+{{> templates/src/widgets/code/code-snippet file=example section=example.sections.handlers}}
+
+## Making some Requests
+Here is a quick little method to use [OkHttp](/posts/okhttp-example-rest-client) to send a HTTP request to our example server.
+
+{{> templates/src/widgets/code/code-snippet file=example section=example.sections.request}}
+
+## Example Server
+Finally we can start up a server and send some requests at it with a `ScheduledExecutorService`.
+
+{{> templates/src/widgets/code/code-snippet file=example section=example.sections.main}}
+
+### Output
+<pre class="line-numbers"><code class="language-bash">2018-02-05 23:43:16.168 [main] INFO  c.s.common.undertow.SimpleServer - ListenerInfo{protcol='http', address=/0:0:0:0:0:0:0:0:8080, sslContext=null}
+2018-02-05 23:43:16.542 [main] INFO  c.s.e.failsafe.FailsafeWebserver - warmup Circuit is open everything is functioning properly.
+2018-02-05 23:43:16.549 [main] INFO  c.s.e.failsafe.FailsafeWebserver - warmup Circuit is open everything is functioning properly.
+2018-02-05 23:43:16.553 [main] INFO  c.s.e.failsafe.FailsafeWebserver - warmup Circuit is open everything is functioning properly.
+2018-02-05 23:43:16.554 [main] INFO  c.s.e.failsafe.FailsafeWebserver - warmup Circuit is open everything is functioning properly.
+2018-02-05 23:43:16.556 [main] INFO  c.s.e.failsafe.FailsafeWebserver - warmup Circuit is open everything is functioning properly.
+2018-02-05 23:43:16.557 [main] INFO  c.s.e.failsafe.FailsafeWebserver - warmup Circuit is open everything is functioning properly.
+2018-02-05 23:43:16.559 [main] INFO  c.s.e.failsafe.FailsafeWebserver - warmup Circuit is open everything is functioning properly.
+2018-02-05 23:43:16.561 [main] INFO  c.s.e.failsafe.FailsafeWebserver - warmup Circuit is open everything is functioning properly.
+2018-02-05 23:43:16.562 [main] INFO  c.s.e.failsafe.FailsafeWebserver - warmup Circuit is open everything is functioning properly.
+2018-02-05 23:43:16.564 [main] INFO  c.s.e.failsafe.FailsafeWebserver - warmup Circuit is open everything is functioning properly.
+2018-02-05 23:43:16.568 [pool-1-thread-1] INFO  c.s.e.failsafe.FailsafeWebserver - ping Circuit is open everything is functioning properly.
+2018-02-05 23:43:17.068 [pool-1-thread-1] INFO  c.s.e.failsafe.FailsafeWebserver - ping Circuit is open everything is functioning properly.
+2018-02-05 23:43:17.568 [pool-1-thread-1] INFO  c.s.e.failsafe.FailsafeWebserver - ping Circuit is open everything is functioning properly.
+2018-02-05 23:43:17.568 [pool-1-thread-1] INFO  c.s.e.failsafe.FailsafeWebserver - Start: Executing bad requests!
+2018-02-05 23:43:17.569 [pool-1-thread-1] INFO  c.s.e.failsafe.FailsafeWebserver - bad request Bad Request
+2018-02-05 23:43:17.570 [pool-1-thread-1] INFO  c.s.e.failsafe.FailsafeWebserver - bad request Bad Request
+2018-02-05 23:43:17.572 [pool-1-thread-1] INFO  c.s.e.failsafe.FailsafeWebserver - bad request Bad Request
+2018-02-05 23:43:17.574 [pool-1-thread-1] INFO  c.s.e.failsafe.FailsafeWebserver - bad request Bad Request
+2018-02-05 23:43:17.575 [pool-1-thread-1] INFO  c.s.e.failsafe.FailsafeWebserver - bad request Bad Request
+2018-02-05 23:43:17.576 [pool-1-thread-1] INFO  c.s.e.failsafe.FailsafeWebserver - bad request Bad Request
+2018-02-05 23:43:17.577 [pool-1-thread-1] INFO  c.s.e.failsafe.FailsafeWebserver - bad request Bad Request
+2018-02-05 23:43:17.578 [XNIO-1 I/O-2] INFO  c.s.e.failsafe.FailsafeWebserver - Circuit Opened
+2018-02-05 23:43:17.580 [pool-1-thread-1] INFO  c.s.e.failsafe.FailsafeWebserver - bad request 500 - Internal Server Error
+2018-02-05 23:43:17.581 [pool-1-thread-1] INFO  c.s.e.failsafe.FailsafeWebserver - bad request 500 - Internal Server Error
+2018-02-05 23:43:17.583 [pool-1-thread-1] INFO  c.s.e.failsafe.FailsafeWebserver - bad request 500 - Internal Server Error
+2018-02-05 23:43:17.584 [pool-1-thread-1] INFO  c.s.e.failsafe.FailsafeWebserver - bad request 500 - Internal Server Error
+2018-02-05 23:43:17.585 [pool-1-thread-1] INFO  c.s.e.failsafe.FailsafeWebserver - bad request 500 - Internal Server Error
+2018-02-05 23:43:17.587 [pool-1-thread-1] INFO  c.s.e.failsafe.FailsafeWebserver - bad request 500 - Internal Server Error
+2018-02-05 23:43:17.588 [pool-1-thread-1] INFO  c.s.e.failsafe.FailsafeWebserver - bad request 500 - Internal Server Error
+2018-02-05 23:43:17.589 [pool-1-thread-1] INFO  c.s.e.failsafe.FailsafeWebserver - bad request 500 - Internal Server Error
+2018-02-05 23:43:17.589 [pool-1-thread-1] INFO  c.s.e.failsafe.FailsafeWebserver - End: Executing bad requests!
+2018-02-05 23:43:18.070 [pool-1-thread-1] INFO  c.s.e.failsafe.FailsafeWebserver - ping 500 - Internal Server Error
+2018-02-05 23:43:18.568 [pool-1-thread-1] INFO  c.s.e.failsafe.FailsafeWebserver - ping 500 - Internal Server Error
+2018-02-05 23:43:19.068 [pool-1-thread-1] INFO  c.s.e.failsafe.FailsafeWebserver - ping 500 - Internal Server Error
+2018-02-05 23:43:19.570 [pool-1-thread-1] INFO  c.s.e.failsafe.FailsafeWebserver - ping 500 - Internal Server Error
+2018-02-05 23:43:20.070 [XNIO-1 I/O-2] INFO  c.s.e.failsafe.FailsafeWebserver - Circuit Half-Open
+2018-02-05 23:43:20.071 [pool-1-thread-1] INFO  c.s.e.failsafe.FailsafeWebserver - ping Circuit is open everything is functioning properly.
+2018-02-05 23:43:20.573 [pool-1-thread-1] INFO  c.s.e.failsafe.FailsafeWebserver - ping Circuit is open everything is functioning properly.
+2018-02-05 23:43:21.068 [pool-1-thread-1] INFO  c.s.e.failsafe.FailsafeWebserver - ping Circuit is open everything is functioning properly.
+2018-02-05 23:43:21.569 [pool-1-thread-1] INFO  c.s.e.failsafe.FailsafeWebserver - ping Circuit is open everything is functioning properly.
+2018-02-05 23:43:21.570 [pool-1-thread-1] INFO  c.s.e.failsafe.FailsafeWebserver - Start: Executing requests that throw exceptions!
+2018-02-05 23:43:21.571 [XNIO-1 I/O-2] INFO  c.s.e.failsafe.FailsafeWebserver - Circuit Closed
+2018-02-05 23:43:21.572 [pool-1-thread-1] INFO  c.s.e.failsafe.FailsafeWebserver - exception request 500 - Internal Server Error
+2018-02-05 23:43:21.574 [pool-1-thread-1] INFO  c.s.e.failsafe.FailsafeWebserver - exception request 500 - Internal Server Error
+2018-02-05 23:43:21.575 [pool-1-thread-1] INFO  c.s.e.failsafe.FailsafeWebserver - exception request 500 - Internal Server Error
+2018-02-05 23:43:21.576 [pool-1-thread-1] INFO  c.s.e.failsafe.FailsafeWebserver - exception request 500 - Internal Server Error
+2018-02-05 23:43:21.578 [pool-1-thread-1] INFO  c.s.e.failsafe.FailsafeWebserver - exception request 500 - Internal Server Error
+2018-02-05 23:43:21.579 [pool-1-thread-1] INFO  c.s.e.failsafe.FailsafeWebserver - exception request 500 - Internal Server Error
+2018-02-05 23:43:21.581 [pool-1-thread-1] INFO  c.s.e.failsafe.FailsafeWebserver - exception request 500 - Internal Server Error
+2018-02-05 23:43:21.583 [pool-1-thread-1] INFO  c.s.e.failsafe.FailsafeWebserver - exception request 500 - Internal Server Error
+2018-02-05 23:43:21.584 [pool-1-thread-1] INFO  c.s.e.failsafe.FailsafeWebserver - exception request 500 - Internal Server Error
+2018-02-05 23:43:21.585 [pool-1-thread-1] INFO  c.s.e.failsafe.FailsafeWebserver - exception request 500 - Internal Server Error
+2018-02-05 23:43:21.586 [XNIO-1 I/O-2] INFO  c.s.e.failsafe.FailsafeWebserver - Circuit Opened
+2018-02-05 23:43:21.587 [pool-1-thread-1] INFO  c.s.e.failsafe.FailsafeWebserver - exception request 500 - Internal Server Error
+2018-02-05 23:43:21.587 [pool-1-thread-1] INFO  c.s.e.failsafe.FailsafeWebserver - exception request 500 - Internal Server Error
+2018-02-05 23:43:21.589 [pool-1-thread-1] INFO  c.s.e.failsafe.FailsafeWebserver - exception request 500 - Internal Server Error
+2018-02-05 23:43:21.590 [pool-1-thread-1] INFO  c.s.e.failsafe.FailsafeWebserver - exception request 500 - Internal Server Error
+2018-02-05 23:43:21.591 [pool-1-thread-1] INFO  c.s.e.failsafe.FailsafeWebserver - exception request 500 - Internal Server Error
+2018-02-05 23:43:21.591 [pool-1-thread-1] INFO  c.s.e.failsafe.FailsafeWebserver - End: Executing requests that throw exceptions!
+2018-02-05 23:43:22.071 [pool-1-thread-1] INFO  c.s.e.failsafe.FailsafeWebserver - ping 500 - Internal Server Error
+2018-02-05 23:43:22.572 [pool-1-thread-1] INFO  c.s.e.failsafe.FailsafeWebserver - ping 500 - Internal Server Error
+2018-02-05 23:43:23.072 [pool-1-thread-1] INFO  c.s.e.failsafe.FailsafeWebserver - ping 500 - Internal Server Error
+2018-02-05 23:43:23.573 [pool-1-thread-1] INFO  c.s.e.failsafe.FailsafeWebserver - ping 500 - Internal Server Error
+2018-02-05 23:43:24.068 [XNIO-1 I/O-2] INFO  c.s.e.failsafe.FailsafeWebserver - Circuit Half-Open
+2018-02-05 23:43:24.069 [pool-1-thread-1] INFO  c.s.e.failsafe.FailsafeWebserver - ping Circuit is open everything is functioning properly.
+2018-02-05 23:43:24.573 [pool-1-thread-1] INFO  c.s.e.failsafe.FailsafeWebserver - ping Circuit is open everything is functioning properly.
+2018-02-05 23:43:25.069 [pool-1-thread-1] INFO  c.s.e.failsafe.FailsafeWebserver - ping Circuit is open everything is functioning properly.
+2018-02-05 23:43:25.572 [pool-1-thread-1] INFO  c.s.e.failsafe.FailsafeWebserver - ping Circuit is open everything is functioning properly.
+2018-02-05 23:43:26.068 [XNIO-1 I/O-2] INFO  c.s.e.failsafe.FailsafeWebserver - Circuit Closed
+2018-02-05 23:43:26.069 [pool-1-thread-1] INFO  c.s.e.failsafe.FailsafeWebserver - ping Circuit is open everything is functioning properly.
+2018-02-05 23:43:26.569 [pool-1-thread-1] INFO  c.s.e.failsafe.FailsafeWebserver - ping Circuit is open everything is functioning properly.
+2018-02-05 23:43:27.069 [pool-1-thread-1] INFO  c.s.e.failsafe.FailsafeWebserver - ping Circuit is open everything is functioning properly.
+2018-02-05 23:43:27.570 [pool-1-thread-1] INFO  c.s.e.failsafe.FailsafeWebserver - ping Circuit is open everything is functioning properly.
+2018-02-05 23:43:28.073 [pool-1-thread-1] INFO  c.s.e.failsafe.FailsafeWebserver - ping Circuit is open everything is functioning properly.
+2018-02-05 23:43:28.572 [pool-1-thread-1] INFO  c.s.e.failsafe.FailsafeWebserver - ping Circuit is open everything is functioning properly.
+2018-02-05 23:43:29.072 [pool-1-thread-1] INFO  c.s.e.failsafe.FailsafeWebserver - ping Circuit is open everything is functioning properly.
+2018-02-05 23:43:29.569 [pool-1-thread-1] INFO  c.s.e.failsafe.FailsafeWebserver - ping Circuit is open everything is functioning properly.</code></pre>
+
+{{/assign}}
+{{md markdown}}
+</div>
