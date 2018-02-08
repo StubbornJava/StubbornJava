@@ -18,14 +18,13 @@ import org.jooq.UniqueKey;
 import org.jooq.UpdatableRecord;
 import org.jooq.impl.TableImpl;
 
-public class TableCrud<Rec extends UpdatableRecord<Rec>, T> {
+public class Dao<Rec extends UpdatableRecord<Rec>, T> {
     private final TableImpl<Rec> table;
-    private final RecordMapper<Record, T> mapper;
+    private final RecordMapper<Rec, T> mapper;
     private final RecordUnmapper<T, Rec> unmapper;
     private final Supplier<DSLContext> configSupplier;
-    public TableCrud(TableImpl<Rec> table,
-                     // Ideally this would be RecordMapper<Rec, T> mapper but hitting generic issues
-                     RecordMapper<Record, T> mapper,
+    public Dao(TableImpl<Rec> table,
+                     RecordMapper<Rec, T> mapper,
                      RecordUnmapper<T, Rec> unmapper,
                      Supplier<DSLContext> configSupplier) {
         super();
@@ -38,7 +37,7 @@ public class TableCrud<Rec extends UpdatableRecord<Rec>, T> {
     public T insertReturning(T obj) {
         Rec rec = records(Collections.singletonList(obj), false).get(0);
         rec.insert();
-        return rec.map(mapper);
+        return mapper.map(rec);
     }
 
     public void insert(T obj) {
@@ -104,11 +103,11 @@ public class TableCrud<Rec extends UpdatableRecord<Rec>, T> {
         }
     }
 
-    public T findOne(Function<TableImpl<Rec>, Condition> func) {
-        return configSupplier.get().fetchOne(table, func.apply(table)).map(mapper);
+    public T fetchOne(Function<TableImpl<Rec>, Condition> func) {
+        return mapper.map(configSupplier.get().fetchOne(table, func.apply(table)));
     }
 
-    public List<T> find(Function<TableImpl<Rec>, Condition> func) {
+    public List<T> fetch(Function<TableImpl<Rec>, Condition> func) {
         return configSupplier.get().fetch(table, func.apply(table)).map(mapper);
     }
 
