@@ -14,6 +14,9 @@ import com.typesafe.config.ConfigRenderOptions;
 // {{start:config}}
 public class Configs {
     private static final Logger log = LoggerFactory.getLogger(Configs.class);
+
+    private Configs() { }
+
     /*
      * I am letting the typesafe configs bleed out on purpose here.
      * We could abstract out and delegate but its not worth it.
