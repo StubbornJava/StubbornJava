@@ -8,3 +8,9 @@
 
 - src: jdauphant.nginx
   version: v2.12.3
+
+- src: gantsign.maven
+  version: 3.5.0
+
+- src: shelleg.gradle
+  version: v1.1.3

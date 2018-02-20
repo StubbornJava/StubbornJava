@@ -16,3 +16,5 @@
     - galaxy_roles/geerlingguy.java
     - galaxy_roles/geerlingguy.jenkins
     - galaxy_roles/jdauphant.nginx
+    - galaxy_roles/gantsign.maven
+    - galaxy_roles/shelleg.gradle
