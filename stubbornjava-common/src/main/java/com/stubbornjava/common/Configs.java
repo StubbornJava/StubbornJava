@@ -2,6 +2,8 @@ package com.stubbornjava.common;
 
 import java.io.File;
 import java.util.Map;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 import org.jooq.lambda.Seq;
 import org.slf4j.Logger;
@@ -41,6 +43,20 @@ public class Configs {
     public static Map<String, Object> asMap(Config config) {
         return Seq.seq(config.entrySet())
                   .toMap(e -> e.getKey(), e -> e.getValue().unwrapped());
+    }
+
+    public <T> T getOrDefault(Config config, String path, Function<Config, T> extractor, T defaultValue) {
+        if (config.hasPath(path)) {
+            return extractor.apply(config);
+        }
+        return defaultValue;
+    }
+
+    public <T> T getOrDefault(Config config, String path, Function<Config, T> extractor, Supplier<T> defaultSupplier) {
+        if (config.hasPath(path)) {
+            return extractor.apply(config);
+        }
+        return defaultSupplier.get();
     }
 
     public static class Builder {
