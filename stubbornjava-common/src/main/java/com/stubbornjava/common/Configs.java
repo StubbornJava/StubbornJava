@@ -45,14 +45,14 @@ public class Configs {
                   .toMap(e -> e.getKey(), e -> e.getValue().unwrapped());
     }
 
-    public <T> T getOrDefault(Config config, String path, Function<Config, T> extractor, T defaultValue) {
+    public static <T> T getOrDefault(Config config, String path, Function<Config, T> extractor, T defaultValue) {
         if (config.hasPath(path)) {
             return extractor.apply(config);
         }
         return defaultValue;
     }
 
-    public <T> T getOrDefault(Config config, String path, Function<Config, T> extractor, Supplier<T> defaultSupplier) {
+    public static <T> T getOrDefault(Config config, String path, Function<Config, T> extractor, Supplier<T> defaultSupplier) {
         if (config.hasPath(path)) {
             return extractor.apply(config);
         }
