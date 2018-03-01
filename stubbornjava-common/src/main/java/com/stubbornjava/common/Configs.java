@@ -2,7 +2,7 @@ package com.stubbornjava.common;
 
 import java.io.File;
 import java.util.Map;
-import java.util.function.Function;
+import java.util.function.BiFunction;
 import java.util.function.Supplier;
 
 import org.jooq.lambda.Seq;
@@ -45,16 +45,16 @@ public class Configs {
                   .toMap(e -> e.getKey(), e -> e.getValue().unwrapped());
     }
 
-    public static <T> T getOrDefault(Config config, String path, Function<Config, T> extractor, T defaultValue) {
+    public static <T> T getOrDefault(Config config, String path, BiFunction<Config, String, T> extractor, T defaultValue) {
         if (config.hasPath(path)) {
-            return extractor.apply(config);
+            return extractor.apply(config, path);
         }
         return defaultValue;
     }
 
-    public static <T> T getOrDefault(Config config, String path, Function<Config, T> extractor, Supplier<T> defaultSupplier) {
+    public static <T> T getOrDefault(Config config, String path, BiFunction<Config, String, T> extractor, Supplier<T> defaultSupplier) {
         if (config.hasPath(path)) {
-            return extractor.apply(config);
+            return extractor.apply(config, path);
         }
         return defaultSupplier.get();
     }
