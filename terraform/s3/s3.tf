@@ -16,4 +16,8 @@ resource "aws_s3_bucket" "stubbornjava-terraform" {
 resource "aws_s3_bucket" "stubbornjava-jenkins" {
     bucket = "stubbornjava-jenkins"
     acl    = "private"
+
+    versioning {
+        enabled = true
+    }
 }
