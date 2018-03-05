@@ -13,6 +13,7 @@ resource "aws_instance" "ci" {
   count                       = 1
   ami                         = "${var.amis["amazon-linux-2017-09"]}"
   disable_api_termination     = true
+  iam_instance_profile        = "jenkins"
   instance_type               = "t2.micro"
   monitoring                  = false
   subnet_id                   = "${element(data.aws_subnet_ids.public.ids, count.index)}"
