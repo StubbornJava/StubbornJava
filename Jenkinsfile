@@ -5,7 +5,7 @@ pipeline {
       parallel {
         stage('Build') {
           steps {
-            sh './gradlew clean shadowJar --stacktrace --debug'
+            sh './gradlew clean shadowJar --no-daemon'
           }
         }
         stage('echo') {
