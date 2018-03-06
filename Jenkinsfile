@@ -3,7 +3,7 @@ pipeline {
   stages {
     stage('Build') {
       steps {
-        sh '/usr/local/bin/gradle clean shadowJar'
+        sh './gradlew clean shadowJar'
       }
     }
   }
