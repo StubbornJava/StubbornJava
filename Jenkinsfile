@@ -2,8 +2,17 @@ pipeline {
   agent any
   stages {
     stage('Build') {
-      steps {
-        sh './gradlew clean shadowJar'
+      parallel {
+        stage('Build') {
+          steps {
+            sh './gradlew clean shadowJar'
+          }
+        }
+        stage('echo') {
+          steps {
+            sh 'echo $JAVA_HOME'
+          }
+        }
       }
     }
   }
