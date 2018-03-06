@@ -11,3 +11,8 @@
     special_time: daily
     user: root
     job: "yum update -y --security --quiet"
+
+- name: install git
+  package:
+    name: "git"
+    state: installed
