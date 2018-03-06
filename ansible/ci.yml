@@ -3,9 +3,9 @@
 - hosts: tag_Role_ci
   become: true
   vars:
-    java_home: "/usr/lib/jvm/jre-1.8.0-openjdk.x86_64"
+    java_home: "/usr/lib/jvm/java-1.8.0-openjdk.x86_64"
     java_packages:
-      - java-1.8.0-openjdk
+      - java-1.8.0-openjdk-devel
     jenkins_version: "2.105"
     nginx_sites:
      default:
