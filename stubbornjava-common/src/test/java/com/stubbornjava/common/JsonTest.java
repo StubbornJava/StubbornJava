@@ -1,7 +1,6 @@
 package com.stubbornjava.common;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
 
 import java.time.LocalDate;
 
@@ -73,7 +72,6 @@ public class JsonTest {
 
         String actualJson = Json.serializer().toString(message);
         assertEquals(message, Json.serializer().fromJson(actualJson, new TypeReference<Message>() {}));
-        fail();
     }
 
     @Ignore // https://github.com/FasterXML/jackson-modules-java8/issues/58
