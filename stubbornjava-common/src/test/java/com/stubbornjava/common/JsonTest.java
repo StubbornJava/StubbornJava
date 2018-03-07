@@ -77,7 +77,7 @@ public class JsonTest {
     @Ignore // https://github.com/FasterXML/jackson-modules-java8/issues/58
     @Test(expected=JsonException.class)
     public void parseShouldFailOnInvalidType() {
-        String rawJson = Resources.asString(" json-test/invalid-message.json");
+        String rawJson = Resources.asString("json-test/invalid-message.json");
         Json.serializer().fromJson(rawJson, new TypeReference<Message>() {});
     }
 
