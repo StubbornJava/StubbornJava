@@ -60,7 +60,7 @@ public class Configs {
     }
 
     public static class Builder {
-        private Config conf;
+        private Config conf = ConfigFactory.empty();
 
         public Builder() {
             log.info("Loading configs first row is highest priority, second row is fallback and so on");

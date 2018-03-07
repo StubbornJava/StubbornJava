@@ -4,14 +4,11 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.concurrent.TimeUnit;
 
-import org.junit.Test;
-
 import com.typesafe.config.Config;
 
 public class ConfigsTest {
 
-    @Test(expected=IllegalArgumentException.class)
-    public void emptyConfigShouldFail() {
+    public void emptyConfigShouldNotFail() {
         new Configs.Builder().build();
     }
 
