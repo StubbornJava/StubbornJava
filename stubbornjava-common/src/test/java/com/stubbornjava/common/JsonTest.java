@@ -78,7 +78,7 @@ public class JsonTest {
     @Test(expected=JsonException.class)
     public void parseShouldFailOnInvalidType() {
         String rawJson = Resources.asString("json-test/invalid-message.json");
-        Json.serializer().fromJson(rawJson, new TypeReference<Message>() {});
+        //Json.serializer().fromJson(rawJson, new TypeReference<Message>() {});
     }
 
     /*
