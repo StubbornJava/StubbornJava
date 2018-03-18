@@ -13,6 +13,7 @@
          - server_name _
          - return 301 https://jenkins.stubbornjava.com$request_uri
   roles:
+    - roles/common
     - roles/java
     - galaxy_roles/geerlingguy.jenkins
     - galaxy_roles/jdauphant.nginx
