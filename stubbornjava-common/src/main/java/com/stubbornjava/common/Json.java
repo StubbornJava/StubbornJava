@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.codahale.metrics.json.MetricsModule;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -32,7 +33,11 @@ public class Json {
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
         // Ignore null values when writing json.
-        mapper.configure(SerializationFeature.WRITE_NULL_MAP_VALUES, false);
+        // mapper.configure(SerializationFeature.WRITE_NULL_MAP_VALUES, false);
+
+        // Is this right? I have no idea
+        mapper.configOverride(Map.class)
+              .setInclude(JsonInclude.Value.construct(Include.NON_NULL, Include.NON_NULL));
         mapper.setSerializationInclusion(Include.NON_NULL);
 
         // Write times as a String instead of a Long so its human readable.
