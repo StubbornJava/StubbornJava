@@ -15,6 +15,7 @@
   roles:
     - roles/common
     - roles/java
+    - roles/ansible
     - galaxy_roles/geerlingguy.jenkins
     - galaxy_roles/jdauphant.nginx
     # - galaxy_roles/gantsign.maven
