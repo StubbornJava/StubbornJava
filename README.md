@@ -3,7 +3,7 @@
 # StubbornJava
 https://www.stubbornjava.com/
 
-This is very much a work in progress and in the early stages. No code will be pushed to maven or supported in any way currently. Feel free to clone and install locally. Currently the website itself is not open souced but that is the eventual plan. The website is built using all the methods described on the site and in the examples. There is no backing blog framework.
+This is very much a work in progress and in the early stages. No code will be pushed to maven central or supported in any way currently. Feel free to clone and install locally. The website is built using all the methods described on the site and in the examples. There is no backing blog framework.
 
 ## Quick Example (full example [Simple REST server in Undertow](https://www.stubbornjava.com/posts/lightweight-embedded-java-rest-server-without-a-framework))
 
