@@ -1,12 +1,12 @@
 // {{start:build}}
 buildscript {
-  repositories {
-      jcenter()
-  }
-  // buildscript dependencies can be used for build time plugins.
-  dependencies {
-    classpath "com.github.jengelman.gradle.plugins:shadow:1.2.3"
-  }
+    repositories {
+        jcenter()
+    }
+    // buildscript dependencies can be used for build time plugins.
+    dependencies {
+        classpath "com.github.jengelman.gradle.plugins:shadow:1.2.3"
+    }
 }
 
 // Include a gradle script that has all of our dependencies split out.
@@ -22,6 +22,17 @@ allprojects {
     // Using Jitpack so I need the repo name in the group to match.
     group = 'com.stubbornjava.StubbornJava'
     version = '0.1.30-SNAPSHOT'
+
+    sourceSets {
+        main {
+            java {
+                srcDirs = ["src/main/java", "src/generated/java"]
+            }
+            resources {
+                srcDirs = ["src/main/resources", "ui/assets"]
+            }
+        }
+    }
 
     repositories { 
         mavenLocal()
