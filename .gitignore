@@ -13,6 +13,7 @@ logback-test.xml
 **/*.local.conf
 
 .gradle/
+**/gradle-wrapper.jar
 
 **/ui/node_modules
 **/ui/assets
