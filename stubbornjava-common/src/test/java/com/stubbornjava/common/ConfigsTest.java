@@ -8,11 +8,6 @@ import com.typesafe.config.Config;
 
 public class ConfigsTest {
 
-    @Test(expected=IllegalArgumentException.class)
-    public void emptyConfigShouldFail() {
-        new Configs.Builder().build();
-    }
-
     @Test
     public void emptyConfigShouldNotFail() {
         new Configs.Builder().build();

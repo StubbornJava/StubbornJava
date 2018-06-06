@@ -83,26 +83,26 @@ public class Configs {
     }
 
     public static class Builder {
-        private Config conf;
+        private Config conf = ConfigFactory.empty();
 
         public Builder() {
             log.info("Loading configs first row is highest priority, second row is fallback and so on");
         }
 
         public Builder withResource(String resource) {
-            conf = returnOrFallback(ConfigFactory.parseResources(resource));
+            conf = conf.withFallback(ConfigFactory.parseResources(resource));
             log.info("Loaded config file from resource ({})", resource);
             return this;
         }
 
         public Builder withSystemProperties() {
-            conf = returnOrFallback(systemProperties);
+            conf = conf.withFallback(systemProperties);
             log.info("Loaded system properties into config");
             return this;
         }
 
         public Builder withSystemEnvironment() {
-            conf = returnOrFallback(systemEnvironment);
+            conf = conf.withFallback(systemEnvironment);
             log.info("Loaded system environment into config");
             return this;
         }
@@ -111,7 +111,7 @@ public class Configs {
             File secureConfFile = new File(path);
             if (secureConfFile.exists()) {
                 log.info("Loaded config file from path ({})", path);
-                conf = returnOrFallback(ConfigFactory.parseFile(secureConfFile));
+                conf = conf.withFallback(ConfigFactory.parseFile(secureConfFile));
             } else {
                 log.info("Attempted to load file from path ({}) but it was not found", path);
             }
@@ -123,7 +123,7 @@ public class Configs {
         }
 
         public Builder withConfig(Config config) {
-            conf = returnOrFallback(config);
+            conf = conf.withFallback(config);
             return this;
         }
 
@@ -135,13 +135,6 @@ public class Configs {
                 log.debug(conf.root().render(ConfigRenderOptions.concise().setFormatted(true)));
             }
             return conf;
-        }
-
-        private Config returnOrFallback(Config config) {
-            if (this.conf == null) {
-                return config;
-            }
-            return this.conf.withFallback(config);
         }
     }
 
