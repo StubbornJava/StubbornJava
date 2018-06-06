@@ -15,15 +15,4 @@ shadowJar {
    version = null
 }
 
-sourceSets {
-    main {
-        java {
-            srcDirs = ["src/main/java"]
-        }
-        resources {
-            srcDirs = ["src/main/resources", "ui/assets"]
-        }
-    }
-}
-
 // {{end:dependencies}}
