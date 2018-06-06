@@ -1,15 +1,16 @@
 package com.stubbornjava.common.db;
 
+import static org.jooq.impl.DSL.using;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
-import java.util.function.Supplier;
 
 import org.jooq.Condition;
-import org.jooq.DSLContext;
+import org.jooq.Configuration;
 import org.jooq.Field;
 import org.jooq.Record;
 import org.jooq.RecordMapper;
@@ -22,16 +23,16 @@ public class Dao<Rec extends UpdatableRecord<Rec>, T> {
     private final TableImpl<Rec> table;
     private final RecordMapper<Rec, T> mapper;
     private final RecordUnmapper<T, Rec> unmapper;
-    private final Supplier<DSLContext> configSupplier;
+    private final Configuration configuration;
     public Dao(TableImpl<Rec> table,
                      RecordMapper<Rec, T> mapper,
                      RecordUnmapper<T, Rec> unmapper,
-                     Supplier<DSLContext> configSupplier) {
+                     Configuration configuration) {
         super();
         this.table = table;
         this.mapper = mapper;
         this.unmapper = unmapper;
-        this.configSupplier = configSupplier;
+        this.configuration = configuration;
     }
 
     public T insertReturning(T obj) {
@@ -52,7 +53,7 @@ public class Dao<Rec extends UpdatableRecord<Rec>, T> {
     public void insert(Collection<T> objects) {
         // Execute a batch INSERT
         if (objects.size() > 1) {
-            configSupplier.get().batchInsert(records(objects, false)).execute();
+            using(configuration).batchInsert(records(objects, false)).execute();
         }
 
         // Execute a regular INSERT
@@ -73,7 +74,7 @@ public class Dao<Rec extends UpdatableRecord<Rec>, T> {
     public void update(Collection<T> objects) {
         // Execute a batch UPDATE
         if (objects.size() > 1) {
-            configSupplier.get().batchUpdate(records(objects, false)).execute();
+            using(configuration).batchUpdate(records(objects, false)).execute();
         }
 
         // Execute a regular UPDATE
@@ -94,7 +95,7 @@ public class Dao<Rec extends UpdatableRecord<Rec>, T> {
     public void delete(Collection<T> objects) {
         // Execute a batch DELETE
         if (objects.size() > 1) {
-            configSupplier.get().batchDelete(records(objects, false)).execute();
+            using(configuration).batchDelete(records(objects, false)).execute();
         }
 
         // Execute a regular DELETE
@@ -104,15 +105,19 @@ public class Dao<Rec extends UpdatableRecord<Rec>, T> {
     }
 
     public T fetchOne(Function<TableImpl<Rec>, Condition> func) {
-        return mapper.map(configSupplier.get().fetchOne(table, func.apply(table)));
+        return mapper.map(using(configuration).fetchOne(table, func.apply(table)));
     }
 
     public List<T> fetch(Function<TableImpl<Rec>, Condition> func) {
-        return configSupplier.get().fetch(table, func.apply(table)).map(mapper);
+        return using(configuration).fetch(table, func.apply(table)).map(mapper);
+    }
+
+    public List<T> fetchAll() {
+        return using(configuration).fetch(table).map(mapper);
     }
 
     public int deleteWhere(Function<TableImpl<Rec>, Condition> func) {
-        return configSupplier.get().deleteFrom(table).where(func.apply(table)).execute();
+        return using(configuration).deleteFrom(table).where(func.apply(table)).execute();
     }
 
     // Copy pasted from jOOQ's DAOImpl.java
@@ -128,7 +133,7 @@ public class Dao<Rec extends UpdatableRecord<Rec>, T> {
 
         for (T object : objects) {
             Rec record = unmapper.unmap(object);
-            record.attach(configSupplier.get().configuration());
+            record.attach(using(configuration).configuration());
 
             if (forUpdate && pk != null)
                 for (Field<?> field : pk)
