@@ -355,7 +355,7 @@ public class PostData {
         posts.add(PostRaw.builder()
             .postId(834409923388349418L)
             .title("Java Enum Lookup by Name or Field Without Throwing Exceptions")
-            .metaDesc("Enum lookup by name without using Enum.valueOf() by utilizing custom methods and Google's Guava. Ignore Enum.valueOf() exception.")
+            .metaDesc("Java enumEnum lookup by name without using Enum.valueOf() by utilizing custom methods and Google's Guava. Ignore Enum.valueOf() exception.")
             .dateCreated(LocalDateTime.parse("2017-02-22T10:15:30"))
             .dateUpdated(LocalDateTime.parse("2017-02-22T10:15:30"))
             .javaLibs(Lists.newArrayList(JavaLib.Guava, JavaLib.Jackson))
