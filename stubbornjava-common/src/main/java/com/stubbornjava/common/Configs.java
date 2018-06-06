@@ -2,6 +2,7 @@ package com.stubbornjava.common;
 
 import java.io.File;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BiFunction;
 import java.util.function.Supplier;
 
@@ -24,25 +25,42 @@ public class Configs {
      * We could abstract out and delegate but its not worth it.
      * I am gambling on the fact that I will not switch out the config library.
      */
-    private static final Config system = ConfigFactory.systemProperties();
-    private static final Config properties = new Builder().withSecureConf().envAwareApp().build();
 
-    public static Config system() {
-        return system;
+    // This config has all of the JVM system properties including any custom -D properties
+    private static final Config systemProperties = ConfigFactory.systemProperties();
+
+    // This config has access to all of the environment variables
+    private static final Config systemEnvironment = ConfigFactory.systemEnvironment();
+
+    // Always start with a blank config and add fallbacks
+    private static final AtomicReference<Config> propertiesRef = new AtomicReference<>(null);
+
+    public static void initProperties(Config config) {
+        boolean success = propertiesRef.compareAndSet(null, config);
+        if (!success) {
+            throw new RuntimeException("propertiesRef Config has already been initialized. This should only be called once.");
+        }
     }
 
     public static Config properties() {
-        return properties;
+        return propertiesRef.get();
+    }
+
+    public static Config systemProperties() {
+        return systemProperties;
+    }
+
+    public static Config systemEnvironment() {
+        return systemEnvironment;
+    }
+
+    public static Configs.Builder newBuilder() {
+        return new Builder();
     }
 
     // This should return the current executing user path
     public static String getExecutionDirectory() {
-        return system.getString("user.dir");
-    }
-
-    public static Map<String, Object> asMap(Config config) {
-        return Seq.seq(config.entrySet())
-                  .toMap(e -> e.getKey(), e -> e.getValue().unwrapped());
+        return systemProperties.getString("user.dir");
     }
 
     public static <T> T getOrDefault(Config config, String path, BiFunction<Config, String, T> extractor, T defaultValue) {
@@ -59,6 +77,11 @@ public class Configs {
         return defaultSupplier.get();
     }
 
+    public static Map<String, Object> asMap(Config config) {
+        return Seq.seq(config.entrySet())
+                  .toMap(e -> e.getKey(), e -> e.getValue().unwrapped());
+    }
+
     public static class Builder {
         private Config conf = ConfigFactory.empty();
 
@@ -69,6 +92,18 @@ public class Configs {
         public Builder withResource(String resource) {
             conf = returnOrFallback(ConfigFactory.parseResources(resource));
             log.info("Loaded config file from resource ({})", resource);
+            return this;
+        }
+
+        public Builder withSystemProperties() {
+            conf = returnOrFallback(systemProperties);
+            log.info("Loaded system properties into config");
+            return this;
+        }
+
+        public Builder withSystemEnvironment() {
+            conf = returnOrFallback(systemEnvironment);
+            log.info("Loaded system environment into config");
             return this;
         }
 
@@ -83,14 +118,13 @@ public class Configs {
             return this;
         }
 
-        public Builder envAwareApp() {
-            String env = system.hasPath("env") ? system.getString("env") : "local";
-            String envFile = "application." + env + ".conf";
-            return withResource(envFile).withResource("application.conf");
+        public Builder withOptionalRelativeFile(String path) {
+            return withOptionalFile(getExecutionDirectory() + path);
         }
 
-        public Builder withSecureConf() {
-            return withOptionalFile(getExecutionDirectory() + "/secure.conf");
+        public Builder withConfig(Config config) {
+            conf = returnOrFallback(config);
+            return this;
         }
 
         public Config build() {
@@ -112,7 +146,9 @@ public class Configs {
     }
 
     public static void main(String[] args) {
-        Configs.properties();
+        log.debug(ConfigFactory.load().root().render(ConfigRenderOptions.concise()));
+
+        //newBuilder().withSystemEnvironment().withSystemProperties().build();
     }
 }
 // {{end:config}}

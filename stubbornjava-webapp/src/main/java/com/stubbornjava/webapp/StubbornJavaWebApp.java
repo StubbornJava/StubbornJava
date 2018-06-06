@@ -62,43 +62,44 @@ public class StubbornJavaWebApp {
     // {{end:middleware}}
 
     // These routes do not require any authentication
-    private static final HttpHandler basicRoutes = new RoutingHandler()
-        .get("/", timed("getHome", PageRoutes::home))
-        .get("/ping", timed("ping", PageRoutes::ping))
+    private static final HttpHandler getBasicRoutes() {
+        return new RoutingHandler()
+            .get("/", timed("getHome", PageRoutes::home))
+            .get("/ping", timed("ping", PageRoutes::ping))
 
-        .get("/favicon.ico", timed("favicon", CustomHandlers.resource("images/", (int)TimeUnit.DAYS.toSeconds(30))))
-        .get("robots.txt", timed("robots", PageRoutes::robots))
+            .get("/favicon.ico", timed("favicon", CustomHandlers.resource("images/", (int)TimeUnit.DAYS.toSeconds(30))))
+            .get("robots.txt", timed("robots", PageRoutes::robots))
 
-        .get("/posts/{slug}", timed("getPost", PostRoutes::getPost))
+            .get("/posts/{slug}", timed("getPost", PostRoutes::getPost))
 
-        .get("/tags/{tag}/posts", timed("getRecentPostsWithTag", PostRoutes::recentPostsWithTag))
+            .get("/tags/{tag}/posts", timed("getRecentPostsWithTag", PostRoutes::recentPostsWithTag))
 
-        .get("/java-libraries", timed("getJavaLibraries", JavaLibRoutes::listLibraries))
-        .get("/java-libraries/{library}", timed("getLibrary", JavaLibRoutes::getLibrary))
-        .get("/libraries/{library}/posts", timed("getLibraryRedirect", JavaLibRoutes::getLibraryRedirect))
+            .get("/java-libraries", timed("getJavaLibraries", JavaLibRoutes::listLibraries))
+            .get("/java-libraries/{library}", timed("getLibrary", JavaLibRoutes::getLibrary))
+            .get("/libraries/{library}/posts", timed("getLibraryRedirect", JavaLibRoutes::getLibraryRedirect))
 
-        .get("/guides/{slug}", timed("getGuide", GuideRoutes::getGuide))
+            .get("/guides/{slug}", timed("getGuide", GuideRoutes::getGuide))
 
-        .get("/best-selling-html-css-themes-and-website-templates", timed("popularThemes", ThemeRoutes::popularThemes))
+            .get("/best-selling-html-css-themes-and-website-templates", timed("popularThemes", ThemeRoutes::popularThemes))
 
-        .get("/dev/metrics", timed("getMetrics", HelperRoutes::getMetrics))
+            .get("/dev/metrics", timed("getMetrics", HelperRoutes::getMetrics))
 
-        // addAll allows you to combine more than one RoutingHandler together.
-        .addAll(SitemapRoutes.router(StubbornJavaSitemapGenerator.getSitemap()))
+            // addAll allows you to combine more than one RoutingHandler together.
+            .addAll(SitemapRoutes.router(StubbornJavaSitemapGenerator.getSitemap()))
 
-        .setFallbackHandler(timed("notFound", PageRoutes::notFound))
-    ;
-
-    private static final HttpHandler staticRoutes = new PathHandler(basicRoutes)
-        .addPrefixPath("/assets", timed("getAssets", CustomHandlers.resource("", (int)TimeUnit.DAYS.toSeconds(30))))
-    ;
+            .setFallbackHandler(timed("notFound", PageRoutes::notFound));
+    }
 
     private static void startServer() {
+        HttpHandler staticRoutes = new PathHandler(getBasicRoutes())
+            .addPrefixPath("/assets", timed("getAssets", CustomHandlers.resource("", (int)TimeUnit.DAYS.toSeconds(30))));
         SimpleServer server = SimpleServer.simpleServer(wrapWithMiddleware(staticRoutes));
         server.start();
     }
 
     public static void main(String[] args) {
-        startServer();
+        StubbornJavaBootstrap.run(() -> {
+            startServer();
+        });
     }
 }

@@ -5,8 +5,9 @@ import org.slf4j.LoggerFactory;
 
 public enum Env {
     LOCAL("local")
-    , DEV("dev")
-    , PROD("prod")
+    , DEV("development")
+    , STAGING("staging")
+    , PROD("production")
     ;
 
     private final String name;
@@ -23,8 +24,9 @@ public enum Env {
     private static final Env currentEnv;
     static {
         String env = "local";
-        if (Configs.system().hasPath("env")) {
-            env = Configs.system().getString("env");
+        // This comes from -Denv={environment}
+        if (Configs.systemProperties().hasPath("env")) {
+            env = Configs.systemProperties().getString("env");
         }
         currentEnv = Env.valueOf(env.toUpperCase());
         log.info("Current Env: {}", currentEnv.getName());
