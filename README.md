@@ -1,4 +1,7 @@
 [![Release](https://jitpack.io/v/StubbornJava/StubbornJava.svg)](https://jitpack.io/#StubbornJava/StubbornJava)
+[![Follow @StubbornJava](https://img.shields.io/twitter/follow/stubbornJava.svg?style=social)](https://twitter.com/intent/follow?screen_name=StubbornJava) 
+
+
 
 # StubbornJava
 https://www.stubbornjava.com/
