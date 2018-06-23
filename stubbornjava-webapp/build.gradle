@@ -3,7 +3,8 @@ dependencies {
     // Project reference
     compile project(':stubbornjava-undertow')
     compile project(':stubbornjava-common')
-    
+    compile project(':stubbornjava-cms-server')
+
     compile libs.lombok
 
     testCompile libs.junit
