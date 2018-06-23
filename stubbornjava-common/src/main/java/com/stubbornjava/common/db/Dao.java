@@ -1,7 +1,5 @@
 package com.stubbornjava.common.db;
 
-import static org.jooq.impl.DSL.using;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -10,7 +8,7 @@ import java.util.List;
 import java.util.function.Function;
 
 import org.jooq.Condition;
-import org.jooq.Configuration;
+import org.jooq.DSLContext;
 import org.jooq.Field;
 import org.jooq.Record;
 import org.jooq.RecordMapper;
@@ -19,105 +17,102 @@ import org.jooq.UniqueKey;
 import org.jooq.UpdatableRecord;
 import org.jooq.impl.TableImpl;
 
-public class Dao<Rec extends UpdatableRecord<Rec>, T> {
-    private final TableImpl<Rec> table;
+public class Dao<Rec extends UpdatableRecord<Rec>, T, Table extends TableImpl<Rec>> {
+    private final Table table;
     private final RecordMapper<Rec, T> mapper;
     private final RecordUnmapper<T, Rec> unmapper;
-    private final Configuration configuration;
-    public Dao(TableImpl<Rec> table,
-                     RecordMapper<Rec, T> mapper,
-                     RecordUnmapper<T, Rec> unmapper,
-                     Configuration configuration) {
+    public Dao(Table table,
+               RecordMapper<Rec, T> mapper,
+               RecordUnmapper<T, Rec> unmapper) {
         super();
         this.table = table;
         this.mapper = mapper;
         this.unmapper = unmapper;
-        this.configuration = configuration;
     }
 
-    public T insertReturning(T obj) {
-        Rec rec = records(Collections.singletonList(obj), false).get(0);
+    public T insertReturning(DSLContext ctx, T obj) {
+        Rec rec = records(ctx, Collections.singletonList(obj), false).get(0);
         rec.insert();
         return mapper.map(rec);
     }
 
-    public void insert(T obj) {
-        insert(Collections.singletonList(obj));
+    public void insert(DSLContext ctx, T obj) {
+        insert(ctx, Collections.singletonList(obj));
     }
 
     @SuppressWarnings("unchecked")
-    public void insert(T... objects) {
-        insert(Arrays.asList(objects));
+    public void insert(DSLContext ctx, T... objects) {
+        insert(ctx, Arrays.asList(objects));
     }
 
-    public void insert(Collection<T> objects) {
+    public void insert(DSLContext ctx, Collection<T> objects) {
         // Execute a batch INSERT
         if (objects.size() > 1) {
-            using(configuration).batchInsert(records(objects, false)).execute();
+            ctx.batchInsert(records(ctx, objects, false)).execute();
         }
 
         // Execute a regular INSERT
         else if (objects.size() == 1) {
-            records(objects, false).get(0).insert();
+            records(ctx, objects, false).get(0).insert();
         }
     }
 
-    public void update(T obj) {
-        update(Collections.singletonList(obj));
+    public void update(DSLContext ctx, T obj) {
+        update(ctx, Collections.singletonList(obj));
     }
 
     @SuppressWarnings("unchecked")
-    public void update(T... objects) {
-        update(Arrays.asList(objects));
+    public void update(DSLContext ctx, T... objects) {
+        update(ctx, Arrays.asList(objects));
     }
 
-    public void update(Collection<T> objects) {
+    public void update(DSLContext ctx, Collection<T> objects) {
         // Execute a batch UPDATE
         if (objects.size() > 1) {
-            using(configuration).batchUpdate(records(objects, false)).execute();
+            ctx.batchUpdate(records(ctx, objects, false)).execute();
         }
 
         // Execute a regular UPDATE
         else if (objects.size() == 1) {
-            records(objects, false).get(0).update();
+            records(ctx, objects, false).get(0).update();
         }
     }
 
-    public void delete(T obj) {
-        delete(Collections.singletonList(obj));
+    public void delete(DSLContext ctx, T obj) {
+        delete(ctx, Collections.singletonList(obj));
     }
 
     @SuppressWarnings("unchecked")
-    public void delete(T... objects) {
-        delete(Arrays.asList(objects));
+    public void delete(DSLContext ctx, T... objects) {
+        delete(ctx, Arrays.asList(objects));
     }
 
-    public void delete(Collection<T> objects) {
+    public void delete(DSLContext ctx, Collection<T> objects) {
         // Execute a batch DELETE
         if (objects.size() > 1) {
-            using(configuration).batchDelete(records(objects, false)).execute();
+            ctx.batchDelete(records(ctx, objects, false)).execute();
         }
 
         // Execute a regular DELETE
         else if (objects.size() == 1) {
-            records(objects, false).get(0).delete();
+            records(ctx, objects, false).get(0).delete();
         }
     }
 
-    public T fetchOne(Function<TableImpl<Rec>, Condition> func) {
-        return mapper.map(using(configuration).fetchOne(table, func.apply(table)));
+    public T fetchOne(DSLContext ctx, Function<Table, Condition> func) {
+        return mapper.map(ctx.fetchOne(table, func.apply(table)));
     }
 
-    public List<T> fetch(Function<TableImpl<Rec>, Condition> func) {
-        return using(configuration).fetch(table, func.apply(table)).map(mapper);
+    public List<T> fetch(DSLContext ctx, Function<Table, Condition> func) {
+        return ctx.fetch(table, func.apply(table)).map(mapper);
     }
 
-    public List<T> fetchAll() {
-        return using(configuration).fetch(table).map(mapper);
+    public List<T> fetchAll(DSLContext ctx) {
+        return ctx.fetch(table).map(mapper);
     }
 
-    public int deleteWhere(Function<TableImpl<Rec>, Condition> func) {
-        return using(configuration).deleteFrom(table).where(func.apply(table)).execute();
+    public int deleteWhere(DSLContext ctx, Function<TableImpl<Rec>, Condition> func) {
+        return ctx.deleteFrom(table).where(func.apply(table)).execute();
     }
 
     // Copy pasted from jOOQ's DAOImpl.java
@@ -127,13 +122,13 @@ public class Dao<Rec extends UpdatableRecord<Rec>, T> {
     }
 
     // Copy pasted from jOOQ's DAOImpl.java
-    private /* non-final */ List<Rec> records(Collection<T> objects, boolean forUpdate) {
+    private /* non-final */ List<Rec> records(DSLContext ctx, Collection<T> objects, boolean forUpdate) {
         List<Rec> result = new ArrayList<>();
         Field<?>[] pk = pk();
 
         for (T object : objects) {
             Rec record = unmapper.unmap(object);
-            record.attach(using(configuration).configuration());
+            record.attach(ctx.configuration());
 
             if (forUpdate && pk != null)
                 for (Field<?> field : pk)
