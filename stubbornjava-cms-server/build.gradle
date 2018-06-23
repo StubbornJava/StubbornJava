@@ -1,0 +1,9 @@
+dependencies {
+    // Project reference
+    compile project(':stubbornjava-undertow')
+    compile project(':stubbornjava-common')
+    
+    compile libs.lombok
+    
+    testCompile libs.junit
+}
