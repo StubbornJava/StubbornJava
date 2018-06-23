@@ -90,8 +90,10 @@ public class Configs {
         }
 
         public Builder withResource(String resource) {
-            conf = conf.withFallback(ConfigFactory.parseResources(resource));
-            log.info("Loaded config file from resource ({})", resource);
+            Config resourceConfig = ConfigFactory.parseResources(resource);
+            String empty = resourceConfig.entrySet().size() == 0 ? " contains no values" : "";
+            conf = conf.withFallback(resourceConfig);
+            log.info("Loaded config file from resource ({}){}", resource, empty);
             return this;
         }
 
@@ -132,7 +134,7 @@ public class Configs {
             conf = conf.resolve();
             if (log.isDebugEnabled()) {
                 log.debug("Logging properties. Make sure sensitive data such as passwords or secrets are not logged!");
-                log.debug(conf.root().render(ConfigRenderOptions.concise().setFormatted(true)));
+                log.debug(conf.root().render());
             }
             return conf;
         }
