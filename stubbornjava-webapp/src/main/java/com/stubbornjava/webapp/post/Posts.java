@@ -14,7 +14,10 @@ import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
+import com.stubbornjava.cms.server.CmsDSLs;
+import com.stubbornjava.common.Resources;
 import com.stubbornjava.common.Templating;
+import com.stubbornjava.webapp.WebappBoostrap;
 import com.stubbornjava.webapp.github.FileContent;
 import com.stubbornjava.webapp.github.GitHubSource;
 import com.stubbornjava.webapp.post.TagOrLibrary.Type;
@@ -126,9 +129,38 @@ public class Posts {
            .toMap(fc -> fc.getName());
 
         String content = Templating.instance().renderTemplate("templates/src/posts/" + postRaw.getSlug(), fileContents);
+        String template = Resources.asString("templates/src/posts/" + postRaw.getSlug() + ".hbs");
         return Post.builder()
                    .postMeta(meta)
                    .content(content)
+                   .contentTemplate(template)
                    .build();
+    }
+
+    public static void main(String[] args) {
+        WebappBoostrap.run(() -> {
+            List<Post> posts = Seq.seq(PostData.getPosts())
+                                  .map(Posts::postFromMeta)
+                                  .toList();
+
+            for (Post post : posts) {
+                PostMeta meta = post.getPostMeta();
+                com.stubbornjava.cms.server.post.FullPost newPost = new com.stubbornjava.cms.server.post.FullPost(
+                    null,
+                    1,
+                    meta.getTitle(),
+                    meta.getSlug(),
+                    meta.getMetaDesc(),
+                    "PUBLISHED",
+                    meta.getDateCreated(),
+                    meta.getDateCreated(),
+                    meta.getDateCreated().toLocalDate(),
+                    post.getContentTemplate(),
+                    Seq.seq(meta.getTagOrLibraries()).filter(tl -> tl.getType() == Type.Tag).map(x -> x.getName()).toSet());
+                CmsDSLs.transactional().transaction(ctx -> {
+                    com.stubbornjava.cms.server.post.FullPost created = com.stubbornjava.cms.server.post.Posts.create(ctx, 1, newPost);
+                });
+            }
+        });
     }
 }
