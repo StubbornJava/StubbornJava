@@ -1,6 +1,7 @@
 package com.stubbornjava.webapp.post;
 
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
+import com.stubbornjava.cms.server.post.PostMeta;
 
 import lombok.Builder;
 import lombok.Value;

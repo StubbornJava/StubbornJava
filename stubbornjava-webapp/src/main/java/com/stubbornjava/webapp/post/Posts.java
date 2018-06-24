@@ -15,6 +15,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import com.stubbornjava.cms.server.CmsDSLs;
+import com.stubbornjava.cms.server.post.PostMeta;
 import com.stubbornjava.common.Resources;
 import com.stubbornjava.common.Templating;
 import com.stubbornjava.webapp.WebappBoostrap;
@@ -55,10 +56,8 @@ public class Posts {
         }
     }
 
-    public static List<PostMeta> getRecentPostsExcluding(Set<Long> excludeIds) {
-        return Seq.seq(recentPosts)
-                  .filter(p -> !excludeIds.contains(p.getPostId()))
-                  .limit(10).toList();
+    public static List<PostMeta> getRecentPostsExcluding(Set<Long> excludePostIds) {
+        return com.stubbornjava.cms.server.post.Posts.getRecentPostsExcluding(ctx, 1L, excludeIds);
     }
 
     public static List<PostMeta> getRecentPosts() {
