@@ -9,7 +9,7 @@ import lombok.Value;
 
 @Value
 @Builder(toBuilder=true)
-public class PostMeta {
+public class PostInfo {
     private final long postId;
     private final int appId;
     private final String title;

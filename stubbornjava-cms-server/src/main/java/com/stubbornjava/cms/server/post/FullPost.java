@@ -18,7 +18,7 @@ public class FullPost {
     private final String title;
     private final String slug;
     private final String metadesc;
-    private final String draftStatus;
+    private final DraftStatus draftStatus;
     private final LocalDateTime lastUpdateTs;
     private final LocalDateTime dateCreatedTs;
     private final LocalDate dateCreated;

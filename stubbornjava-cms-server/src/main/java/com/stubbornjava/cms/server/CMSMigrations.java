@@ -16,6 +16,7 @@ import org.jooq.util.jaxb.Target;
 import org.jooq.util.mysql.MySQLDatabase;
 
 import com.mysql.jdbc.Driver;
+import com.stubbornjava.cms.server.post.DraftStatus;
 import com.stubbornjava.common.db.CustomGeneratorStrategy;
 import com.stubbornjava.common.db.JooqConfig;
 import com.zaxxer.hikari.HikariDataSource;
@@ -35,6 +36,11 @@ public class CMSMigrations {
 
     public static void codegen() throws Exception {
         List<ForcedType> forcedTypes = JooqConfig.defaultForcedTypes();
+
+        forcedTypes.add(new ForcedType()
+            .withUserType(DraftStatus.class.getName())
+            .withEnumConverter(true)
+            .withExpression(".*draft_status.*"));
 
         HikariDataSource ds = CMSConnectionPools.processing();
 

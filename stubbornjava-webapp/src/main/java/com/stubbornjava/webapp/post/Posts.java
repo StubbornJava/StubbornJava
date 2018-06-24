@@ -15,7 +15,8 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import com.stubbornjava.cms.server.CmsDSLs;
-import com.stubbornjava.cms.server.post.PostMeta;
+import com.stubbornjava.cms.server.post.DraftStatus;
+import com.stubbornjava.cms.server.post.PostInfo;
 import com.stubbornjava.common.Resources;
 import com.stubbornjava.common.Templating;
 import com.stubbornjava.webapp.WebappBoostrap;
@@ -56,16 +57,22 @@ public class Posts {
         }
     }
 
-    public static List<PostMeta> getRecentPostsExcluding(Set<Long> excludePostIds) {
-        return com.stubbornjava.cms.server.post.Posts.getRecentPostsExcluding(ctx, 1L, excludeIds);
+    public static List<PostInfo> getRecentPostsExcluding(Set<Long> excludePostIds) {
+        return CmsDSLs.transactional().transactionResult(ctx -> {
+            return com.stubbornjava.cms.server.post.Posts.getRecentPostsExcluding(ctx, 1, excludePostIds);
+        });
     }
 
-    public static List<PostMeta> getRecentPosts() {
-        return Seq.seq(recentPosts).limit(10).toList();
+    public static List<PostInfo> getRecentPosts() {
+        return CmsDSLs.transactional().transactionResult(ctx -> {
+            return com.stubbornjava.cms.server.post.Posts.getRecentPosts(ctx, 1);
+        });
     }
 
-    public static List<PostMeta> getRecentPosts(int num) {
-        return Seq.seq(recentPosts).limit(num).toList();
+    public static List<PostInfo> getRecentPosts(int num) {
+        return CmsDSLs.transactional().transactionResult(ctx -> {
+            return com.stubbornjava.cms.server.post.Posts.getRecentPosts(ctx, 1, num);
+        });
     }
 
     public static List<PostMeta> getRecentPostsWithTag(String tag) {
@@ -113,11 +120,11 @@ public class Posts {
         tagOrLibraries = Seq.seq(tagOrLibraries).sorted(e -> e.getName()).toList();
         return PostMeta.builder()
                        .postId(postRaw.getPostId())
+                       .metaDesc(postRaw.getMetaDesc())
                        .tagOrLibraries(tagOrLibraries)
                        .dateCreated(postRaw.getDateCreated())
                        .title(postRaw.getTitle())
                        .slug(postRaw.getSlug())
-                       .metaDesc(postRaw.getMetaDesc())
                        .build();
     }
 
@@ -150,7 +157,7 @@ public class Posts {
                     meta.getTitle(),
                     meta.getSlug(),
                     meta.getMetaDesc(),
-                    "PUBLISHED",
+                    DraftStatus.PUBLISHED,
                     meta.getDateCreated(),
                     meta.getDateCreated(),
                     meta.getDateCreated().toLocalDate(),

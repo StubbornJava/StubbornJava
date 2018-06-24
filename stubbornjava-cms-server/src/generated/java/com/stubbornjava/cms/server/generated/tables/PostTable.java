@@ -8,6 +8,7 @@ import com.stubbornjava.cms.server.generated.Indexes;
 import com.stubbornjava.cms.server.generated.Keys;
 import com.stubbornjava.cms.server.generated.SjCms;
 import com.stubbornjava.cms.server.generated.tables.records.PostRecord;
+import com.stubbornjava.cms.server.post.DraftStatus;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -42,7 +43,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class PostTable extends TableImpl<PostRecord> {
 
-    private static final long serialVersionUID = 1003277514;
+    private static final long serialVersionUID = 204476478;
 
     /**
      * The reference instance of <code>sj_cms.post</code>
@@ -85,7 +86,7 @@ public class PostTable extends TableImpl<PostRecord> {
     /**
      * The column <code>sj_cms.post.draft_status</code>.
      */
-    public final TableField<PostRecord, String> DRAFT_STATUS = createField("draft_status", org.jooq.impl.SQLDataType.VARCHAR(255).nullable(false), this, "");
+    public final TableField<PostRecord, DraftStatus> DRAFT_STATUS = createField("draft_status", org.jooq.impl.SQLDataType.VARCHAR(255).nullable(false), this, "", new org.jooq.impl.EnumConverter<java.lang.String, com.stubbornjava.cms.server.post.DraftStatus>(java.lang.String.class, com.stubbornjava.cms.server.post.DraftStatus.class));
 
     /**
      * The column <code>sj_cms.post.last_update_ts</code>.

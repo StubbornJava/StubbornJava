@@ -2,7 +2,6 @@ package com.stubbornjava.webapp.post;
 
 import java.util.List;
 
-import com.stubbornjava.cms.server.post.PostMeta;
 import com.stubbornjava.common.undertow.Exchange;
 import com.stubbornjava.webapp.PageRoutes;
 import com.stubbornjava.webapp.Response;

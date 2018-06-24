@@ -39,7 +39,7 @@ public class Posts {
     }
 
 
-    public static List<PostMeta> getRecentPostsExcluding(DSLContext ctx, int appId, Set<Long> excludePostIds) {
+    public static List<PostInfo> getRecentPostsExcluding(DSLContext ctx, int appId, Set<Long> excludePostIds) {
         PostSearch search = PostSearch.builder()
              .appId(appId)
              .excludePostIds(excludePostIds)
@@ -48,11 +48,11 @@ public class Posts {
         return postSearch(ctx, appId, search);
     }
 
-    public static List<PostMeta> getRecentPosts(DSLContext ctx, int appId) {
+    public static List<PostInfo> getRecentPosts(DSLContext ctx, int appId) {
         return getRecentPosts(ctx, appId, 10);
     }
 
-    public static List<PostMeta> getRecentPosts(DSLContext ctx, int appId, int num) {
+    public static List<PostInfo> getRecentPosts(DSLContext ctx, int appId, int num) {
         PostSearch search = PostSearch.builder()
             .appId(appId)
             .limit(num)
@@ -60,16 +60,16 @@ public class Posts {
         return postSearch(ctx, appId, search);
     }
 
-    public static List<PostMeta> getRecentPostsWithTag(DSLContext ctx, int appId, String tag) {
+    public static List<PostInfo> getRecentPostsWithTag(DSLContext ctx, int appId, String tag) {
         PostSearch search = PostSearch.builder()
-                .appId(appId)
-                .tagName(tag)
-                .limit(50)
-                .build();
+            .appId(appId)
+            .tagName(tag)
+            .limit(50)
+            .build();
         return postSearch(ctx, appId, search);
     }
 
-    private static List<PostMeta> postSearch(DSLContext ctx, int appId, PostSearch searchRequest) {
+    private static List<PostInfo> postSearch(DSLContext ctx, int appId, PostSearch searchRequest) {
         Condition condition = DSL.trueCondition();
 
         if (!searchRequest.getExcludePostIds().isEmpty()) {
@@ -84,7 +84,7 @@ public class Posts {
 
         int limit = Optional.ofNullable(searchRequest.getLimit()).orElse(50);
 
-        List<PostMeta> posts = ctx.select(postMetaFields)
+        List<PostInfo> posts = ctx.select(postMetaFields)
                                   .from(post)
                                   .where(condition)
                                   .orderBy(post.DATE_CREATED.desc(), post.DATE_CREATED_TS.desc())
@@ -92,7 +92,7 @@ public class Posts {
                                   .fetch(record -> Posts.metaFromRecord(record.into(post)));
         Multimap<Long, PostTag> tagsByPostId = PostTags.findTagsForPosts(ctx, appId, metaIds(posts));
 
-        List<PostMeta> postMetas = Seq.seq(posts).map(p -> {
+        List<PostInfo> postMetas = Seq.seq(posts).map(p -> {
             List<String> tagNames = Seq.seq(tagsByPostId.get(p.getPostId())).map(PostTag::getName).toList();
             return p.toBuilder()
                     .tags(tagNames)
@@ -105,8 +105,8 @@ public class Posts {
         return Seq.seq(posts).map(Post::getPostId).toSet();
     }
 
-    private static Set<Long> metaIds(Collection<PostMeta> posts) {
-        return Seq.seq(posts).map(PostMeta::getPostId).toSet();
+    private static Set<Long> metaIds(Collection<PostInfo> posts) {
+        return Seq.seq(posts).map(PostInfo::getPostId).toSet();
     }
 
     private static List<FullPost> buildFullPosts(DSLContext ctx, List<Post> posts, Multimap<Long, PostTag> tagsByPostId) {
@@ -175,8 +175,8 @@ public class Posts {
             );
     }
 
-    static PostMeta metaFromRecord(PostRecord record) {
-        return new PostMeta(
+    static PostInfo metaFromRecord(PostRecord record) {
+        return new PostInfo(
             record.getPostId(),
             record.getAppId(),
             record.getTitle(),

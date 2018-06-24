@@ -18,6 +18,8 @@ import javax.net.ssl.X509TrustManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import okhttp3.Authenticator;
+import okhttp3.Credentials;
 import okhttp3.Dispatcher;
 import okhttp3.Interceptor;
 import okhttp3.Interceptor.Chain;
@@ -26,6 +28,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.OkHttpClient.Builder;
 import okhttp3.Request;
 import okhttp3.Response;
+import okhttp3.Route;
 import okhttp3.logging.HttpLoggingInterceptor;
 import okhttp3.logging.HttpLoggingInterceptor.Level;
 
@@ -56,6 +59,10 @@ public class HttpClient {
         };
     }
 
+    public static Authenticator basicAuth(String username, String password) {
+        return new BasicAuthenticator(username, password);
+    }
+
     // {{start:client}}
     private static final OkHttpClient client;
     static {
@@ -70,8 +77,6 @@ public class HttpClient {
             .addNetworkInterceptor(loggingInterceptor)
             .build();
     }
-
-    ;
 
     /*
      * Global client that can be shared for common HTTP tasks.
@@ -149,4 +154,20 @@ public class HttpClient {
         return builder.build();
     }
     // {{end:trustAllSslClient}}
+
+    private static final class BasicAuthenticator implements Authenticator {
+        private final String username;
+        private final String password;
+
+        public BasicAuthenticator(String username, String password) {
+            this.username = username;
+            this.password = password;
+        }
+
+        @Override
+        public Request authenticate(Route route, Response response) throws IOException {
+            String credential = Credentials.basic(username, password);
+            return response.request().newBuilder().header("Authorization", credential).build();
+        }
+    }
 }
