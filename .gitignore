@@ -22,3 +22,7 @@ logback-test.xml
 
 terraform.tfstate*
 .terraform/
+
+.vscode
+
+ansible/galaxy_roles
