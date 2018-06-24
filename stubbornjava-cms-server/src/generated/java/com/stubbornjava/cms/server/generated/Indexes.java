@@ -38,6 +38,7 @@ public class Indexes {
     public static final Index APP_NAME_IDX = Indexes0.APP_NAME_IDX;
     public static final Index APP_PRIMARY = Indexes0.APP_PRIMARY;
     public static final Index POST_APP_ID_SLUG = Indexes0.POST_APP_ID_SLUG;
+    public static final Index POST_DATE_CREATED_IDX = Indexes0.POST_DATE_CREATED_IDX;
     public static final Index POST_PRIMARY = Indexes0.POST_PRIMARY;
     public static final Index POST_TAG_APP_ID_NAME_UNIQUE = Indexes0.POST_TAG_APP_ID_NAME_UNIQUE;
     public static final Index POST_TAG_PRIMARY = Indexes0.POST_TAG_PRIMARY;
@@ -56,6 +57,7 @@ public class Indexes {
         public static Index APP_NAME_IDX = Internal.createIndex("name_idx", AppTable.APP, new OrderField[] { AppTable.APP.NAME }, true);
         public static Index APP_PRIMARY = Internal.createIndex("PRIMARY", AppTable.APP, new OrderField[] { AppTable.APP.APP_ID }, true);
         public static Index POST_APP_ID_SLUG = Internal.createIndex("app_id_slug", PostTable.POST, new OrderField[] { PostTable.POST.APP_ID, PostTable.POST.SLUG }, true);
+        public static Index POST_DATE_CREATED_IDX = Internal.createIndex("date_created_idx", PostTable.POST, new OrderField[] { PostTable.POST.DATE_CREATED }, false);
         public static Index POST_PRIMARY = Internal.createIndex("PRIMARY", PostTable.POST, new OrderField[] { PostTable.POST.POST_ID }, true);
         public static Index POST_TAG_APP_ID_NAME_UNIQUE = Internal.createIndex("app_id_name_unique", PostTagTable.POST_TAG, new OrderField[] { PostTagTable.POST_TAG.APP_ID, PostTagTable.POST_TAG.NAME }, true);
         public static Index POST_TAG_PRIMARY = Internal.createIndex("PRIMARY", PostTagTable.POST_TAG, new OrderField[] { PostTagTable.POST_TAG.POST_TAG_ID }, true);

@@ -42,7 +42,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class PostTable extends TableImpl<PostRecord> {
 
-    private static final long serialVersionUID = 1196258882;
+    private static final long serialVersionUID = 1003277514;
 
     /**
      * The reference instance of <code>sj_cms.post</code>
@@ -149,7 +149,7 @@ public class PostTable extends TableImpl<PostRecord> {
      */
     @Override
     public List<Index> getIndexes() {
-        return Arrays.<Index>asList(Indexes.POST_APP_ID_SLUG, Indexes.POST_PRIMARY);
+        return Arrays.<Index>asList(Indexes.POST_APP_ID_SLUG, Indexes.POST_DATE_CREATED_IDX, Indexes.POST_PRIMARY);
     }
 
     /**

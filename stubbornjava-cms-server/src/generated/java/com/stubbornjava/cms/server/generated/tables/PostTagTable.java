@@ -41,7 +41,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class PostTagTable extends TableImpl<PostTagRecord> {
 
-    private static final long serialVersionUID = 724752556;
+    private static final long serialVersionUID = 1272857439;
 
     /**
      * The reference instance of <code>sj_cms.post_tag</code>
@@ -59,7 +59,7 @@ public class PostTagTable extends TableImpl<PostTagRecord> {
     /**
      * The column <code>sj_cms.post_tag.post_tag_id</code>.
      */
-    public final TableField<PostTagRecord, Long> POST_TAG_ID = createField("post_tag_id", org.jooq.impl.SQLDataType.BIGINT.nullable(false).identity(true), this, "");
+    public final TableField<PostTagRecord, Integer> POST_TAG_ID = createField("post_tag_id", org.jooq.impl.SQLDataType.INTEGER.nullable(false).identity(true), this, "");
 
     /**
      * The column <code>sj_cms.post_tag.app_id</code>.
@@ -125,7 +125,7 @@ public class PostTagTable extends TableImpl<PostTagRecord> {
      * {@inheritDoc}
      */
     @Override
-    public Identity<PostTagRecord, Long> getIdentity() {
+    public Identity<PostTagRecord, Integer> getIdentity() {
         return Keys.IDENTITY_POST_TAG;
     }
 

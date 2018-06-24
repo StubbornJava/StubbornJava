@@ -10,7 +10,7 @@ import lombok.Value;
 @Builder(toBuilder=true)
 @AllArgsConstructor
 public class PostTag {
-    private final Long postTagId;
+    private final Integer postTagId;
     private final Integer appId;
     private final String name;
     private final LocalDateTime lastUpdateTs;

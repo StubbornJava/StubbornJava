@@ -45,7 +45,7 @@ public class Keys {
 
     public static final Identity<AppRecord, Integer> IDENTITY_APP = Identities0.IDENTITY_APP;
     public static final Identity<PostRecord, Long> IDENTITY_POST = Identities0.IDENTITY_POST;
-    public static final Identity<PostTagRecord, Long> IDENTITY_POST_TAG = Identities0.IDENTITY_POST_TAG;
+    public static final Identity<PostTagRecord, Integer> IDENTITY_POST_TAG = Identities0.IDENTITY_POST_TAG;
     public static final Identity<UserRecord, Long> IDENTITY_USER = Identities0.IDENTITY_USER;
 
     // -------------------------------------------------------------------------
@@ -79,7 +79,7 @@ public class Keys {
     private static class Identities0 {
         public static Identity<AppRecord, Integer> IDENTITY_APP = Internal.createIdentity(AppTable.APP, AppTable.APP.APP_ID);
         public static Identity<PostRecord, Long> IDENTITY_POST = Internal.createIdentity(PostTable.POST, PostTable.POST.POST_ID);
-        public static Identity<PostTagRecord, Long> IDENTITY_POST_TAG = Internal.createIdentity(PostTagTable.POST_TAG, PostTagTable.POST_TAG.POST_TAG_ID);
+        public static Identity<PostTagRecord, Integer> IDENTITY_POST_TAG = Internal.createIdentity(PostTagTable.POST_TAG, PostTagTable.POST_TAG.POST_TAG_ID);
         public static Identity<UserRecord, Long> IDENTITY_USER = Internal.createIdentity(UserTable.USER, UserTable.USER.USER_ID);
     }
 

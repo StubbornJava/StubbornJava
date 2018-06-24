@@ -39,7 +39,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class PostTagLinksTable extends TableImpl<PostTagLinksRecord> {
 
-    private static final long serialVersionUID = -1615077758;
+    private static final long serialVersionUID = 267947263;
 
     /**
      * The reference instance of <code>sj_cms.post_tag_links</code>
@@ -62,7 +62,7 @@ public class PostTagLinksTable extends TableImpl<PostTagLinksRecord> {
     /**
      * The column <code>sj_cms.post_tag_links.post_tag_id</code>.
      */
-    public final TableField<PostTagLinksRecord, Long> POST_TAG_ID = createField("post_tag_id", org.jooq.impl.SQLDataType.BIGINT.nullable(false), this, "");
+    public final TableField<PostTagLinksRecord, Integer> POST_TAG_ID = createField("post_tag_id", org.jooq.impl.SQLDataType.INTEGER.nullable(false), this, "");
 
     /**
      * Create a <code>sj_cms.post_tag_links</code> table reference

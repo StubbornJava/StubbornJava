@@ -22,7 +22,7 @@ CREATE TABLE IF NOT EXISTS user (
 insert into user (email_hash, email, active, date_created_ts, date_updated_ts) values (md5('bill@dartalley.com'), 'bill@dartalley.com', true, now(), now());
 
 CREATE TABLE IF NOT EXISTS post_tag (
-    post_tag_id BIGINT NOT NULL AUTO_INCREMENT,
+    post_tag_id INT NOT NULL AUTO_INCREMENT,
     app_id INT NOT NULL,
     name VARCHAR(255) NOT NULL,
     last_update_ts DATETIME NOT NULL,
@@ -45,12 +45,13 @@ CREATE TABLE IF NOT EXISTS post (
     content_template MEDIUMTEXT DEFAULT NULL,
     PRIMARY KEY (post_id),
     UNIQUE KEY `app_id_slug` (app_id, slug),
+    KEY `date_created_idx` (date_created),
     CONSTRAINT `post_app_id_fk` FOREIGN KEY (`app_id`) REFERENCES `app` (`app_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE IF NOT EXISTS post_tag_links (
     post_id BIGINT NOT NULL,
-    post_tag_id BIGINT NOT NULL,
+    post_tag_id INT NOT NULL,
     PRIMARY KEY (post_id, post_tag_id),
     CONSTRAINT `post_tag_links_post_id_fk` FOREIGN KEY (`post_id`) REFERENCES `post` (`post_id`),
     CONSTRAINT `post_tag_links_post_tag_id_fk` FOREIGN KEY (`post_tag_id`) REFERENCES `post_tag` (`post_tag_id`)
