@@ -3,17 +3,17 @@ package com.stubbornjava.cms.server;
 import java.util.List;
 
 import org.flywaydb.core.Flyway;
+import org.jooq.codegen.GenerationTool;
 import org.jooq.lambda.Unchecked;
-import org.jooq.util.GenerationTool;
-import org.jooq.util.jaxb.Configuration;
-import org.jooq.util.jaxb.Database;
-import org.jooq.util.jaxb.ForcedType;
-import org.jooq.util.jaxb.Generate;
-import org.jooq.util.jaxb.Generator;
-import org.jooq.util.jaxb.Jdbc;
-import org.jooq.util.jaxb.Strategy;
-import org.jooq.util.jaxb.Target;
-import org.jooq.util.mysql.MySQLDatabase;
+import org.jooq.meta.jaxb.Configuration;
+import org.jooq.meta.jaxb.Database;
+import org.jooq.meta.jaxb.ForcedType;
+import org.jooq.meta.jaxb.Generate;
+import org.jooq.meta.jaxb.Generator;
+import org.jooq.meta.jaxb.Jdbc;
+import org.jooq.meta.jaxb.Strategy;
+import org.jooq.meta.jaxb.Target;
+import org.jooq.meta.mysql.MySQLDatabase;
 
 import com.mysql.jdbc.Driver;
 import com.stubbornjava.cms.server.post.DraftStatus;

@@ -9,7 +9,7 @@ import org.jooq.Configuration;
 import org.jooq.SQLDialect;
 import org.jooq.impl.DataSourceConnectionProvider;
 import org.jooq.impl.DefaultConfiguration;
-import org.jooq.util.jaxb.ForcedType;
+import org.jooq.meta.jaxb.ForcedType;
 
 import com.google.common.collect.Lists;
 
