@@ -14,7 +14,12 @@ import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
+import com.stubbornjava.cms.server.CmsDSLs;
+import com.stubbornjava.cms.server.post.DraftStatus;
+import com.stubbornjava.cms.server.post.PostInfo;
+import com.stubbornjava.common.Resources;
 import com.stubbornjava.common.Templating;
+import com.stubbornjava.webapp.WebappBoostrap;
 import com.stubbornjava.webapp.github.FileContent;
 import com.stubbornjava.webapp.github.GitHubSource;
 import com.stubbornjava.webapp.post.TagOrLibrary.Type;
@@ -52,18 +57,22 @@ public class Posts {
         }
     }
 
-    public static List<PostMeta> getRecentPostsExcluding(Set<Long> excludeIds) {
-        return Seq.seq(recentPosts)
-                  .filter(p -> !excludeIds.contains(p.getPostId()))
-                  .limit(10).toList();
+    public static List<PostInfo> getRecentPostsExcluding(Set<Long> excludePostIds) {
+        return CmsDSLs.transactional().transactionResult(ctx -> {
+            return com.stubbornjava.cms.server.post.Posts.getRecentPostsExcluding(ctx, 1, excludePostIds);
+        });
     }
 
-    public static List<PostMeta> getRecentPosts() {
-        return Seq.seq(recentPosts).limit(10).toList();
+    public static List<PostInfo> getRecentPosts() {
+        return CmsDSLs.transactional().transactionResult(ctx -> {
+            return com.stubbornjava.cms.server.post.Posts.getRecentPosts(ctx, 1);
+        });
     }
 
-    public static List<PostMeta> getRecentPosts(int num) {
-        return Seq.seq(recentPosts).limit(num).toList();
+    public static List<PostInfo> getRecentPosts(int num) {
+        return CmsDSLs.transactional().transactionResult(ctx -> {
+            return com.stubbornjava.cms.server.post.Posts.getRecentPosts(ctx, 1, num);
+        });
     }
 
     public static List<PostMeta> getRecentPostsWithTag(String tag) {
@@ -111,11 +120,11 @@ public class Posts {
         tagOrLibraries = Seq.seq(tagOrLibraries).sorted(e -> e.getName()).toList();
         return PostMeta.builder()
                        .postId(postRaw.getPostId())
+                       .metaDesc(postRaw.getMetaDesc())
                        .tagOrLibraries(tagOrLibraries)
                        .dateCreated(postRaw.getDateCreated())
                        .title(postRaw.getTitle())
                        .slug(postRaw.getSlug())
-                       .metaDesc(postRaw.getMetaDesc())
                        .build();
     }
 
@@ -126,9 +135,38 @@ public class Posts {
            .toMap(fc -> fc.getName());
 
         String content = Templating.instance().renderTemplate("templates/src/posts/" + postRaw.getSlug(), fileContents);
+        String template = Resources.asString("templates/src/posts/" + postRaw.getSlug() + ".hbs");
         return Post.builder()
                    .postMeta(meta)
                    .content(content)
+                   .contentTemplate(template)
                    .build();
+    }
+
+    public static void main(String[] args) {
+        WebappBoostrap.run(() -> {
+            List<Post> posts = Seq.seq(PostData.getPosts())
+                                  .map(Posts::postFromMeta)
+                                  .toList();
+
+            for (Post post : posts) {
+                PostMeta meta = post.getPostMeta();
+                com.stubbornjava.cms.server.post.FullPost newPost = new com.stubbornjava.cms.server.post.FullPost(
+                    null,
+                    1,
+                    meta.getTitle(),
+                    meta.getSlug(),
+                    meta.getMetaDesc(),
+                    DraftStatus.PUBLISHED,
+                    meta.getDateCreated(),
+                    meta.getDateCreated(),
+                    meta.getDateCreated().toLocalDate(),
+                    post.getContentTemplate(),
+                    Seq.seq(meta.getTagOrLibraries()).filter(tl -> tl.getType() == Type.Tag).map(x -> x.getName()).toSet());
+                CmsDSLs.transactional().transaction(ctx -> {
+                    com.stubbornjava.cms.server.post.FullPost created = com.stubbornjava.cms.server.post.Posts.create(ctx, 1, newPost);
+                });
+            }
+        });
     }
 }

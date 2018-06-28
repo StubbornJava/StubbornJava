@@ -11,4 +11,5 @@ public class Post {
     @JsonUnwrapped
     private final PostMeta postMeta;
     private final String content;
+    private final String contentTemplate;
 }

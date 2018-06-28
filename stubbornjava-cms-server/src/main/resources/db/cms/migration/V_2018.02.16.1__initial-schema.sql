@@ -56,3 +56,13 @@ CREATE TABLE IF NOT EXISTS post_tag_links (
     CONSTRAINT `post_tag_links_post_id_fk` FOREIGN KEY (`post_id`) REFERENCES `post` (`post_id`),
     CONSTRAINT `post_tag_links_post_tag_id_fk` FOREIGN KEY (`post_tag_id`) REFERENCES `post_tag` (`post_tag_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS post_github_file_links (
+    post_id BIGINT NOT NULL,
+    github_owner varchar(255) NOT NULL,
+    github_repo varchar(255) NOT NULL,
+    name varchar(255) NOT NULL,
+    file_path TEXT NOT NULL,
+    PRIMARY KEY (post_id, github_owner, github_repo, name),
+    CONSTRAINT `post_tag_links_post_id_fk` FOREIGN KEY (`post_id`) REFERENCES `post` (`post_id`),
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

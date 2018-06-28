@@ -1,9 +1,15 @@
 package com.stubbornjava.webapp.post;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import com.google.common.collect.Lists;
+import com.stubbornjava.cms.server.CMSBootstrap;
+import com.stubbornjava.cms.server.CmsDSLs;
+import com.stubbornjava.cms.server.post.PostTag;
+import com.stubbornjava.cms.server.post.PostTags;
 
+@Deprecated
 public class Tags {
     private static final List<Tag> TAGS = Lists.newArrayList();
     public static final Tag JSON = addTag(new Tag(811790051562631559L, "JSON"));
@@ -40,5 +46,14 @@ public class Tags {
 
     public static List<Tag> getTags() {
         return TAGS;
+    }
+
+    public static void main(String[] args) {
+        CMSBootstrap.run(() -> {
+           for (Tag tag : TAGS) {
+               PostTag postTag = new PostTag(null, 1, tag.getName(), LocalDateTime.now());
+               CmsDSLs.transactional().transaction((ctx) -> PostTags.create(ctx, postTag));
+           }
+        });
     }
 }
