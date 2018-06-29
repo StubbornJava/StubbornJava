@@ -6,10 +6,13 @@ import java.util.concurrent.TimeUnit;
 
 import org.slf4j.LoggerFactory;
 
+import com.amazonaws.util.EC2MetadataUtils;
 import com.codahale.metrics.Meter;
 import com.codahale.metrics.Metric;
+import com.codahale.metrics.MetricFilter;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Timer;
+import com.codahale.metrics.graphite.GraphiteReporter;
 import com.codahale.metrics.jvm.CachedThreadStatesGaugeSet;
 import com.codahale.metrics.jvm.GarbageCollectorMetricSet;
 import com.codahale.metrics.jvm.MemoryUsageGaugeSet;
@@ -17,6 +20,7 @@ import com.codahale.metrics.logback.InstrumentedAppender;
 
 import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.LoggerContext;
+import okhttp3.OkHttpClient;
 // {{start:metrics}}
 public class Metrics {
     /*
@@ -38,6 +42,22 @@ public class Metrics {
         metrics.setContext(root.getLoggerContext());
         metrics.start();
         root.addAppender(metrics);
+
+
+        // Graphite reporter to Grafana Cloud
+        OkHttpClient client = new OkHttpClient.Builder()
+            //.addNetworkInterceptor(HttpClient.getLoggingInterceptor())
+            .build();
+        String graphiteHost = Configs.properties().getString("metrics.graphite.host");
+        String grafanaApiKey = Configs.properties().getString("metrics.grafana.api_key");
+        final GraphiteHttpSender graphite = new GraphiteHttpSender(client, graphiteHost, grafanaApiKey);
+        final GraphiteReporter reporter = GraphiteReporter.forRegistry(registry)
+                                                          .prefixedWith(metricPrefix("stubbornjava"))
+                                                          .convertRatesTo(TimeUnit.SECONDS)
+                                                          .convertDurationsTo(TimeUnit.MILLISECONDS)
+                                                          .filter(MetricFilter.ALL)
+                                                          .build(graphite);
+        reporter.start(10, TimeUnit.SECONDS);
 
         // Register reporters here.
     }
@@ -62,6 +82,12 @@ public class Metrics {
             registry.register(metricName, metric);
             return metric;
         });
+    }
+
+    private static String metricPrefix(String app) {
+        Env env = Env.get();
+        String host = env == Env.LOCAL ? "localhost" : EC2MetadataUtils.getLocalHostName();
+        return MetricRegistry.name(app, env.getName(), host);
     }
 }
 // {{end:metrics}}

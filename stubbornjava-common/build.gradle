@@ -16,6 +16,7 @@ dependencies {
     compile libs.metricsJson
     compile libs.metricsLogback
     compile libs.metricsHealthchecks
+    compile libs.metricsGraphite
     compile libs.guava
     compile libs.typesafeConfig
     compile libs.handlebars

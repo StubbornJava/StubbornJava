@@ -7,3 +7,9 @@
   github:
     client_id: "{{_vault['github']['client_id']}}"
     client_secret: "{{_vault['github']['client_secret']}}"
+
+  metrics:
+    graphite:
+      host: "{{_vault.metrics.graphite.host}}"
+    grafana:
+      api_key: "{{_vault.metrics.grafana.api_key}}"

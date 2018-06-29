@@ -6,7 +6,7 @@ ext {
         slf4j             : '1.7.25',      // Logging 
         logback           : '1.2.3',       // Logging
         undertow          : '1.4.20.Final',// Webserver
-        metrics           : '3.2.5',       // Metrics
+        metrics           : '4.0.2',       // Metrics
         guava             : '23.3-jre',    // Common / Helper libraries
         typesafeConfig    : '1.3.2',       // Configuration
         handlebars        : '4.0.6',       // HTML templating
@@ -42,6 +42,7 @@ ext {
         metricsJson               : "io.dropwizard.metrics:metrics-json:$versions.metrics",
         metricsLogback            : "io.dropwizard.metrics:metrics-logback:$versions.metrics",
         metricsHealthchecks       : "io.dropwizard.metrics:metrics-healthchecks:$versions.metrics",
+        metricsGraphite           : "io.dropwizard.metrics:metrics-graphite:$versions.metrics",
         undertowCore              : "io.undertow:undertow-core:$versions.undertow",
         slf4j                     : "org.slf4j:slf4j-api:$versions.slf4j",
         slf4jLog4j                : "org.slf4j:log4j-over-slf4j:$versions.slf4j",
