@@ -90,7 +90,7 @@ public class CustomHandlers {
     }
 
     public static TimingHttpHandler timed(String name, HttpHandler next) {
-        return new TimingHttpHandler(next, name);
+        return new TimingHttpHandler(next, "routes." + name);
     }
 
     public static void metrics(HttpServerExchange exchange) {
