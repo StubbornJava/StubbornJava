@@ -5,7 +5,7 @@ buildscript {
     }
     // buildscript dependencies can be used for build time plugins.
     dependencies {
-        classpath "com.github.jengelman.gradle.plugins:shadow:1.2.3"
+        classpath "com.github.jengelman.gradle.plugins:shadow:2.0.4"
     }
 }
 
@@ -34,7 +34,7 @@ allprojects {
         }
     }
 
-    repositories { 
+    repositories {
         mavenLocal()
         mavenCentral()
         maven { url 'https://jitpack.io' } // This allows us to use jitpack projects
@@ -51,7 +51,7 @@ allprojects {
             force('io.reactivex:rxjava:1.1.2')
             force('com.google.code.gson:gson:2.6.2')
             force('commons-logging:commons-logging:1.2')
-            
+
             // cache dynamic versions for 10 minutes
             cacheDynamicVersionsFor 10*60, 'seconds'
             // don't cache changing modules at all
@@ -76,13 +76,5 @@ allprojects {
         }
     }
     // Maven Publish End
-}
-
-subprojects {
-    apply plugin: 'com.github.johnrengelman.shadow'
-
-    shadowJar {
-       classifier = null
-    }
 }
 // {{end:build}}

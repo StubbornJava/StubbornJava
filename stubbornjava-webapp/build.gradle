@@ -1,4 +1,6 @@
 // {{start:dependencies}}
+apply plugin: 'com.github.johnrengelman.shadow'
+
 dependencies {
     // Project reference
     compile project(':stubbornjava-undertow')
