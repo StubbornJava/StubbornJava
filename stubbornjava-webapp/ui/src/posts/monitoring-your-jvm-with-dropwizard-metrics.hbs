@@ -1,10 +1,17 @@
-<p>We briefly mentioned <a href="http://metrics.dropwizard.io/">Dropwizard Metrics</a> in our <a href="/posts/lightweight-embedded-java-rest-server-without-a-framework#routing-server">Simple Embedded Java REST server</a> example. Let's see what else it can do.</p>
+<div class="anchored-md">
+{{#assign "markdown"}}
 
-<h2 class="anchored">Metrics Implementation</h2>
-<p>Live stats for this server. <a rel="nofollow" href="/dev/metrics">Metrics</a></p>
+We briefly mentioned [Dropwizard Metrics](http://metrics.dropwizard.io/) in our [Simple Embedded Java REST server](/posts/lightweight-embedded-java-rest-server-without-a-framework#routing-server) example. Let's see what some of the built in metrics such as `GarbageCollectorMetricSet`, `CachedThreadStatesGaugeSet`, `MemoryUsageGaugeSet`, and a Logback `InstrumentedAppender` can offer us.
+
+## Metrics Implementation
+[Live stats for this server.](/dev/metrics) Once we create our `MetricRegistry` we can register some built in metric sets. This also also where we can set up our metrics reporters where we can report and graph metrics to vairous systems such as [hosted grafana](https://grafana.com/cloud/grafana) used with [hosted metrics](https://grafana.com/cloud/metrics) or many self hosted solutions including but not limited to 
+[Grafana](https://grafana.com), [InfluxDB](https://www.influxdata.com/), [Graphite](https://graphiteapp.org/), and [Prometheus](https://prometheus.io/).
+
 {{> templates/src/widgets/code/code-snippet file=metrics section=metrics.sections.metrics}}
 
-<h2 class="anchored">Garbage Collector Stats</h2>
+## Garbage Collector Stats
+Garbage collector stats from `GarbageCollectorMetricSet` provide us with metrics that tell us how frequently we mark and sweep or scavenge as well as how long they take to run. Monitoring these over time can help identify unecessary object creation or anytime you introduce new code that incurs much higher garbage collection costs.
+
 <pre class="line-numbers"><code class="language-json">"gc.PS-MarkSweep.count": {
   "value": 2
 },
@@ -18,7 +25,9 @@
   "value": 102
 }</code></pre>
 
-<h2 class="anchored">Thread Stats</h2>
+## Thread State Stats
+The `CachedThreadStatesGaugeSet` provides us with snapshots of how many threads we have in which states. It's best to use the cached version since this requires traversing all threads and can be a little more expensive than some other metrics. These stats help identify whether or not the application is utilizing its threads well. It's not uncommon to see microservices these days running on 2 core machines with 200-400 threads. Get your services under control people.
+
 <pre class="line-numbers"><code class="language-json">"threads.blocked.count": {
   "value": 0
 },
@@ -50,9 +59,9 @@
   "value": 20
 }</code></pre>
 
+## Logging Level Hit Counts
+The `InstrumentedAppender` is a great way to monitor your logging levels over time. This can help track if you have increasing / decreasing errors over time or notice any bursts in one specific level. For instance If you log validation errors at the `INFO` level and notice a very large spike in `INFO` logs it might be worthwhile to check out what is going on.
 
-<h2 class="anchored">Logging Level Hit Counts</h2>
-<p>Great for monitoring errors over time and early alerting if issues arise.</p>
 <pre class="line-numbers"><code class="language-json">"ch.qos.logback.core.Appender.all": {
   "count": 383,
   "m15_rate": 34.36128532787729,
@@ -102,8 +111,9 @@
   "units": "events/minute"
 }</code></pre>
 
+## JVM Memory Stats
+The `MemoryUsageGaugeSet` gives you many useful metrics around the JVM's memory internals.
 
-<h2 class="anchored">JVM Memory Stats</h2>
 <pre class="line-numbers"><code class="language-json">"memory.heap.committed": {
   "value": 294649856
 },
@@ -237,3 +247,6 @@
   "value": 191603408
 }</code></pre>
 
+{{/assign}}
+{{md markdown}}
+</div>

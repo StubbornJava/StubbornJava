@@ -1,7 +1,5 @@
 package com.stubbornjava.common;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
@@ -9,7 +7,6 @@ import org.slf4j.LoggerFactory;
 
 import com.amazonaws.util.EC2MetadataUtils;
 import com.codahale.metrics.Meter;
-import com.codahale.metrics.Metric;
 import com.codahale.metrics.MetricFilter;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Timer;
@@ -21,15 +18,10 @@ import com.codahale.metrics.logback.InstrumentedAppender;
 
 import ch.qos.logback.classic.LoggerContext;
 import okhttp3.OkHttpClient;
+
 // {{start:metrics}}
 public class Metrics {
     private static final Logger log = LoggerFactory.getLogger(Metrics.class);
-
-    /*
-     * Use a concurrent map to cache metrics we generate on the fly.
-     * For example we generate status code metrics on the fly.
-     */
-    private static final Map<String, Metric> metricCache = new ConcurrentHashMap<>();
     private static final MetricRegistry registry;
     static {
         registry = new MetricRegistry();
@@ -70,21 +62,11 @@ public class Metrics {
     }
 
     public static Timer timer(String first, String... keys) {
-        String key = MetricRegistry.name(first, keys);
-        return (Timer) metricCache.computeIfAbsent(key, (String metricName) -> {
-            Timer metric = new Timer();
-            registry.register(metricName, metric);
-            return metric;
-        });
+        return registry.timer(MetricRegistry.name(first, keys));
     }
 
     public static Meter meter(String first, String... keys) {
-        String key = MetricRegistry.name(first, keys);
-        return (Meter) metricCache.computeIfAbsent(key, (String metricName) -> {
-            Meter metric = new Meter();
-            registry.register(metricName, metric);
-            return metric;
-        });
+        return registry.meter(MetricRegistry.name(first, keys));
     }
 
     private static String metricPrefix(String app) {
