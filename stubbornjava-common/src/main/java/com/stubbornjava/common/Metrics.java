@@ -48,7 +48,7 @@ public class Metrics {
         final GraphiteHttpSender graphite = new GraphiteHttpSender(client, graphiteHost, grafanaApiKey);
         final GraphiteReporter reporter = GraphiteReporter.forRegistry(registry)
                                                           .prefixedWith(metricPrefix("stubbornjava"))
-                                                          .convertRatesTo(TimeUnit.SECONDS)
+                                                          .convertRatesTo(TimeUnit.MINUTES)
                                                           .convertDurationsTo(TimeUnit.MILLISECONDS)
                                                           .filter(MetricFilter.ALL)
                                                           .build(graphite);
