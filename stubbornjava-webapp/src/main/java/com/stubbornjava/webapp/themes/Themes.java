@@ -22,7 +22,6 @@ public class Themes {
     private static List<Supplier<List<HtmlCssTheme>>> suppliers = Lists.newArrayList(
         BootstrapBayScraper::popularThemes,
         TemplateMonsterScraper::popularThemes,
-        ThemeForestScraper::popularThemes,
         WrapBootstrapScraper::popularThemes
     );
 
