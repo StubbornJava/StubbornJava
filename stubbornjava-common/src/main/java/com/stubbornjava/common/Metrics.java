@@ -7,17 +7,14 @@ import org.slf4j.LoggerFactory;
 
 import com.amazonaws.util.EC2MetadataUtils;
 import com.codahale.metrics.Meter;
-import com.codahale.metrics.MetricFilter;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Timer;
-import com.codahale.metrics.graphite.GraphiteReporter;
 import com.codahale.metrics.jvm.CachedThreadStatesGaugeSet;
 import com.codahale.metrics.jvm.GarbageCollectorMetricSet;
 import com.codahale.metrics.jvm.MemoryUsageGaugeSet;
 import com.codahale.metrics.logback.InstrumentedAppender;
 
 import ch.qos.logback.classic.LoggerContext;
-import okhttp3.OkHttpClient;
 
 // {{start:metrics}}
 public class Metrics {
@@ -37,24 +34,8 @@ public class Metrics {
         metrics.start();
         root.addAppender(metrics);
 
-
-        // Graphite reporter to Grafana Cloud
-        OkHttpClient client = new OkHttpClient.Builder()
-            //.addNetworkInterceptor(HttpClient.getLoggingInterceptor())
-            .build();
-
-        String graphiteHost = Configs.properties().getString("metrics.graphite.host");
-        String grafanaApiKey = Configs.properties().getString("metrics.grafana.api_key");
-        final GraphiteHttpSender graphite = new GraphiteHttpSender(client, graphiteHost, grafanaApiKey);
-        final GraphiteReporter reporter = GraphiteReporter.forRegistry(registry)
-                                                          .prefixedWith(metricPrefix("stubbornjava"))
-                                                          .convertRatesTo(TimeUnit.MINUTES)
-                                                          .convertDurationsTo(TimeUnit.MILLISECONDS)
-                                                          .filter(MetricFilter.ALL)
-                                                          .build(graphite);
-        reporter.start(10, TimeUnit.SECONDS);
-
         // Register reporters here.
+        MetricsReporters.startReporters(registry);
     }
 
     public static MetricRegistry registry() {
@@ -69,7 +50,7 @@ public class Metrics {
         return registry.meter(MetricRegistry.name(first, keys));
     }
 
-    private static String metricPrefix(String app) {
+    static String metricPrefix(String app) {
         Env env = Env.get();
         String host = env == Env.LOCAL ? "localhost" : getHost();
         String prefix = MetricRegistry.name(app, env.getName(), host);
