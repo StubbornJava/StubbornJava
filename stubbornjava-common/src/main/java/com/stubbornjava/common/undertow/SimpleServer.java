@@ -26,7 +26,7 @@ public class SimpleServer {
         return undertowBuilder;
     }
 
-    public void start() {
+    public Undertow start() {
         Undertow undertow = undertowBuilder.build();
         undertow.start();
         /*
@@ -37,6 +37,7 @@ public class SimpleServer {
         undertow.getListenerInfo()
                 .stream()
                 .forEach(listenerInfo -> logger.info(listenerInfo.toString()));
+        return undertow;
     }
 
     public static SimpleServer simpleServer(HttpHandler handler) {

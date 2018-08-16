@@ -19,6 +19,7 @@ import com.stubbornjava.webapp.post.JavaLibRoutes;
 import com.stubbornjava.webapp.post.PostRoutes;
 import com.stubbornjava.webapp.themes.ThemeRoutes;
 
+import io.undertow.Undertow;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.RoutingHandler;
 import io.undertow.server.handlers.BlockingHandler;
@@ -90,11 +91,11 @@ public class StubbornJavaWebApp {
             .setFallbackHandler(timed("notFound", PageRoutes::notFound));
     }
 
-    private static void startServer() {
+    private static Undertow startServer() {
         HttpHandler staticRoutes = new PathHandler(getBasicRoutes())
             .addPrefixPath("/assets", timed("getAssets", CustomHandlers.resource("", (int)TimeUnit.DAYS.toSeconds(30))));
         SimpleServer server = SimpleServer.simpleServer(wrapWithMiddleware(staticRoutes));
-        server.start();
+        return server.start();
     }
 
     public static void main(String[] args) {
