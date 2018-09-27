@@ -6,4 +6,4 @@
     - role: common
     - role: apps/jvm_app_base
       app_name: stubbornjava
-      app_command: "java8 -Denv={{env}} -Xmx640m -cp 'stubbornjava-all.jar' com.stubbornjava.webapp.StubbornJavaWebApp"
+      app_command: "java8 -Denv={{env}} -Xmx640m -Xss512k -cp 'stubbornjava-all.jar' com.stubbornjava.webapp.StubbornJavaWebApp"
