@@ -3,6 +3,7 @@ package com.stubbornjava.common.undertow.handlers;
 
 import java.io.File;
 import java.nio.file.Paths;
+import java.util.Set;
 import java.util.SortedMap;
 
 import org.slf4j.Logger;
@@ -168,4 +169,18 @@ public class CustomHandlers {
         return security.complete(next);
     }
     // {{end:securityHeaders}}
+
+    public static HttpHandler corsOriginWhitelist(HttpHandler next, Set<String> originWhitelist) {
+        return exchange -> {
+            String origin = Exchange.headers()
+                                  .getHeader(exchange, Headers.ORIGIN)
+                                  .orElse("");
+            log.debug("Origin: {} Whitelist: {}", origin, originWhitelist);
+            if (originWhitelist.contains(origin)) {
+                log.debug("Origin whitelist matched adding CORS header");
+                Exchange.headers().setHeader(exchange, "Access-Control-Allow-Origin", origin);
+            }
+            next.handleRequest(exchange);
+        };
+    }
 }

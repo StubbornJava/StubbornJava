@@ -7,6 +7,7 @@ import java.util.concurrent.TimeUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.Sets;
 import com.stubbornjava.common.seo.SitemapRoutes;
 import com.stubbornjava.common.undertow.SimpleServer;
 import com.stubbornjava.common.undertow.handlers.CustomHandlers;
@@ -37,27 +38,28 @@ public class StubbornJavaWebApp {
     // {{start:csp}}
     private static HttpHandler contentSecurityPolicy(HttpHandler delegate) {
         return new ContentSecurityPolicyHandler.Builder()
-                .defaultSrc(ContentSecurityPolicy.SELF)
-                .scriptSrc(ContentSecurityPolicy.SELF.getValue(), "https://www.google-analytics.com")
+                .defaultSrc(ContentSecurityPolicy.SELF.getValue(), "https://*.stubbornjava.com")
+                .scriptSrc(ContentSecurityPolicy.SELF.getValue(), "https://*.stubbornjava.com", "https://www.google-analytics.com", "data:")
                 // Drop the wildcard when we host our own images.
-                .imgSrc(ContentSecurityPolicy.SELF.getValue(), "https://www.google-analytics.com", "*")
-                .connectSrc(ContentSecurityPolicy.SELF.getValue(), "https://www.google-analytics.com")
-                .fontSrc(ContentSecurityPolicy.SELF.getValue(), "data:")
-                .styleSrc(ContentSecurityPolicy.SELF.getValue(), ContentSecurityPolicy.UNSAFE_INLINE.getValue())
+                .imgSrc(ContentSecurityPolicy.SELF.getValue(), "https://*.stubbornjava.com", "https://www.google-analytics.com", "data:")
+                .connectSrc(ContentSecurityPolicy.SELF.getValue(), "https://*.stubbornjava.com", "https://www.google-analytics.com")
+                .fontSrc(ContentSecurityPolicy.SELF.getValue(), "https://*.stubbornjava.com", "data:")
+                .styleSrc(ContentSecurityPolicy.SELF.getValue(), ContentSecurityPolicy.UNSAFE_INLINE.getValue(), "https://*.stubbornjava.com")
                 .build(delegate);
     }
     // {{end:csp}}
 
     // {{start:middleware}}
     private static HttpHandler wrapWithMiddleware(HttpHandler next) {
-        return MiddlewareBuilder.begin(PageRoutes::redirector)
+        return MiddlewareBuilder.begin(ex -> CustomHandlers.accessLog(ex, logger))
+                                .next(StubbornJavaWebApp::exceptionHandler)
+                                .next(CustomHandlers::statusCodeMetrics)
                                 .next(handler -> CustomHandlers.securityHeaders(handler, ReferrerPolicy.STRICT_ORIGIN_WHEN_CROSS_ORIGIN))
                                 .next(StubbornJavaWebApp::contentSecurityPolicy)
                                 .next(CustomHandlers::gzip)
+                                .next(h -> CustomHandlers.corsOriginWhitelist(next, Sets.newHashSet("https://www.stubbornjava.com")))
+                                .next(PageRoutes::redirector)
                                 .next(BlockingHandler::new)
-                                .next(ex -> CustomHandlers.accessLog(ex, logger))
-                                .next(CustomHandlers::statusCodeMetrics)
-                                .next(StubbornJavaWebApp::exceptionHandler)
                                 .complete(next);
     }
     // {{end:middleware}}

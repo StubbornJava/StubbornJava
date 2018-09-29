@@ -31,7 +31,7 @@ public class Templating {
     static {
         Templating.Builder builder =
             new Templating.Builder()
-                          .withHelper("dateFormat", TemplateHelpers::dateFormat)
+                          .withHelpers(new TemplateHelpers())
                           .withHelper("md", new MarkdownHelper())
                           .withHelper(AssignHelper.NAME, AssignHelper.INSTANCE)
                           .register(HumanizeHelper::register);
@@ -145,6 +145,12 @@ public class Templating {
         public <T> Builder withHelper(String helperName, Helper<T> helper) {
             log.debug("using template helper {}" , helperName);
             handlebars.registerHelper(helperName, helper);
+            return this;
+        }
+
+        public <T> Builder withHelpers(Object helpers) {
+            log.debug("using template helpers {}" , helpers.getClass());
+            handlebars.registerHelpers(helpers);
             return this;
         }
 
