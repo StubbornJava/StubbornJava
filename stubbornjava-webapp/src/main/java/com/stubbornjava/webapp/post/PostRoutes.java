@@ -2,6 +2,8 @@ package com.stubbornjava.webapp.post;
 
 import java.util.List;
 
+import org.jooq.lambda.Seq;
+
 import com.stubbornjava.common.undertow.Exchange;
 import com.stubbornjava.webapp.PageRoutes;
 import com.stubbornjava.webapp.Response;
@@ -36,11 +38,18 @@ public class PostRoutes {
             exchange.setStatusCode(StatusCodes.NOT_FOUND);
         }
 
+        String metaDesc = "View " + posts.size() + " " + tag +
+                          " examples and guides in Java" +
+                          Seq.seq(posts)
+                             .findFirst()
+                             .map(p -> " including " + p.getTitle() + ".")
+                             .orElse(".");
         Response response = Response.fromExchange(exchange)
                 .with("posts", posts)
                 .with("type", "Tag")
                 .with("value", tag)
                 .with("noData", noData)
+                .with("metaDesc", metaDesc)
                 .withLibCounts()
                 .withRecentPosts();
         Exchange.body().sendHtmlTemplate(exchange, "templates/src/pages/tagOrLibSearch", response);
