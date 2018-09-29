@@ -173,8 +173,8 @@ public class CustomHandlers {
     public static HttpHandler corsOriginWhitelist(HttpHandler next, Set<String> originWhitelist) {
         return exchange -> {
             String origin = Exchange.headers()
-                                  .getHeader(exchange, Headers.ORIGIN)
-                                  .orElse("");
+                                    .getHeader(exchange, Headers.ORIGIN)
+                                    .orElse("");
             log.debug("Origin: {} Whitelist: {}", origin, originWhitelist);
             if (originWhitelist.contains(origin)) {
                 log.debug("Origin whitelist matched adding CORS header");

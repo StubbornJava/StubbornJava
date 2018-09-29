@@ -51,13 +51,13 @@ public class StubbornJavaWebApp {
 
     // {{start:middleware}}
     private static HttpHandler wrapWithMiddleware(HttpHandler next) {
-        return MiddlewareBuilder.begin(ex -> CustomHandlers.accessLog(ex, logger))
+        return MiddlewareBuilder.begin(CustomHandlers::gzip)
+                                .next(ex -> CustomHandlers.accessLog(ex, logger))
                                 .next(StubbornJavaWebApp::exceptionHandler)
                                 .next(CustomHandlers::statusCodeMetrics)
                                 .next(handler -> CustomHandlers.securityHeaders(handler, ReferrerPolicy.STRICT_ORIGIN_WHEN_CROSS_ORIGIN))
                                 .next(StubbornJavaWebApp::contentSecurityPolicy)
-                                .next(CustomHandlers::gzip)
-                                .next(h -> CustomHandlers.corsOriginWhitelist(next, Sets.newHashSet("https://www.stubbornjava.com")))
+                                .next(h -> CustomHandlers.corsOriginWhitelist(h, Sets.newHashSet("https://www.stubbornjava.com")))
                                 .next(PageRoutes::redirector)
                                 .next(BlockingHandler::new)
                                 .complete(next);
