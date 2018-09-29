@@ -13,7 +13,6 @@
             {{> templates/src/widgets/posts/tagOrLibs tagOrLibraries=post.tagOrLibraries}}
             <div class="post-content anchored-md">{{{post.content}}}</div>
           </div>
-          <div id="disqus_thread"></div>
         </div>
         <div class="col-lg-3 hidden-sm hidden-xs">
           {{> templates/src/widgets/subscribe/subscribe-sidebar}}
@@ -22,6 +21,5 @@
         </div>
       </div>
     </div>
-    <!-- {{> templates/src/widgets/disqus/disqus id=post.slug}} -->
   {{/inline}}
 {{/ templates/src/common/_base-layout}}
