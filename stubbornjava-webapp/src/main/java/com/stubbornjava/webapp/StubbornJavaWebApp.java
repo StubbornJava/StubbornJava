@@ -41,7 +41,7 @@ public class StubbornJavaWebApp {
                 .defaultSrc(ContentSecurityPolicy.SELF.getValue(), "https://*.stubbornjava.com")
                 .scriptSrc(ContentSecurityPolicy.SELF.getValue(), "https://*.stubbornjava.com", "https://www.google-analytics.com", "data:")
                 // Drop the wildcard when we host our own images.
-                .imgSrc(ContentSecurityPolicy.SELF.getValue(), "https://*.stubbornjava.com", "https://www.google-analytics.com", "data:")
+                .imgSrc(ContentSecurityPolicy.SELF.getValue(), "https://*.stubbornjava.com", "https://www.google-analytics.com", "data:", "*")
                 .connectSrc(ContentSecurityPolicy.SELF.getValue(), "https://*.stubbornjava.com", "https://www.google-analytics.com")
                 .fontSrc(ContentSecurityPolicy.SELF.getValue(), "https://*.stubbornjava.com", "data:")
                 .styleSrc(ContentSecurityPolicy.SELF.getValue(), ContentSecurityPolicy.UNSAFE_INLINE.getValue(), "https://*.stubbornjava.com")
