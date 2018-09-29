@@ -17,4 +17,12 @@ public interface Headers {
         RequestHeaderAttribute reqHeader = new RequestHeaderAttribute(new HttpString(header));
         return Optional.ofNullable(reqHeader.readAttribute(exchange));
     }
+
+    default void setHeader(HttpServerExchange exchange, HttpString header, String value) {
+        exchange.getResponseHeaders().add(header, value);
+    }
+
+    default void setHeader(HttpServerExchange exchange, String header, String value) {
+        exchange.getResponseHeaders().add(new HttpString(header), value);
+    }
 }
