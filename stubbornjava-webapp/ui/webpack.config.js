@@ -102,7 +102,7 @@ module.exports = {
                 var hash = stats.hash; // Build's hash, found in `stats` since build lifecycle is done.
 
                 replaceInFile(
-                  path.join(module.exports.output.path, 'templates/src/common/scripts.hbs'),
+                  path.join(module.exports.output.path, 'templates/src/common/head.hbs'),
                   'common(?:\-.+)?\.js',
                   'common-' + hash + '.js'
                 );
