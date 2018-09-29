@@ -1,27 +1,27 @@
 // {{start:dependencies}}
 ext {
     versions = [
-        jackson           : '2.9.2',       // Json Serializer / Deserializer
-        okhttp            : '3.9.0',       // HTTP Client
+        jackson           : '2.9.7',       // Json Serializer / Deserializer
+        okhttp            : '3.11.0',      // HTTP Client
         slf4j             : '1.7.25',      // Logging 
         logback           : '1.2.3',       // Logging
-        undertow          : '1.4.20.Final',// Webserver
-        metrics           : '4.0.2',       // Metrics
-        guava             : '23.3-jre',    // Common / Helper libraries
-        typesafeConfig    : '1.3.2',       // Configuration
-        handlebars        : '4.0.6',       // HTML templating
-        htmlCompressor    : '1.4',         // HTML compression
-        hikaricp          : '2.7.2',       // JDBC connection pool
+        undertow          : '2.0.13.Final',// Webserver
+        metrics           : '4.0.3',       // Metrics
+        guava             : '26.0-jre',    // Common / Helper libraries
+        typesafeConfig    : '1.3.3',       // Configuration
+        handlebars        : '4.1.0',       // HTML templating
+        htmlCompressor    : '1.5.2',       // HTML compression
+        hikaricp          : '3.2.0',       // JDBC connection pool
         jool              : '0.9.12',      // Functional Utils
         hsqldb            : '2.3.4',       // In memory SQL db
-        aws               : '1.11.221',    // AWS Java SDK
-        flyway            : '4.2.0',       // DB migrations
+        aws               : '1.11.419',    // AWS Java SDK
+        flyway            : '5.1.4',       // DB migrations
         connectorj        : '5.1.44',      // JDBC MYSQL driver
         jooq              : '3.11.2',      // jOOQ
         hashids           : '1.0.3',       // Id hashing
-        failsafe          : '1.0.4',       // retry and circuit breakers
-        jsoup             : '1.10.3',      // DOM parsing library
-        lombok            : '1.16.18',     // Code gen
+        failsafe          : '1.1.0',       // retry and circuit breakers
+        jsoup             : '1.11.3',      // DOM parsing library
+        lombok            : '1.18.2',      // Code gen
         sitemapgen4j      : '1.0.6',       // Sitemap generator for SEO
         jbcrypt           : '0.4',         // BCrypt salted hashing library
         
