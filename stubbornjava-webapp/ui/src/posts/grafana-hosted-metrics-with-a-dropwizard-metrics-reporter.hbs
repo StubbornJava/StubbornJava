@@ -1,0 +1,13 @@
+<div class="anchored-md">
+{{#assign "markdown"}}
+
+## Title
+The `Strict-Transport-Security` header essentially tells the browser that once it has connected to a host over TLS and receives this header, all subsequent requests should be forced to be TLS as well up until the expiration. Since we should all be sending our traffic over HTTPS these days this is a no brainer and very simple to implement if you already support HTTPS everywhere. For a much more detailed explanation see [HSTS the missing link in tls](https://scotthelme.co.uk/hsts-the-missing-link-in-tls/).
+
+{{> templates/src/widgets/code/code-snippet file=hstsHandler section=hstsHandler.sections.handler}}
+
+
+
+{{/assign}}
+{{md markdown}}
+</div>

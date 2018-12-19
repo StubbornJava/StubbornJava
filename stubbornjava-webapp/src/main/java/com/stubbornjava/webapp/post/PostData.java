@@ -780,10 +780,10 @@ public class PostData {
             );
           posts.add(PostRaw.builder()
               .postId(6L)
-              .title("Increasing Resiliency with Circuit Breakers in your Undertow Web Server with Failsafe")
-              .metaDesc("Utilize circuit breakers to fail fast and recover quickly with a CircuitBreakerHandler in Undertow. Shutoff misbehaving endpoints to allow other endpoints to proceede normally.")
-              .dateCreated(LocalDateTime.parse("2018-02-05T01:15:30"))
-              .dateUpdated(LocalDateTime.parse("2018-02-05T01:15:30"))
+              .title("Grafana Hosted Metrics with a Dropwizard Metrics Reporter")
+              .metaDesc("Dropwizard Metrics reporter for hosted cloud metrics from Grafana.")
+              .dateCreated(LocalDateTime.parse("2018-11-27T01:15:30"))
+              .dateUpdated(LocalDateTime.parse("2018-11-27T01:15:30"))
               .javaLibs(Lists.newArrayList(JavaLib.Undertow, JavaLib.Failsafe, JavaLib.OkHttp))
               .tags(Lists.newArrayList(Tags.WebServer, Tags.Resiliency))
               .gitFileReferences(Lists.newArrayList(
