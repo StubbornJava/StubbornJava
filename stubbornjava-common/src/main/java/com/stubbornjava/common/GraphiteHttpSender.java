@@ -17,6 +17,14 @@ import okhttp3.RequestBody;
 import okhttp3.logging.HttpLoggingInterceptor;
 import okhttp3.logging.HttpLoggingInterceptor.Level;
 
+// {{start:sender}}
+/**
+ * This is a hacked together HTTP sender for grafana cloud.
+ * This is NOT the recommended approach to collect metrics.
+ * The recommended approach is to use a Carbon-Relay-NG.
+ * @author billoneil
+ *
+ */
 class GraphiteHttpSender implements GraphiteSender {
     private static final Logger log = LoggerFactory.getLogger(GraphiteHttpSender.class);
 
@@ -106,3 +114,4 @@ class GraphiteHttpSender implements GraphiteSender {
         }
     }
 }
+// {{end:sender}}
