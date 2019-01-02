@@ -1,6 +1,7 @@
 package com.stubbornjava.webapp.github;
 
 import com.stubbornjava.common.Configs;
+import com.stubbornjava.webapp.StubbornJavaBootstrap;
 
 public class GitHubSource {
     private static final String clientId = Configs.properties().getString("github.clientId");
@@ -15,11 +16,13 @@ public class GitHubSource {
     }
 
     public static void main(String[] args) {
-        FileContent result = githubClient().getFile(
-             FileReference.stubbornJava(
-                             "test",
-                             "src/main/java/com/stubbornjava/examples/utils/JsonUtil.java")
-                          );
-        System.out.println();
+        StubbornJavaBootstrap.run(() -> {
+            FileContent result = githubClient().getFile(
+                    FileReference.stubbornJava(
+                                    "test",
+                                    "src/main/java/com/stubbornjava/examples/utils/JsonUtil.java")
+                                 );
+               System.out.println();
+        });
     }
 }

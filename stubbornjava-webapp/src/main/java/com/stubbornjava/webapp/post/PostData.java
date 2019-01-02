@@ -780,19 +780,19 @@ public class PostData {
             );
           posts.add(PostRaw.builder()
               .postId(6L)
-              .title("Grafana Hosted Metrics with a Dropwizard Metrics Reporter")
-              .metaDesc("Dropwizard Metrics reporter for hosted cloud metrics from Grafana.")
-              .dateCreated(LocalDateTime.parse("2018-11-27T01:15:30"))
-              .dateUpdated(LocalDateTime.parse("2018-11-27T01:15:30"))
-              .javaLibs(Lists.newArrayList(JavaLib.Undertow, JavaLib.Failsafe, JavaLib.OkHttp))
-              .tags(Lists.newArrayList(Tags.WebServer, Tags.Resiliency))
+              .title("Grafana Cloud Dropwizard Metrics Reporter")
+              .metaDesc("Dropwizard Metrics reporter for hosted graphite metrics from Grafana's cloud offering that features hosted Graphite and Prometheus.")
+              .dateCreated(LocalDateTime.parse("2019-01-01T01:15:30"))
+              .dateUpdated(LocalDateTime.parse("2019-01-01T01:15:30"))
+              .javaLibs(Lists.newArrayList(JavaLib.DropwizardMetrics, JavaLib.OkHttp, JavaLib.Jackson))
+              .tags(Lists.newArrayList(Tags.Monitoring))
               .gitFileReferences(Lists.newArrayList(
                   FileReference.stubbornJava(
-                      "handler",
-                      "stubbornjava-common/src/main/java/com/stubbornjava/common/undertow/handlers/CircuitBreakerHandler.java")
+                      "reporters",
+                      "stubbornjava-common/src/main/java/com/stubbornjava/common/MetricsReporters.java")
                   , FileReference.stubbornJava(
-                      "example",
-                      "stubbornjava-examples/src/main/java/com/stubbornjava/examples/failsafe/FailsafeWebserver.java")
+                      "sender",
+                      "stubbornjava-common/src/main/java/com/stubbornjava/common/GraphiteHttpSender.java")
                   ))
               .build()
             );
