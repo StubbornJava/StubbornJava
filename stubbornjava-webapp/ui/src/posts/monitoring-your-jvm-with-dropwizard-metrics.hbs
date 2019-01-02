@@ -4,7 +4,7 @@
 We briefly mentioned [Dropwizard Metrics](http://metrics.dropwizard.io/) in our [Simple Embedded Java REST server](/posts/lightweight-embedded-java-rest-server-without-a-framework#routing-server) example. Let's see what some of the built in metrics such as `GarbageCollectorMetricSet`, `CachedThreadStatesGaugeSet`, `MemoryUsageGaugeSet`, and a Logback `InstrumentedAppender` can offer us.
 
 ## Metrics Implementation
-[Live stats for this server.](/dev/metrics) Once we create our `MetricRegistry` we can register some built in metric sets. This also also where we can set up our metrics reporters where we can report and graph metrics to vairous systems such as [hosted grafana](https://grafana.com/cloud/grafana) used with [hosted metrics](https://grafana.com/cloud/metrics) or many self hosted solutions including but not limited to 
+[Live stats for this server.](/dev/metrics) Once we create our `MetricRegistry` we can register some built in metric sets. This is also where we can set up our [metrics reporters](/posts/grafana-cloud-dropwizard-metrics-reporter) where we can report and graph metrics to vairous systems such as [hosted grafana](https://grafana.com/cloud) used with [hosted metrics](https://grafana.com/cloud) or many self hosted solutions including but not limited to 
 [Grafana](https://grafana.com), [InfluxDB](https://www.influxdata.com/), [Graphite](https://graphiteapp.org/), and [Prometheus](https://prometheus.io/).
 
 {{> templates/src/widgets/code/code-snippet file=metrics section=metrics.sections.metrics}}
