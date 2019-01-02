@@ -778,6 +778,24 @@ public class PostData {
                   ))
               .build()
             );
+          posts.add(PostRaw.builder()
+              .postId(6L)
+              .title("Grafana Cloud Dropwizard Metrics Reporter")
+              .metaDesc("Dropwizard Metrics reporter for hosted graphite metrics from Grafana's cloud offering that features hosted Graphite and Prometheus.")
+              .dateCreated(LocalDateTime.parse("2019-01-01T01:15:30"))
+              .dateUpdated(LocalDateTime.parse("2019-01-01T01:15:30"))
+              .javaLibs(Lists.newArrayList(JavaLib.DropwizardMetrics, JavaLib.OkHttp, JavaLib.Jackson))
+              .tags(Lists.newArrayList(Tags.Monitoring))
+              .gitFileReferences(Lists.newArrayList(
+                  FileReference.stubbornJava(
+                      "reporters",
+                      "stubbornjava-common/src/main/java/com/stubbornjava/common/MetricsReporters.java")
+                  , FileReference.stubbornJava(
+                      "sender",
+                      "stubbornjava-common/src/main/java/com/stubbornjava/common/GraphiteHttpSender.java")
+                  ))
+              .build()
+            );
     }
 
     public static List<PostRaw> getPosts() {
