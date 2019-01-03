@@ -18,6 +18,8 @@ import javax.net.ssl.X509TrustManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.raskasa.metrics.okhttp.InstrumentedOkHttpClients;
+
 import okhttp3.Dispatcher;
 import okhttp3.Interceptor;
 import okhttp3.Interceptor.Chain;
@@ -56,8 +58,13 @@ public class HttpClient {
         };
     }
 
+    public static OkHttpClient wrapWithMetircs(String name, OkHttpClient client) {
+        return InstrumentedOkHttpClients.create(Metrics.registry(), client, name);
+    }
+
     // {{start:client}}
     private static final OkHttpClient client;
+    private static final OkHttpClient globalClient;
     static {
         Dispatcher dispatcher = new Dispatcher();
         dispatcher.setMaxRequestsPerHost(15);
@@ -69,15 +76,23 @@ public class HttpClient {
             .dispatcher(dispatcher)
             .addNetworkInterceptor(loggingInterceptor)
             .build();
-    }
 
-    ;
+        globalClient = wrapWithMetircs("GlobalClient", baseClientBuilder().build());
+    }
 
     /*
      * Global client that can be shared for common HTTP tasks.
      */
     public static OkHttpClient globalClient() {
-        return client;
+        return globalClient;
+    }
+
+    /*
+     * Global client base for extending defaults.
+     * This is the same as the global client but without metrics enabled yet.
+     */
+    public static OkHttpClient.Builder baseClientBuilder() {
+        return client.newBuilder();
     }
     // {{end:client}}
 

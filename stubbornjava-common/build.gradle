@@ -39,6 +39,7 @@ dependencies {
     compile libs.jooqCodegen
     compile libs.flyway
     compile libs.connectorj
+    compile libs.okhttpMetrics
     
     testCompile libs.junit
     testCompile libs.hsqldb
