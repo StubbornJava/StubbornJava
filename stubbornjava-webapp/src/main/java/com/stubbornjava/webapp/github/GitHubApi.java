@@ -88,12 +88,12 @@ public class GitHubApi {
         }
 
         public GitHubApi build() {
-            OkHttpClient client = HttpClient.globalClient()
-                .newBuilder()
+            OkHttpClient client = HttpClient.defaultClientBuilder()
                 .addInterceptor(HttpClient.getHeaderInterceptor("Accept", VERSION_HEADER))
                 .addInterceptor(GitHubApi.gitHubAuth(clientId, clientSecret))
                 .build();
-            return new GitHubApi(client);
+            OkHttpClient metricsClient = HttpClient.wrapWithMetircs("GithubApiClient", client);
+            return new GitHubApi(metricsClient);
         }
     }
 

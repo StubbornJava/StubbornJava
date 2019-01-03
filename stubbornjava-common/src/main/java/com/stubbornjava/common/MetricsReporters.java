@@ -13,9 +13,9 @@ class MetricsReporters {
 
     public static void startReporters(MetricRegistry registry) {
         // Graphite reporter to Grafana Cloud
-        OkHttpClient client = new OkHttpClient.Builder()
-            //.addNetworkInterceptor(HttpClient.getLoggingInterceptor())
-            .build();
+        OkHttpClient client = HttpClient.wrapWithMetircs("GraphiteReporter",
+            new OkHttpClient.Builder()
+                            .build());
 
         String graphiteHost = Configs.properties().getString("metrics.graphite.host");
         String grafanaApiKey = Configs.properties().getString("metrics.grafana.api_key");

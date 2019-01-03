@@ -24,12 +24,14 @@ ext {
         lombok            : '1.18.2',      // Code gen
         sitemapgen4j      : '1.0.6',       // Sitemap generator for SEO
         jbcrypt           : '0.4',         // BCrypt salted hashing library
-        
+        okhttpMetrics     : '0.4.0',       // Metrics for OkHttp
+
         junit             : '4.12',        // Unit Testing
     ]
     libs = [
         okhttp                    : "com.squareup.okhttp3:okhttp:$versions.okhttp",
         okhttpUrlConnection       : "com.squareup.okhttp3:okhttp-urlconnection:$versions.okhttp",
+        okhttpMetrics             : "com.raskasa.metrics:metrics-okhttp:$versions.okhttpMetrics",
         loggingInterceptor        : "com.squareup.okhttp3:logging-interceptor:$versions.okhttp",
         jacksonCore               : "com.fasterxml.jackson.core:jackson-core:$versions.jackson",
         jacksonDatabind           : "com.fasterxml.jackson.core:jackson-databind:$versions.jackson",
