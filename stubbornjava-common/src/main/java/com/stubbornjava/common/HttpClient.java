@@ -63,21 +63,9 @@ public class HttpClient {
     }
 
     // {{start:client}}
-    private static final OkHttpClient client;
     private static final OkHttpClient globalClient;
     static {
-        Dispatcher dispatcher = new Dispatcher();
-        dispatcher.setMaxRequestsPerHost(15);
-
-        client = new OkHttpClient.Builder()
-            .connectTimeout(2, TimeUnit.SECONDS)
-            .writeTimeout(1, TimeUnit.MINUTES)
-            .readTimeout(1, TimeUnit.MINUTES)
-            .dispatcher(dispatcher)
-            .addNetworkInterceptor(loggingInterceptor)
-            .build();
-
-        globalClient = wrapWithMetircs("GlobalClient", baseClientBuilder().build());
+        globalClient = wrapWithMetircs("GlobalClient", defaultClientBuilder().build());
     }
 
     /*
@@ -91,8 +79,16 @@ public class HttpClient {
      * Global client base for extending defaults.
      * This is the same as the global client but without metrics enabled yet.
      */
-    public static OkHttpClient.Builder baseClientBuilder() {
-        return client.newBuilder();
+    public static OkHttpClient.Builder defaultClientBuilder() {
+        Dispatcher dispatcher = new Dispatcher();
+        dispatcher.setMaxRequestsPerHost(15);
+
+        return new OkHttpClient.Builder()
+            .connectTimeout(2, TimeUnit.SECONDS)
+            .writeTimeout(1, TimeUnit.MINUTES)
+            .readTimeout(1, TimeUnit.MINUTES)
+            .dispatcher(dispatcher)
+            .addNetworkInterceptor(loggingInterceptor);
     }
     // {{end:client}}
 
@@ -102,7 +98,7 @@ public class HttpClient {
      * a stateful cookie jar. This is useful when you need
      * to access password protected sites.
      */
-    public static OkHttpClient newClientWithCookieJar() {
+    public static OkHttpClient newClientWithCookieJar(OkHttpClient client) {
         CookieManager cookieManager = new CookieManager();
         cookieManager.setCookiePolicy(CookiePolicy.ACCEPT_ALL);
         JavaNetCookieJar cookieJar = new JavaNetCookieJar(cookieManager);

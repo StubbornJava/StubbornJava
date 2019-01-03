@@ -88,7 +88,7 @@ public class GitHubApi {
         }
 
         public GitHubApi build() {
-            OkHttpClient client = HttpClient.baseClientBuilder()
+            OkHttpClient client = HttpClient.defaultClientBuilder()
                 .addInterceptor(HttpClient.getHeaderInterceptor("Accept", VERSION_HEADER))
                 .addInterceptor(GitHubApi.gitHubAuth(clientId, clientSecret))
                 .build();
