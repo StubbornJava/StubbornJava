@@ -6,6 +6,8 @@ import com.stubbornjava.webapp.StubbornJavaBootstrap;
 public class GitHubSource {
     private static final String clientId = Configs.properties().getString("github.clientId");
     private static final String clientSecret = Configs.properties().getString("github.clientSecret");
+    private static final String ref = Configs.properties().getString("github.ref");
+
     private static final GitHubApi githubClient = new GitHubApi.Builder()
                                                       .clientId(clientId)
                                                       .clientSecret(clientSecret)
