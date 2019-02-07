@@ -87,6 +87,7 @@ public class StubbornJavaWebApp {
 
             .get("/dev/metrics", timed("getMetrics", HelperRoutes::getMetrics))
 
+            .get("/rss/feed", StubbornJavaRss::getRssFeed)
             // addAll allows you to combine more than one RoutingHandler together.
             .addAll(SitemapRoutes.router(StubbornJavaSitemapGenerator.getSitemap()))
 

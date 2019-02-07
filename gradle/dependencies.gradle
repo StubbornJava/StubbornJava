@@ -24,6 +24,7 @@ ext {
         lombok            : '1.18.2',      // Code gen
         sitemapgen4j      : '1.0.6',       // Sitemap generator for SEO
         jbcrypt           : '0.4',         // BCrypt salted hashing library
+        romeRss           : '1.0',         // RSS Library
         
         junit             : '4.12',        // Unit Testing
     ]
@@ -69,6 +70,7 @@ ext {
         lombok                    : "org.projectlombok:lombok:$versions.lombok",
         sitemapgen4j              : "com.github.dfabulich:sitemapgen4j:$versions.sitemapgen4j",
         jbcrypt                   : "org.mindrot:jbcrypt:$versions.jbcrypt",
+        romeRss                   : "rome:rome:$versions.romeRss",
         
         junit                     : "junit:junit:$versions.junit",
     ]

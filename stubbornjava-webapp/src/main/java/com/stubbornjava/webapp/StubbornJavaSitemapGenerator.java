@@ -20,7 +20,7 @@ import com.stubbornjava.webapp.post.Tags;
 import okhttp3.HttpUrl;
 
 // {{start:sitemapgen}}
-public class StubbornJavaSitemapGenerator {
+class StubbornJavaSitemapGenerator {
     private static final String HOST = "https://www.stubbornjava.com";
 
     private static final InMemorySitemap sitemap = InMemorySitemap.fromSupplier(StubbornJavaSitemapGenerator::generateSitemap);

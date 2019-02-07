@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import com.stubbornjava.common.Slugs;
+import com.stubbornjava.webapp.SiteUrls;
 import com.stubbornjava.webapp.github.FileReference;
 
 import lombok.Builder;
@@ -26,5 +27,9 @@ public class PostRaw {
 
     public String getSlug() {
         return Slugs.toSlug(title);
+    }
+
+    public String getUrl() {
+        return SiteUrls.postUrl(getSlug());
     }
 }
