@@ -30,7 +30,7 @@ public class Posts {
 
         recentPosts = Seq.seq(posts)
                          .map(Posts::metaFromPost)
-                         .sorted(p -> p.getDateCreated(), Comparator.reverseOrder())
+                         .sorted(PostMeta::getDateCreated, Comparator.reverseOrder())
                          .toList();
 
         for (PostMeta post: recentPosts) {
@@ -90,7 +90,16 @@ public class Posts {
     }
 
     public static List<String> getAllSlugs() {
-        return Seq.seq(slugIndex.keySet()).sorted().toList();
+        return Seq.seq(slugIndex.values())
+                  .sorted(PostRaw::getDateCreated, Comparator.reverseOrder())
+                  .map(PostRaw::getSlug)
+                  .toList();
+    }
+
+    public static List<PostRaw> getAllRawPosts() {
+        return Seq.seq(slugIndex.values())
+                  .sorted(PostRaw::getDateCreated, Comparator.reverseOrder())
+                  .toList();
     }
 
     private static List<TagOrLibrary> findFromIndex(Multimap<String, PostMeta> index, Type type) {

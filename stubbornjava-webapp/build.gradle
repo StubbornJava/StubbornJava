@@ -8,6 +8,7 @@ dependencies {
     compile project(':stubbornjava-cms-server')
 
     compile libs.lombok
+    compile libs.romeRss
 
     testCompile libs.junit
 }
