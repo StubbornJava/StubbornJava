@@ -16,6 +16,7 @@ public class Timers {
     public static void time(String message, Runnable runnable) {
         Stopwatch sw = Stopwatch.createStarted();
         try {
+            logger.info("{}", message);
             runnable.run();
         } catch (Exception ex) {
             logger.warn("Exception in runnable", ex);

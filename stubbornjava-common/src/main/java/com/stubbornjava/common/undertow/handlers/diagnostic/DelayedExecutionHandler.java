@@ -13,9 +13,6 @@ import io.undertow.server.handlers.BlockingHandler;
  * A non blocking handler to add a time delay before the next handler
  * is executed. If the exchange has already been dispatched this will
  * un-dispatch the exchange and re-dispatch it before next is called.
- *
- * @author billoneil
- *
  */
 public class DelayedExecutionHandler implements HttpHandler {
 
