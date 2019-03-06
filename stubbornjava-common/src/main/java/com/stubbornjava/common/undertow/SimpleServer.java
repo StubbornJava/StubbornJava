@@ -47,6 +47,8 @@ public class SimpleServer {
              * If you base64 encode any cookie values you probably want it on.
              */
             .setServerOption(UndertowOptions.ALLOW_EQUALS_IN_COOKIE_VALUE, true)
+            // Needed to set request time in access logs
+            .setServerOption(UndertowOptions.RECORD_REQUEST_START_TIME, true)
             .addHttpListener(DEFAULT_PORT, DEFAULT_HOST, handler)
         ;
         return new SimpleServer(undertow);

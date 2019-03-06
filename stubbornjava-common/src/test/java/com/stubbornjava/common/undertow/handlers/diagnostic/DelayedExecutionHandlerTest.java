@@ -31,7 +31,6 @@ import io.undertow.server.handlers.BlockingHandler;
 import okhttp3.OkHttpClient;
 import okhttp3.Response;
 
-// {{start:delayedHandler}}
 public class DelayedExecutionHandlerTest {
 
     // Delay for 500ms then return "ok"
@@ -42,7 +41,7 @@ public class DelayedExecutionHandlerTest {
             500, TimeUnit.MILLISECONDS);
 
     @Test
-    public void testOnIoThread() throws InterruptedException {
+    public void testOnXIoThread() throws InterruptedException {
         int numThreads = 10;
         run(delayedHandler, numThreads);
     }
@@ -96,4 +95,3 @@ public class DelayedExecutionHandlerTest {
     }
 
 }
-// {{end:delayedHandler}}

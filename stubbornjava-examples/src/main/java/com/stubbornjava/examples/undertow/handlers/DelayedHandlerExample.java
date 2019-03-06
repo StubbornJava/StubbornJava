@@ -47,7 +47,7 @@ public class DelayedHandlerExample {
             .get("/dispatch/delay", new BlockingHandler(delayedHandler))
             .setFallbackHandler(RoutingHandlers::notFoundHandler);
 
-        return CustomHandlers.accessLog(routes, log);
+        return CustomHandlers.accessLog(routes, LoggerFactory.getLogger("Access Log"));
     }
     // {{end:router}}
 

@@ -1,5 +1,6 @@
 package com.stubbornjava.common.undertow.handlers.diagnostic;
 
+import java.time.Duration;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
@@ -27,11 +28,13 @@ public class DelayedExecutionHandler implements HttpHandler {
 
     @Override
     public void handleRequest(HttpServerExchange exchange) throws Exception {
-        Duration dau = durationFunc.apply(exchange);
+        Duration duration = durationFunc.apply(exchange);
 
-        boolean wasDispatched = exchange.isBlocking();
         final HttpHandler delegate;
-        if (wasDispatched) {
+        if (exchange.isBlocking()) {
+            // We want to undispatch here so that we are not blocking
+            // a worker thread. We will spin on the IO thread using the
+            // built in executeAfter.
             exchange.unDispatch();
             delegate = new BlockingHandler(next);
         } else {
@@ -41,25 +44,9 @@ public class DelayedExecutionHandler implements HttpHandler {
         exchange.dispatch(exchange.getIoThread(), () -> {
             exchange.getIoThread().executeAfter(() ->
                 Connectors.executeRootHandler(delegate, exchange),
-                                              dau.getDuration(),
-                                              dau.getUnit());
+                duration.toMillis(),
+                TimeUnit.MILLISECONDS);
         });
-    }
-
-    static class Duration {
-        private final long duration;
-        private final TimeUnit unit;
-        public Duration(long duration, TimeUnit unit) {
-            super();
-            this.duration = duration;
-            this.unit = unit;
-        }
-        public long getDuration() {
-            return duration;
-        }
-        public TimeUnit getUnit() {
-            return unit;
-        }
     }
 }
 // {{end:delayedHandler}}

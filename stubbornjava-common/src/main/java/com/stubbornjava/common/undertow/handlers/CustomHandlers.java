@@ -46,7 +46,9 @@ public class CustomHandlers {
     private static final Logger log = LoggerFactory.getLogger(CustomHandlers.class);
 
     public static AccessLogHandler accessLog(HttpHandler next, Logger logger) {
-        return new AccessLogHandler(next, new Slf4jAccessLogReceiver(logger), "combined", CustomHandlers.class.getClassLoader());
+        // see http://undertow.io/javadoc/2.0.x/io/undertow/server/handlers/accesslog/AccessLogHandler.html
+        String format = "%H %h %u \"%r\" %s %Dms %b bytes \"%{i,Referer}\" \"%{i,User-Agent}\"";
+        return new AccessLogHandler(next, new Slf4jAccessLogReceiver(logger), format, CustomHandlers.class.getClassLoader());
     }
 
     public static AccessLogHandler accessLog(HttpHandler next) {

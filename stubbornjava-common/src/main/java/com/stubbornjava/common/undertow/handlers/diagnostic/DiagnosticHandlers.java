@@ -1,9 +1,8 @@
 package com.stubbornjava.common.undertow.handlers.diagnostic;
 
+import java.time.Duration;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
-
-import com.stubbornjava.common.undertow.handlers.diagnostic.DelayedExecutionHandler.Duration;
 
 import io.undertow.server.HttpHandler;
 
@@ -21,7 +20,7 @@ public class DiagnosticHandlers {
                                                      long duration,
                                                      TimeUnit unit) {
         return new DelayedExecutionHandler(
-            next, (exchange) -> new Duration(duration, unit));
+            next, (exchange) -> Duration.ofMillis(unit.toMillis(duration)));
     }
 
     /**
@@ -43,7 +42,7 @@ public class DiagnosticHandlers {
         next, (exchange) ->  {
             long duration = ThreadLocalRandom.current()
                                              .nextLong(minDuration, maxDuration);
-            return new Duration(duration, unit);
+            return Duration.ofMillis(unit.toMillis(duration));
         });
     }
     // {{end:delayedHandler}}
