@@ -15,6 +15,7 @@ public class OkHttpTestUtil {
     private OkHttpTestUtil() {}
     private static final Logger log = LoggerFactory.getLogger(OkHttpTestUtil.class);
 
+    // {{start:getInParallel}}
     public static void getInParallel(OkHttpClient client, String url, int count) {
         ExecutorService exec = Executors.newFixedThreadPool(count);
         for (int i = 0; i < count; i++) {
@@ -27,4 +28,5 @@ public class OkHttpTestUtil {
             log.error("error shutting down executor", e);
         }
     }
+    // {{end:getInParallel}}
 }
