@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.util.concurrent.Uninterruptibles;
+import com.stubbornjava.common.Http;
 import com.stubbornjava.common.HttpClient;
 import com.stubbornjava.common.Timers;
 import com.stubbornjava.common.undertow.Exchange;
@@ -13,7 +14,6 @@ import com.stubbornjava.common.undertow.SimpleServer;
 import com.stubbornjava.common.undertow.handlers.CustomHandlers;
 import com.stubbornjava.common.undertow.handlers.diagnostic.DelayedExecutionHandler;
 import com.stubbornjava.common.undertow.handlers.diagnostic.DiagnosticHandlers;
-import com.stubbornjava.examples.okhttp.OkHttpTestUtil;
 import com.stubbornjava.examples.undertow.routing.RoutingHandlers;
 
 import io.undertow.Undertow;
@@ -61,13 +61,13 @@ public class DelayedHandlerExample {
         OkHttpClient client = HttpClient.globalClient();
 
         Timers.time("---------- sleep ----------", () ->
-            OkHttpTestUtil.getInParallel(client, "http://localhost:8080/sleep", 5));
+            Http.getInParallel(client, "http://localhost:8080/sleep", 5));
         Timers.time("---------- dispatch sleep ----------", () ->
-            OkHttpTestUtil.getInParallel(client, "http://localhost:8080/dispatch/sleep", 5));
+            Http.getInParallel(client, "http://localhost:8080/dispatch/sleep", 5));
         Timers.time("---------- delay ----------", () ->
-            OkHttpTestUtil.getInParallel(client, "http://localhost:8080/delay", 5));
+            Http.getInParallel(client, "http://localhost:8080/delay", 5));
         Timers.time("---------- dispatch delay ----------", () ->
-            OkHttpTestUtil.getInParallel(client, "http://localhost:8080/dispatch/delay", 5));
+            Http.getInParallel(client, "http://localhost:8080/dispatch/delay", 5));
         undertow.stop();
     }
     // {{end:main}}
