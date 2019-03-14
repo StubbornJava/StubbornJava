@@ -809,7 +809,7 @@ public class PostData {
                       "delayedHandler",
                       "stubbornjava-common/src/main/java/com/stubbornjava/common/undertow/handlers/diagnostic/DelayedExecutionHandler.java")
                   , FileReference.stubbornJava(
-                      "dianostic",
+                      "diagnostic",
                       "stubbornjava-common/src/main/java/com/stubbornjava/common/undertow/handlers/diagnostic/DiagnosticHandlers.java")
                   , FileReference.stubbornJava(
                       "http",
