@@ -27,23 +27,27 @@ public class DelayedHandlerExample {
 
     // {{start:router}}
     private static HttpHandler getRouter() {
-        DelayedExecutionHandler delayedHandler = DiagnosticHandlers.fixedDelay(
-                (exchange) -> {
-                    log.debug("In delayed handler");
-                    Exchange.body().sendText(exchange, "ok");
-                },
-                1L, TimeUnit.SECONDS);
 
+        // Handler using Thread.sleep for a blocking delay
         HttpHandler sleepHandler = (exchange) -> {
             log.debug("In sleep handler");
             Uninterruptibles.sleepUninterruptibly(1L, TimeUnit.SECONDS);
             Exchange.body().sendText(exchange, "ok");
         };
 
+        // Custom handler using XnioExecutor.executeAfter
+        // internals for a non blocking delay
+        DelayedExecutionHandler delayedHandler = DiagnosticHandlers.fixedDelay(
+            (exchange) -> {
+                log.debug("In delayed handler");
+                Exchange.body().sendText(exchange, "ok");
+            },
+            1L, TimeUnit.SECONDS);
+
         HttpHandler routes = new RoutingHandler()
             .get("/sleep", sleepHandler)
-            .get("/delay", delayedHandler)
             .get("/dispatch/sleep", new BlockingHandler(sleepHandler))
+            .get("/delay", delayedHandler)
             .get("/dispatch/delay", new BlockingHandler(delayedHandler))
             .setFallbackHandler(RoutingHandlers::notFoundHandler);
 
@@ -55,17 +59,21 @@ public class DelayedHandlerExample {
     public static void main(String[] args) {
         SimpleServer server = SimpleServer.simpleServer(getRouter());
         server.getUndertow()
-              .setWorkerThreads(1)
-              .setIoThreads(1);
+              .setIoThreads(1)
+              .setWorkerThreads(5);
         Undertow undertow = server.start();
+
         OkHttpClient client = HttpClient.globalClient();
 
         Timers.time("---------- sleep ----------", () ->
             Http.getInParallel(client, "http://localhost:8080/sleep", 5));
+
         Timers.time("---------- dispatch sleep ----------", () ->
             Http.getInParallel(client, "http://localhost:8080/dispatch/sleep", 5));
+
         Timers.time("---------- delay ----------", () ->
             Http.getInParallel(client, "http://localhost:8080/delay", 5));
+
         Timers.time("---------- dispatch delay ----------", () ->
             Http.getInParallel(client, "http://localhost:8080/dispatch/delay", 5));
         undertow.stop();

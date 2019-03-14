@@ -36,7 +36,6 @@ public class Http {
         for (int i = 0; i < count; i++) {
             exec.submit(() -> Http.get(client, url));
         }
-        exec.shutdown();
         MoreExecutors.shutdownAndAwaitTermination(exec, 30, TimeUnit.SECONDS);
     }
     // {{end:getInParallel}}

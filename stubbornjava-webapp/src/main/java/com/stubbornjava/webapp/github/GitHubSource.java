@@ -11,6 +11,7 @@ public class GitHubSource {
     private static final GitHubApi githubClient = new GitHubApi.Builder()
                                                       .clientId(clientId)
                                                       .clientSecret(clientSecret)
+                                                      .ref(ref)
                                                       .build();
 
     public static GitHubApi githubClient() {
