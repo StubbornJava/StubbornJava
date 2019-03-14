@@ -76,6 +76,7 @@ public class GitHubApi {
     public static class Builder {
         private String clientId;
         private String clientSecret;
+        private String ref = "master";
 
         public Builder clientId(String clientId) {
             this.clientId = clientId;
@@ -87,22 +88,28 @@ public class GitHubApi {
             return this;
         }
 
+        public Builder ref(String ref) {
+            this.ref = ref;
+            return this;
+        }
+
         public GitHubApi build() {
             OkHttpClient client = HttpClient.globalClient()
                 .newBuilder()
                 .addInterceptor(HttpClient.getHeaderInterceptor("Accept", VERSION_HEADER))
-                .addInterceptor(GitHubApi.gitHubAuth(clientId, clientSecret))
+                .addInterceptor(GitHubApi.gitHubAuth(clientId, clientSecret, ref))
                 .build();
             return new GitHubApi(client);
         }
     }
 
-    private static Interceptor gitHubAuth(String clientId, String clientSecret) {
+    private static Interceptor gitHubAuth(String clientId, String clientSecret, String ref) {
         return (Chain chain) -> {
             Request orig = chain.request();
             HttpUrl url = orig.url().newBuilder()
                               .addQueryParameter("client_id", clientId)
                               .addQueryParameter("client_secret", clientSecret)
+                              .addQueryParameter("ref", ref)
                               .build();
             Request newRequest = orig.newBuilder().url(url).build();
             return chain.proceed(newRequest);

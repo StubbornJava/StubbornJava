@@ -1,0 +1,140 @@
+<div class="anchored-md">
+{{#assign "markdown"}}
+Latency can be a major cause of performance issues in distributed systems. Even a simple system with a single web server and a single database can fall victim to the N+1 problem (SQL or API Based), processing one record at a time vs batching, or serial vs parallel execution. To help highlight some of these issues in future posts we need way to add artificial latency to http requests. 
+
+## Scenario
+* Create [custom Undertow HttpHandler's](/posts/undertow-writing-custom-httphandlers) that block for ~1 second
+* Web server will only have a single IO worker and five worker threads
+* Make five requests in parallel
+
+## Delay Handler and Sleep Handler
+We will start out with a naive sleep implementation using Guava's `Uninterruptibles.sleepUninterruptibly` and then test out a non-blocking option utilizing `XnioExecutor.executeAfter` method exposed to us by Undertow. Both approaches will then be tested on just the IO thread followed by dispatching to worker threads. Our only intention is to show the differences between all the approaches, not to compare performance or suggest one method over the other. We will dive into the `DelayedExecutionHandler` implementation later on.
+
+{{> templates/src/widgets/code/code-snippet file=example section=example.sections.router}}
+
+### Parallel Request Helper
+Additionally we have a helper function for executing N GET requests in parallel using the [OkHttpClient](/posts/okhttp-example-rest-client). This will spin up a new fixed size thread pool, execute the requests, and finally shutdown the executor using Guava's `MoreExecutors.shutdownAndAwaitTermination`.
+
+{{> templates/src/widgets/code/code-snippet file=http section=http.sections.getInParallel}}
+
+### Main Method
+Here we will be spinning up a simple [embedded Undertow web server](/posts/java-hello-world-embedded-http-server-using-undertow) configured with a single IO worker and five worker threads. Then we make five parallel requests to each endpoint to see the results.
+
+{{> templates/src/widgets/code/code-snippet file=example section=example.sections.main}}
+
+## Sleep Handler IO Thread Results
+You should never be calling blocking operations on the IO threads but we did this purposefully here just as an example. It took a total of ~5 seconds to make our five concurrent requests. The first request took ~1 second and each additional request took a second longer than the one before it. This is expected as we were blocking the only IO thread (`XNIO-1 I/O-1`) so each request needed to process serially.
+
+<pre class="line-numbers"><code class="language-bash">2019-03-13 21:56:33.951 [main] INFO  com.stubbornjava.common.Timers - ---------- sleep ----------
+2019-03-13 21:56:33.954 [pool-5-thread-2] DEBUG com.stubbornjava.common.HttpClient - --> GET http://localhost:8080/sleep http/1.1
+2019-03-13 21:56:33.954 [pool-5-thread-1] DEBUG com.stubbornjava.common.HttpClient - --> GET http://localhost:8080/sleep http/1.1
+2019-03-13 21:56:33.957 [pool-5-thread-3] DEBUG com.stubbornjava.common.HttpClient - --> GET http://localhost:8080/sleep http/1.1
+2019-03-13 21:56:33.959 [XNIO-1 I/O-1] DEBUG c.s.e.u.h.DelayedHandlerExample - In sleep handler
+2019-03-13 21:56:33.959 [pool-5-thread-5] DEBUG com.stubbornjava.common.HttpClient - --> GET http://localhost:8080/sleep http/1.1
+2019-03-13 21:56:33.959 [pool-5-thread-4] DEBUG com.stubbornjava.common.HttpClient - --> GET http://localhost:8080/sleep http/1.1
+2019-03-13 21:56:34.962 [XNIO-1 I/O-1] INFO  Access Log - HTTP/1.1 127.0.0.1 - "GET /sleep HTTP/1.1" 200 1003ms 2 bytes "-" "okhttp/3.11.0"
+2019-03-13 21:56:34.962 [pool-5-thread-1] DEBUG com.stubbornjava.common.HttpClient - <-- 200 OK http://localhost:8080/sleep (1007ms, 2-byte body)
+2019-03-13 21:56:34.963 [XNIO-1 I/O-1] DEBUG c.s.e.u.h.DelayedHandlerExample - In sleep handler
+2019-03-13 21:56:35.968 [XNIO-1 I/O-1] INFO  Access Log - HTTP/1.1 127.0.0.1 - "GET /sleep HTTP/1.1" 200 1004ms 2 bytes "-" "okhttp/3.11.0"
+2019-03-13 21:56:35.968 [pool-5-thread-2] DEBUG com.stubbornjava.common.HttpClient - <-- 200 OK http://localhost:8080/sleep (2013ms, 2-byte body)
+2019-03-13 21:56:35.969 [XNIO-1 I/O-1] DEBUG c.s.e.u.h.DelayedHandlerExample - In sleep handler
+2019-03-13 21:56:36.971 [XNIO-1 I/O-1] INFO  Access Log - HTTP/1.1 127.0.0.1 - "GET /sleep HTTP/1.1" 200 1002ms 2 bytes "-" "okhttp/3.11.0"
+2019-03-13 21:56:36.971 [pool-5-thread-3] DEBUG com.stubbornjava.common.HttpClient - <-- 200 OK http://localhost:8080/sleep (3014ms, 2-byte body)
+2019-03-13 21:56:36.972 [XNIO-1 I/O-1] DEBUG c.s.e.u.h.DelayedHandlerExample - In sleep handler
+2019-03-13 21:56:37.975 [XNIO-1 I/O-1] INFO  Access Log - HTTP/1.1 127.0.0.1 - "GET /sleep HTTP/1.1" 200 1002ms 2 bytes "-" "okhttp/3.11.0"
+2019-03-13 21:56:37.975 [pool-5-thread-4] DEBUG com.stubbornjava.common.HttpClient - <-- 200 OK http://localhost:8080/sleep (4015ms, 2-byte body)
+2019-03-13 21:56:37.976 [XNIO-1 I/O-1] DEBUG c.s.e.u.h.DelayedHandlerExample - In sleep handler
+2019-03-13 21:56:38.978 [pool-5-thread-5] DEBUG com.stubbornjava.common.HttpClient - <-- 200 OK http://localhost:8080/sleep (5018ms, 2-byte body)
+2019-03-13 21:56:38.978 [XNIO-1 I/O-1] INFO  Access Log - HTTP/1.1 127.0.0.1 - "GET /sleep HTTP/1.1" 200 1001ms 2 bytes "-" "okhttp/3.11.0"
+2019-03-13 21:56:38.979 [main] INFO  com.stubbornjava.common.Timers - ---------- sleep ---------- took 5028ms</code></pre>
+
+## Sleep Handler Dispatching to Worker Threads Results
+Since you should never be blocking the IO threads this example will dispatch the sleep operation to our pool of five worker threads. Since we now have five worker threads (`XNIO-1 task-{n}`) that are able to handle blocking operations our total response time is ~1 second with each request taking about a second. If we had more requests than workers the requests would queue up.
+
+<pre class="line-numbers"><code class="language-bash">2019-03-13 21:56:38.980 [main] INFO  com.stubbornjava.common.Timers - ---------- dispatch sleep ----------
+2019-03-13 21:56:38.982 [pool-6-thread-2] DEBUG com.stubbornjava.common.HttpClient - --> GET http://localhost:8080/dispatch/sleep http/1.1
+2019-03-13 21:56:38.982 [pool-6-thread-4] DEBUG com.stubbornjava.common.HttpClient - --> GET http://localhost:8080/dispatch/sleep http/1.1
+2019-03-13 21:56:38.982 [pool-6-thread-1] DEBUG com.stubbornjava.common.HttpClient - --> GET http://localhost:8080/dispatch/sleep http/1.1
+2019-03-13 21:56:38.982 [pool-6-thread-3] DEBUG com.stubbornjava.common.HttpClient - --> GET http://localhost:8080/dispatch/sleep http/1.1
+2019-03-13 21:56:38.983 [XNIO-1 task-2] DEBUG c.s.e.u.h.DelayedHandlerExample - In sleep handler
+2019-03-13 21:56:38.983 [XNIO-1 task-5] DEBUG c.s.e.u.h.DelayedHandlerExample - In sleep handler
+2019-03-13 21:56:38.983 [XNIO-1 task-1] DEBUG c.s.e.u.h.DelayedHandlerExample - In sleep handler
+2019-03-13 21:56:38.983 [pool-6-thread-5] DEBUG com.stubbornjava.common.HttpClient - --> GET http://localhost:8080/dispatch/sleep http/1.1
+2019-03-13 21:56:38.984 [XNIO-1 task-4] DEBUG c.s.e.u.h.DelayedHandlerExample - In sleep handler
+2019-03-13 21:56:38.984 [XNIO-1 task-3] DEBUG c.s.e.u.h.DelayedHandlerExample - In sleep handler
+2019-03-13 21:56:39.987 [XNIO-1 task-2] INFO  Access Log - HTTP/1.1 127.0.0.1 - "GET /dispatch/sleep HTTP/1.1" 200 1004ms 2 bytes "-" "okhttp/3.11.0"
+2019-03-13 21:56:39.987 [pool-6-thread-3] DEBUG com.stubbornjava.common.HttpClient - <-- 200 OK http://localhost:8080/dispatch/sleep (1005ms, 2-byte body)
+2019-03-13 21:56:39.987 [XNIO-1 task-5] INFO  Access Log - HTTP/1.1 127.0.0.1 - "GET /dispatch/sleep HTTP/1.1" 200 1004ms 2 bytes "-" "okhttp/3.11.0"
+2019-03-13 21:56:39.988 [pool-6-thread-2] DEBUG com.stubbornjava.common.HttpClient - <-- 200 OK http://localhost:8080/dispatch/sleep (1005ms, 2-byte body)
+2019-03-13 21:56:39.987 [pool-6-thread-1] DEBUG com.stubbornjava.common.HttpClient - <-- 200 OK http://localhost:8080/dispatch/sleep (1005ms, 2-byte body)
+2019-03-13 21:56:39.988 [XNIO-1 task-1] INFO  Access Log - HTTP/1.1 127.0.0.1 - "GET /dispatch/sleep HTTP/1.1" 200 1004ms 2 bytes "-" "okhttp/3.11.0"
+2019-03-13 21:56:39.989 [XNIO-1 task-3] INFO  Access Log - HTTP/1.1 127.0.0.1 - "GET /dispatch/sleep HTTP/1.1" 200 1004ms 2 bytes "-" "okhttp/3.11.0"
+2019-03-13 21:56:39.989 [XNIO-1 task-4] INFO  Access Log - HTTP/1.1 127.0.0.1 - "GET /dispatch/sleep HTTP/1.1" 200 1005ms 2 bytes "-" "okhttp/3.11.0"
+2019-03-13 21:56:39.990 [pool-6-thread-5] DEBUG com.stubbornjava.common.HttpClient - <-- 200 OK http://localhost:8080/dispatch/sleep (1005ms, 2-byte body)
+2019-03-13 21:56:39.990 [pool-6-thread-4] DEBUG com.stubbornjava.common.HttpClient - <-- 200 OK http://localhost:8080/dispatch/sleep (1007ms, 2-byte body)
+2019-03-13 21:56:39.990 [main] INFO  com.stubbornjava.common.Timers - ---------- dispatch sleep ---------- took 1010ms
+</code></pre>
+
+## Delay Handler Implementation
+Here we have a non blocking `HttpHandler` that utilizes `XnioExecutor.executeAfter` to achieve our delay. We need to undispatch the `HttpServerExchange` if it has already been dispatched so we can spin on the IO thread.
+
+{{> templates/src/widgets/code/code-snippet file=delayedHandler section=delayedHandler.sections.delayedHandler}}
+
+{{> templates/src/widgets/code/code-snippet file=diagnostic section=diagnostic.sections.delayedHandler}}
+
+## Delay Handler IO Thread Results
+Utilizing `XnioExecutor.executeAfter` we are able to achieve our same one second delay across all five requests with only the IO thread (`XNIO-1 I/O-1`). This is an option that could allow us to delay many parallel requests with fewer threads than the blocking approach.
+
+<pre class="line-numbers"><code class="language-bash">2019-03-13 21:56:39.991 [main] INFO  com.stubbornjava.common.Timers - ---------- delay ----------
+2019-03-13 21:56:39.992 [pool-7-thread-1] DEBUG com.stubbornjava.common.HttpClient - --> GET http://localhost:8080/delay http/1.1
+2019-03-13 21:56:39.992 [pool-7-thread-3] DEBUG com.stubbornjava.common.HttpClient - --> GET http://localhost:8080/delay http/1.1
+2019-03-13 21:56:39.992 [pool-7-thread-2] DEBUG com.stubbornjava.common.HttpClient - --> GET http://localhost:8080/delay http/1.1
+2019-03-13 21:56:39.993 [pool-7-thread-4] DEBUG com.stubbornjava.common.HttpClient - --> GET http://localhost:8080/delay http/1.1
+2019-03-13 21:56:39.993 [pool-7-thread-5] DEBUG com.stubbornjava.common.HttpClient - --> GET http://localhost:8080/delay http/1.1
+2019-03-13 21:56:40.998 [XNIO-1 I/O-1] DEBUG c.s.e.u.h.DelayedHandlerExample - In delayed handler
+2019-03-13 21:56:40.999 [XNIO-1 I/O-1] INFO  Access Log - HTTP/1.1 127.0.0.1 - "GET /delay HTTP/1.1" 200 1005ms 2 bytes "-" "okhttp/3.11.0"
+2019-03-13 21:56:40.999 [pool-7-thread-1] DEBUG com.stubbornjava.common.HttpClient - <-- 200 OK http://localhost:8080/delay (1006ms, 2-byte body)
+2019-03-13 21:56:40.999 [XNIO-1 I/O-1] DEBUG c.s.e.u.h.DelayedHandlerExample - In delayed handler
+2019-03-13 21:56:41.000 [XNIO-1 I/O-1] INFO  Access Log - HTTP/1.1 127.0.0.1 - "GET /delay HTTP/1.1" 200 1006ms 2 bytes "-" "okhttp/3.11.0"
+2019-03-13 21:56:41.000 [pool-7-thread-2] DEBUG com.stubbornjava.common.HttpClient - <-- 200 OK http://localhost:8080/delay (1007ms, 2-byte body)
+2019-03-13 21:56:41.000 [XNIO-1 I/O-1] DEBUG c.s.e.u.h.DelayedHandlerExample - In delayed handler
+2019-03-13 21:56:41.001 [XNIO-1 I/O-1] INFO  Access Log - HTTP/1.1 127.0.0.1 - "GET /delay HTTP/1.1" 200 1007ms 2 bytes "-" "okhttp/3.11.0"
+2019-03-13 21:56:41.001 [pool-7-thread-3] DEBUG com.stubbornjava.common.HttpClient - <-- 200 OK http://localhost:8080/delay (1008ms, 2-byte body)
+2019-03-13 21:56:41.001 [XNIO-1 I/O-1] DEBUG c.s.e.u.h.DelayedHandlerExample - In delayed handler
+2019-03-13 21:56:41.002 [XNIO-1 I/O-1] INFO  Access Log - HTTP/1.1 127.0.0.1 - "GET /delay HTTP/1.1" 200 1008ms 2 bytes "-" "okhttp/3.11.0"
+2019-03-13 21:56:41.002 [pool-7-thread-4] DEBUG com.stubbornjava.common.HttpClient - <-- 200 OK http://localhost:8080/delay (1009ms, 2-byte body)
+2019-03-13 21:56:41.002 [XNIO-1 I/O-1] DEBUG c.s.e.u.h.DelayedHandlerExample - In delayed handler
+2019-03-13 21:56:41.003 [XNIO-1 I/O-1] INFO  Access Log - HTTP/1.1 127.0.0.1 - "GET /delay HTTP/1.1" 200 1008ms 2 bytes "-" "okhttp/3.11.0"
+2019-03-13 21:56:41.003 [pool-7-thread-5] DEBUG com.stubbornjava.common.HttpClient - <-- 200 OK http://localhost:8080/delay (1009ms, 2-byte body)
+2019-03-13 21:56:41.003 [main] INFO  com.stubbornjava.common.Timers - ---------- delay ---------- took 1012ms</code></pre>
+
+
+## Delay Handler Dispatching to Worker Threads Results
+The delayed handler operating on the dispatched threads has similar results as the sleeping approach dispatching to worker threads. This approach probably has slightly higher overhead since we are bouncing from the IO thread to the worker thread, then back to the IO thread, and finally completing in the worker again.
+
+<pre class="line-numbers"><code class="language-bash">2019-03-13 21:56:41.003 [main] INFO  com.stubbornjava.common.Timers - ---------- dispatch delay ----------
+2019-03-13 21:56:41.004 [pool-8-thread-1] DEBUG com.stubbornjava.common.HttpClient - --> GET http://localhost:8080/dispatch/delay http/1.1
+2019-03-13 21:56:41.005 [pool-8-thread-2] DEBUG com.stubbornjava.common.HttpClient - --> GET http://localhost:8080/dispatch/delay http/1.1
+2019-03-13 21:56:41.005 [pool-8-thread-3] DEBUG com.stubbornjava.common.HttpClient - --> GET http://localhost:8080/dispatch/delay http/1.1
+2019-03-13 21:56:41.005 [pool-8-thread-4] DEBUG com.stubbornjava.common.HttpClient - --> GET http://localhost:8080/dispatch/delay http/1.1
+2019-03-13 21:56:41.005 [pool-8-thread-5] DEBUG com.stubbornjava.common.HttpClient - --> GET http://localhost:8080/dispatch/delay http/1.1
+2019-03-13 21:56:42.007 [XNIO-1 task-2] DEBUG c.s.e.u.h.DelayedHandlerExample - In delayed handler
+2019-03-13 21:56:42.007 [XNIO-1 task-1] DEBUG c.s.e.u.h.DelayedHandlerExample - In delayed handler
+2019-03-13 21:56:42.008 [XNIO-1 task-3] DEBUG c.s.e.u.h.DelayedHandlerExample - In delayed handler
+2019-03-13 21:56:42.008 [XNIO-1 task-1] INFO  Access Log - HTTP/1.1 127.0.0.1 - "GET /dispatch/delay HTTP/1.1" 200 1001ms 2 bytes "-" "okhttp/3.11.0"
+2019-03-13 21:56:42.007 [XNIO-1 task-5] DEBUG c.s.e.u.h.DelayedHandlerExample - In delayed handler
+2019-03-13 21:56:42.008 [pool-8-thread-4] DEBUG com.stubbornjava.common.HttpClient - <-- 200 OK http://localhost:8080/dispatch/delay (1002ms, 2-byte body)
+2019-03-13 21:56:42.008 [XNIO-1 task-3] INFO  Access Log - HTTP/1.1 127.0.0.1 - "GET /dispatch/delay HTTP/1.1" 200 1001ms 2 bytes "-" "okhttp/3.11.0"
+2019-03-13 21:56:42.008 [XNIO-1 task-5] INFO  Access Log - HTTP/1.1 127.0.0.1 - "GET /dispatch/delay HTTP/1.1" 200 1002ms 2 bytes "-" "okhttp/3.11.0"
+2019-03-13 21:56:42.008 [XNIO-1 task-4] DEBUG c.s.e.u.h.DelayedHandlerExample - In delayed handler
+2019-03-13 21:56:42.008 [XNIO-1 task-2] INFO  Access Log - HTTP/1.1 127.0.0.1 - "GET /dispatch/delay HTTP/1.1" 200 1002ms 2 bytes "-" "okhttp/3.11.0"
+2019-03-13 21:56:42.008 [pool-8-thread-2] DEBUG com.stubbornjava.common.HttpClient - <-- 200 OK http://localhost:8080/dispatch/delay (1003ms, 2-byte body)
+2019-03-13 21:56:42.008 [pool-8-thread-1] DEBUG com.stubbornjava.common.HttpClient - <-- 200 OK http://localhost:8080/dispatch/delay (1003ms, 2-byte body)
+2019-03-13 21:56:42.008 [pool-8-thread-3] DEBUG com.stubbornjava.common.HttpClient - <-- 200 OK http://localhost:8080/dispatch/delay (1002ms, 2-byte body)
+2019-03-13 21:56:42.009 [pool-8-thread-5] DEBUG com.stubbornjava.common.HttpClient - <-- 200 OK http://localhost:8080/dispatch/delay (1003ms, 2-byte body)
+2019-03-13 21:56:42.009 [XNIO-1 task-4] INFO  Access Log - HTTP/1.1 127.0.0.1 - "GET /dispatch/delay HTTP/1.1" 200 1002ms 2 bytes "-" "okhttp/3.11.0"
+2019-03-13 21:56:42.010 [main] INFO  com.stubbornjava.common.Timers - ---------- dispatch delay ---------- took 1006ms</code></pre>
+
+{{/assign}}
+{{md markdown}}
+</div>

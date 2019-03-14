@@ -796,6 +796,30 @@ public class PostData {
                   ))
               .build()
             );
+          posts.add(PostRaw.builder()
+              .postId(7L)
+              .title("Creating a non-blocking delay in the Undertow Web Server for Artificial Latency")
+              .metaDesc("Adding atrificial latency to Undertow HTTP routes for testing / diagnostics by using a non blocking sleep.")
+              .dateCreated(LocalDateTime.parse("2019-03-13T01:15:30"))
+              .dateUpdated(LocalDateTime.parse("2019-03-13T01:15:30"))
+              .javaLibs(Lists.newArrayList(JavaLib.Undertow, JavaLib.OkHttp, JavaLib.Guava))
+              .tags(Lists.newArrayList(Tags.HTTP, Tags.Middleware))
+              .gitFileReferences(Lists.newArrayList(
+                  FileReference.stubbornJava(
+                      "delayedHandler",
+                      "stubbornjava-common/src/main/java/com/stubbornjava/common/undertow/handlers/diagnostic/DelayedExecutionHandler.java")
+                  , FileReference.stubbornJava(
+                      "diagnostic",
+                      "stubbornjava-common/src/main/java/com/stubbornjava/common/undertow/handlers/diagnostic/DiagnosticHandlers.java")
+                  , FileReference.stubbornJava(
+                      "http",
+                      "stubbornjava-common/src/main/java/com/stubbornjava/common/Http.java")
+                  , FileReference.stubbornJava(
+                      "example",
+                      "stubbornjava-examples/src/main/java/com/stubbornjava/examples/undertow/handlers/DelayedHandlerExample.java")
+                  ))
+              .build()
+            );
     }
 
     public static List<PostRaw> getPosts() {

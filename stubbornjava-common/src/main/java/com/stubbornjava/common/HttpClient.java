@@ -40,7 +40,11 @@ public class HttpClient {
             log.debug(msg);
         });
     static {
-        loggingInterceptor.setLevel(Level.BODY);
+        if (log.isDebugEnabled()) {
+            loggingInterceptor.setLevel(Level.BASIC);
+        } else if (log.isTraceEnabled()) {
+            loggingInterceptor.setLevel(Level.BODY);
+        }
     }
 
     public static HttpLoggingInterceptor getLoggingInterceptor() {
