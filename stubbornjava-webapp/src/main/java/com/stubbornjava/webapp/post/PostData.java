@@ -234,13 +234,16 @@ public class PostData {
             .title("HTTP Redirects with Undertow")
             .metaDesc("Handling permanent redirect, temporary redirect and a referrer redirect using Undertow web server.")
             .dateCreated(LocalDateTime.parse("2017-01-16T20:15:30"))
-            .dateUpdated(LocalDateTime.parse("2017-01-16T20:15:30"))
+            .dateUpdated(LocalDateTime.parse("2019-03-15T20:15:30"))
             .javaLibs(Lists.newArrayList(JavaLib.Undertow))
-            .tags(Lists.newArrayList(Tags.WebServer))
+            .tags(Lists.newArrayList(Tags.WebServer, Tags.HTTP))
             .gitFileReferences(Lists.newArrayList(
                 FileReference.stubbornJava(
-                             "server",
-                             "stubbornjava-examples/src/main/java/com/stubbornjava/examples/undertow/redirects/RedirectServer.java")
+                     "server",
+                     "stubbornjava-examples/src/main/java/com/stubbornjava/examples/undertow/redirects/RedirectServer.java")
+                , FileReference.stubbornJava(
+                     "redirects",
+                     "stubbornjava-undertow/src/main/java/com/stubbornjava/undertow/exchange/RedirectSenders.java")
              ))
             .build()
         );
