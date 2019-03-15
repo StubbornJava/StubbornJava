@@ -1,13 +1,23 @@
-<p>Simple HTTP redirecting with the Undertow web server. Using the convience class <a href="https://github.com/StubbornJava/StubbornJava/blob/master/stubbornjava-undertow/src/main/java/com/stubbornjava/undertow/exchange/RedirectSenders.java">RedirectSenders.java</a></p>
+<div class="anchored-md">
+{{#assign "markdown"}}
+HTTP redirects are a method for web servers to direct clients from one url to another. These can be used for temporarily handling errors / downtime, redirecting http to https, migrating from one domain to another, changing url schemes, etc. In its simplest form a HTTP redirect is a combination of a status code and the `Location` header. We will create some common HTTP redirects with Undertow.
 
-<h2 class="anchored">Redirects</h2>
+## Redirect Example
+We will be working with the following web server containing a few simple routes to demonstrate each type of redirect.
+
 {{> templates/src/widgets/code/code-snippet file=server section=server.sections.redirects}}
 
-<h2 class="anchored">Hello Handler</h2>
+## Hello Handler
+All endpoints will redirect to the hello handler which simply outputs the text `Hello`.
+
 <pre class="line-numbers"><code class="language-bash">curl 127.0.0.1:8080/hello
 Hello</code></pre>
 
-<h2 class="anchored">Temporary Redirect</h2>
+## Temporary Redirect (302)
+The temporary redirect is one of the most commonly used redirects and as it's name states it is meant to be temporary. There are many applications of the temporary redirect. Some common uses are redirecting to error pages, redirecting you back to your previous page after a form submission, and redirecting unauthenticated users to a login page.
+
+{{> templates/src/widgets/code/code-snippet file=redirects section=redirects.sections.temporary}}
+
 <pre class="line-numbers"><code class="language-bash">curl -v -L 127.0.0.1:8080/temporaryRedirect
 *   Trying 127.0.0.1...
 * Connected to 127.0.0.1 (127.0.0.1) port 8080 (#0)
@@ -37,8 +47,12 @@ Hello</code></pre>
 < Content-Type: text/plain
 < Content-Length: 5
 < Date: Tue, 17 Jan 2017 02:22:02 GMT</code></pre>
-<p>A good use of a temporary redirect is to redirect unauthenticated users to a login page.</p>
-<h2 class="anchored">Permanent Redirect</h2>
+
+## Permanent Redirect (301)
+The permanent redirect works very similarly to the temporary redirect with the added implication that this redirect is permanent. This implication can be used by clients in various ways. One of the most common is web crawlers updating their indexes based on 301s. If you decide to update your domain name, redirect from http to https, or change your url scheme, the 301 redirect allows you to keep your old links active but tell the crawlers they should start using the new link instead. This is one of the primary ways to make sure Google starts listing your results under the new urls.
+
+{{> templates/src/widgets/code/code-snippet file=redirects section=redirects.sections.permanent}}
+
 <pre class="line-numbers"><code class="language-bash">curl -v -L 127.0.0.1:8080/permanentRedirect
 *   Trying 127.0.0.1...
 * Connected to 127.0.0.1 (127.0.0.1) port 8080 (#0)
@@ -69,7 +83,11 @@ Hello</code></pre>
 < Content-Length: 5
 < Date: Tue, 17 Jan 2017 02:22:23 GMT</code></pre>
 
-<h2 class="anchored">Referrer Redirect</h2>
+## Referrer Redirect Helper
+Although server side rendered websites are becoming less popular and being replaced by single page apps they are still a great tool for many use cases. In server side rendered web pages many actions trigger form POST requests which then need to redirect the user to another page when it completes. This is a helper intended to dynamically redirect back to the page the request was made from based on the `Referer` header. Yes the Referer header was misspelled in the HTTP spec and has stuck around that way.
+
+{{> templates/src/widgets/code/code-snippet file=redirects section=redirects.sections.referer}}
+
 <pre class="line-numbers"><code class="language-bash">curl -v -L --referer 'http://www.google.com' 127.0.0.1:8080/referrerRedirect
 *   Trying 127.0.0.1...
 * Connected to 127.0.0.1 (127.0.0.1) port 8080 (#0)
@@ -97,3 +115,7 @@ Hello</code></pre>
 > Referer: http://www.google.com
 >
 < HTTP/1.1 200 OK</code></pre>
+
+{{/assign}}
+{{md markdown}}
+</div>
