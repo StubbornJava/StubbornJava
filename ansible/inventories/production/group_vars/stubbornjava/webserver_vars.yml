@@ -13,3 +13,6 @@
       host: "{{_vault.metrics.graphite.host}}"
     grafana:
       api_key: "{{_vault.metrics.grafana.api_key}}"
+
+  slack:
+    legacyToken: "{{_vault.slack.legacyToken}}"
