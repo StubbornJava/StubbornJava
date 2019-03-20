@@ -13,6 +13,6 @@ public class Slf4jAccessLogReceiver implements AccessLogReceiver {
 
     @Override
     public void logMessage(String message) {
-        logger.info(message);
+        logger.info("{}", message);
     }
 }
