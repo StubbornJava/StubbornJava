@@ -55,7 +55,7 @@ public class WrapBootstrapScraper {
                             .newBuilder()
                             .addQueryParameter("ref", affilaiteCode)
                             .build().toString();
-        String imageUrl = element.select(".image img").attr("src");
+        String imageUrl = element.select(".image noscript img").attr("src");
         int downloads = Optional.of(element.select(".item_foot .purchases").text())
                                 .filter(val -> !Strings.isNullOrEmpty(val))
                                 .map(Integer::parseInt)
