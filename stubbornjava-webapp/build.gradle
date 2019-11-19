@@ -7,16 +7,18 @@ dependencies {
     compile project(':stubbornjava-common')
     compile project(':stubbornjava-cms-server')
 
-    compile libs.lombok
     compile libs.romeRss
+    
+    compileOnly libs.lombok
+    annotationProcessor libs.lombok
 
     testCompile libs.junit
 }
 
 shadowJar {
-   baseName = 'stubbornjava-all'
+   archiveBaseName = 'stubbornjava-all'
    classifier = null
-   version = null
+   archiveVersion = null
 }
 
 // {{end:dependencies}}

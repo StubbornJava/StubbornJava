@@ -3,7 +3,8 @@ dependencies {
     compile project(':stubbornjava-undertow')
     compile project(':stubbornjava-common')
     
-    compile libs.lombok
-    
+    compileOnly libs.lombok
+    annotationProcessor libs.lombok
+        
     testCompile libs.junit
 }
