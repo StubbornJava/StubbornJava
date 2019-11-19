@@ -21,11 +21,12 @@ ext {
         hashids           : '1.0.3',       // Id hashing
         failsafe          : '1.1.0',       // retry and circuit breakers
         jsoup             : '1.11.3',      // DOM parsing library
-        lombok            : '1.18.2',      // Code gen
+        lombok            : '1.18.10',     // Code gen
         sitemapgen4j      : '1.0.6',       // Sitemap generator for SEO
         jbcrypt           : '0.4',         // BCrypt salted hashing library
         romeRss           : '1.0',         // RSS Library
         kotlin            : '1.3.60',      // Kotlin
+        javax             : '1.3.2',
 
         junit             : '4.12',        // Unit Testing
     ]
@@ -73,6 +74,7 @@ ext {
         jbcrypt                   : "org.mindrot:jbcrypt:$versions.jbcrypt",
         romeRss                   : "rome:rome:$versions.romeRss",
         kotlin                    : "org.jetbrains.kotlin:kotlin-stdlib:$versions.kotlin",
+        javaxAnnotation           : "javax.annotation:javax.annotation-api:$versions.javax",
 
         junit                     : "junit:junit:$versions.junit",
     ]
