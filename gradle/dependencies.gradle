@@ -1,17 +1,17 @@
 // {{start:dependencies}}
 ext {
     versions = [
-        jackson           : '2.9.7',       // Json Serializer / Deserializer
-        okhttp            : '3.11.0',      // HTTP Client
-        slf4j             : '1.7.25',      // Logging 
+        jackson           : '2.10.1',      // Json Serializer / Deserializer
+        okhttp            : '4.2.2',       // HTTP Client
+        slf4j             : '1.7.29',      // Logging 
         logback           : '1.2.3',       // Logging
-        undertow          : '2.0.13.Final',// Webserver
+        undertow          : '2.0.28.Final',// Webserver
         metrics           : '4.0.3',       // Metrics
-        guava             : '26.0-jre',    // Common / Helper libraries
-        typesafeConfig    : '1.3.3',       // Configuration
-        handlebars        : '4.1.0',       // HTML templating
+        guava             : '28.1-jre',    // Common / Helper libraries
+        typesafeConfig    : '1.4.0',       // Configuration
+        handlebars        : '4.1.2',       // HTML templating
         htmlCompressor    : '1.5.2',       // HTML compression
-        hikaricp          : '3.2.0',       // JDBC connection pool
+        hikaricp          : '3.4.1',       // JDBC connection pool
         jool              : '0.9.12',      // Functional Utils
         hsqldb            : '2.3.4',       // In memory SQL db
         aws               : '1.11.419',    // AWS Java SDK
@@ -25,7 +25,8 @@ ext {
         sitemapgen4j      : '1.0.6',       // Sitemap generator for SEO
         jbcrypt           : '0.4',         // BCrypt salted hashing library
         romeRss           : '1.0',         // RSS Library
-        
+        kotlin            : '1.3.60',      // Kotlin
+
         junit             : '4.12',        // Unit Testing
     ]
     libs = [
@@ -71,7 +72,8 @@ ext {
         sitemapgen4j              : "com.github.dfabulich:sitemapgen4j:$versions.sitemapgen4j",
         jbcrypt                   : "org.mindrot:jbcrypt:$versions.jbcrypt",
         romeRss                   : "rome:rome:$versions.romeRss",
-        
+        kotlin                    : "org.jetbrains.kotlin:kotlin-stdlib:$versions.kotlin",
+
         junit                     : "junit:junit:$versions.junit",
     ]
 }

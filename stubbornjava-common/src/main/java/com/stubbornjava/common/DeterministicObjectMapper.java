@@ -38,7 +38,7 @@ public class DeterministicObjectMapper {
          */
         SerializerProvider serializers = mapper.getSerializerProviderInstance();
 
-        // This module is reponsible for replacing non-deterministic objects
+        // This module is responsible for replacing non-deterministic objects
         // with deterministic ones. Example convert Set to a sorted List.
         SimpleModule module = new SimpleModule();
         module.addSerializer(Collection.class,
