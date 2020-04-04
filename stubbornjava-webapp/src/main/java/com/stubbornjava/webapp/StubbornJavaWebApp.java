@@ -90,7 +90,7 @@ public class StubbornJavaWebApp {
             .get("/rss/feed", StubbornJavaRss::getRssFeed)
             // addAll allows you to combine more than one RoutingHandler together.
             .addAll(SitemapRoutes.router(StubbornJavaSitemapGenerator.getSitemap()))
-
+            
             .setFallbackHandler(timed("notFound", PageRoutes::notFound));
     }
 

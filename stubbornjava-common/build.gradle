@@ -6,7 +6,6 @@ dependencies {
     compile libs.logback
     compile libs.jacksonCore
     compile libs.jacksonDatabind
-    compile libs.jacksonDatabind
     compile libs.jacksonAnnotations
     compile libs.jacksonDatatypeJdk8
     compile libs.jacksonDatatypeJsr310
