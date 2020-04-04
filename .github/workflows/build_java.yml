@@ -1,0 +1,11 @@
+name: 'Java Build'
+
+description: 'Build, test, and release StubbornJava'
+inputs:
+outputs:
+  
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
+  args:
+    
