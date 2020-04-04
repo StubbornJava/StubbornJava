@@ -1,0 +1,9 @@
+# Ignore everything
+*
+# Whitelist the following
+!pom.xml
+!stubbornjava*
+**/target
+**/bin
+**/build
+**/node_modules

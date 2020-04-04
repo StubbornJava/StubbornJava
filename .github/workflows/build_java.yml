@@ -1,9 +1,15 @@
 name: 'Java Build'
 
 description: 'Build, test, and release StubbornJava'
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
 inputs:
 outputs:
-  
 runs:
   using: 'docker'
   image: 'Dockerfile'

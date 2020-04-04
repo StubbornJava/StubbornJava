@@ -42,6 +42,12 @@
     </issueManagement>
 
     <build>
+        <resources>
+            <resource>
+                <directory>src/generated/java</directory>
+            </resource>
+        </resources>
+
         <pluginManagement>
             <plugins>
                 <plugin>
