@@ -1,14 +1,7 @@
 // {{start:build}}
-buildscript {
-    repositories {
-        jcenter()
-    }
-    // buildscript dependencies can be used for build time plugins.
-    dependencies {
-        classpath "com.github.jengelman.gradle.plugins:shadow:2.0.4"
-    }
+plugins {
+    id 'com.google.cloud.tools.jib' version '2.0.0' apply false
 }
-
 // Include a gradle script that has all of our dependencies split out.
 apply from: "gradle/dependencies.gradle"
 
@@ -35,6 +28,12 @@ allprojects {
                 srcDirs = ["src/main/resources", "ui/assets"]
             }
         }
+    }
+
+    // https://github.com/GoogleContainerTools/jib/tree/master/examples/multi-module#reproducibility-of-dependency-module-shared-library
+    jar {
+        preserveFileTimestamps false
+        reproducibleFileOrder true
     }
 
     repositories {

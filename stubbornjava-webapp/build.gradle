@@ -1,5 +1,6 @@
 // {{start:dependencies}}
-apply plugin: 'com.github.johnrengelman.shadow'
+
+apply plugin: 'com.google.cloud.tools.jib'
 
 dependencies {
     // Project reference
@@ -15,10 +16,24 @@ dependencies {
     testCompile libs.junit
 }
 
-shadowJar {
-   archiveBaseName = 'stubbornjava-all'
-   classifier = null
-   archiveVersion = null
+jib {
+  //containerizingMode = 'packaged'
+  from {
+    image = 'adoptopenjdk/openjdk11:alpine-jre'
+  }
+  // to {
+  //   image = 'localhost:5000/my-image/built-with-jib'
+  //   credHelper = 'osxkeychain'
+  //   tags = ['tag2', 'latest']
+  // }
+  container {
+    jvmFlags = ['-Denv=PROD']
+    mainClass = 'com.stubbornjava.webapp.StubbornJavaWebApp'
+    // args = ['some', 'args']
+    ports = ['8080', '8080/tcp']
+    // labels = [key1:'value1', key2:'value2']
+    // format = 'OCI'
+  }
 }
 
 // {{end:dependencies}}
