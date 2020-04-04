@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.stubbornjava</groupId>
+    <artifactId>stubbornjava-parent</artifactId>
+    <version>0.1.34-SNAPSHOT</version>
+    <packaging>pom</packaging>
+
+    <description>
+        Unconventional guides, examples, and blog utilizing modern Java
+    </description>
+
+    <url>https://www.stubbornjava.com</url>
+
+    <modules>
+        <module>stubbornjava-bom</module>
+        <module>stubbornjava-cms-server</module>
+        <module>stubbornjava-common</module>
+        <module>stubbornjava-dependencies</module>
+        <module>stubbornjava-examples</module>
+        <module>stubbornjava-undertow</module>
+        <module>stubbornjava-webapp</module>
+    </modules>
+
+    <properties>
+
+    </properties>
+
+    <scm>
+        <developerConnection>https://github.com/StubbornJava/StubbornJava.git</developerConnection>
+        <url>https://github.com/StubbornJava/StubbornJava.git</url>
+        <connection>git://github.com/StubbornJava/StubbornJava.git</connection>
+    </scm>
+
+    <issueManagement>
+        <system>GitHub</system>
+        <url>https://github.com/StubbornJava/StubbornJava/issues</url>
+    </issueManagement>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>3.8.1</version>
+                    <configuration>
+                        <!-- https://issues.apache.org/jira/browse/MCOMPILER-209 -->
+                        <useIncrementalCompilation>false</useIncrementalCompilation>
+
+                        <fork>false</fork>
+                        <maxmem>512m</maxmem>
+                        <meminitial>256m</meminitial>
+                        <encoding>UTF-8</encoding>
+
+                        <source>1.8</source>
+                        <target>1.8</target>
+
+                        <debug>false</debug>
+                        <debuglevel>lines,vars,source</debuglevel>
+                        <compilerArgs>
+                            <arg>-Xlint:varargs</arg>
+                        </compilerArgs>
+                    </configuration>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-source-plugin</artifactId>
+                    <version>3.1.0</version>
+                    <inherited>true</inherited>
+                    <executions>
+                        <execution>
+                            <id>attach-sources</id>
+                            <goals>
+                                <goal>jar</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                    <configuration>
+                        <excludeResources>true</excludeResources>
+                        <useDefaultExcludes>true</useDefaultExcludes>
+                    </configuration>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-javadoc-plugin</artifactId>
+                    <version>3.2.0</version>
+                    <inherited>true</inherited>
+                    <executions>
+                        <execution>
+                            <id>bundle-sources</id>
+                            <phase>package</phase>
+                            <goals>
+                                <goal>jar</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                    <configuration>
+                        <maxmemory>1024</maxmemory>
+                        <encoding>UTF-8</encoding>
+                        <show>protected</show>
+                        <notree>true</notree>
+
+                        <!-- Avoid running into Java 8's very restrictive 
+                            doclint issues -->
+                        <additionalparam>-Xdoclint:none</additionalparam>
+                        <additionalOptions>-Xdoclint:none</additionalOptions>
+                    </configuration>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>2.22.2</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-enforcer-plugin</artifactId>
+                    <version>3.0.0-M3</version>
+                    <configuration>
+                        <rules>
+                            <DependencyConvergence />
+                        </rules>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <id>enforcer</id>
+                            <phase>validate</phase>
+                            <goals>
+                                <goal>enforce</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-dependency-plugin</artifactId>
+                    <version>3.1.2</version>
+                    <executions>
+                        <execution>
+                            <phase>install</phase>
+                            <goals>
+                                <goal>copy-dependencies</goal>
+                            </goals>
+                            <configuration>
+                                <outputDirectory>${project.build.directory}/lib</outputDirectory>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-jar-plugin</artifactId>
+                    <version>3.1.2</version>
+
+                    <configuration>
+                        <archive>
+                            <manifestEntries>
+                                <Built-By>StubbornJava</Built-By>
+                            </manifestEntries>
+                        </archive>
+                    </configuration>
+                </plugin>
+
+            </plugins>
+        </pluginManagement>
+
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>3.1.0</version>
+                <configuration>
+                    <encoding>UTF-8</encoding>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+
+
+</project>
