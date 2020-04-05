@@ -67,7 +67,6 @@ jobs:
 
     - name: Publish Docker Image
       uses: elgohr/Publish-Docker-Github-Action@master
-      working-directory: ./stubbornjava-webapp
       with:
         name: stubbornjava/stubbornjava/stubbornjava-webapp
         username: ${{ github.actor }}
