@@ -25,7 +25,7 @@ jobs:
       uses: actions/cache@v1
       with:
         path: ./stubbornjava-webapp/ui/assets
-        key: ${{ runner.os }}-stubbornjava-webapp-ui-${{ hashFiles('src/**') }}
+        key: ${{ runner.os }}-stubbornjava-webapp-ui-${{ hashFiles('stubbornjava-webapp/ui/src/**') }}
 
     - name: Set up Node
       uses: actions/setup-node@v1
