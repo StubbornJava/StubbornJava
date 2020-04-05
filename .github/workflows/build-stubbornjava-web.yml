@@ -61,20 +61,30 @@ jobs:
     - name: Build with Gradle
       run: ./gradlew build
 
-    # - name: Build docker container
-    #   working-directory: ./stubbornjava-webapp
-    #   run: docker build -t qa -f ./docker/Dockerfile .
 
-    - name: Publish Docker Image
-      uses: elgohr/Publish-Docker-Github-Action@master
-      env:
-        BRANCH: ${{ github.ref }}
-      with:
-        name: stubbornjava/stubbornjava/stubbornjava-webapp
-        username: ${{ github.actor }}
-        password: ${{ secrets.GITHUB_TOKEN }}
-        registry: docker.pkg.github.com
-        tag_names: true
-        tags: "latest"
-        dockerfile: stubbornjava-webapp/docker/Dockerfile
-        context: stubbornjava-webapp
+    - name: Docker Login
+      run: echo ${{ secrets.GITHUB_TOKEN }} | docker login -u ${{ github.actor }} --password-stdin docker.pkg.github.com
+
+    - name: Build docker prod container
+      if: github.ref == 'refs/heads/master'
+      working-directory: ./stubbornjava-webapp
+      run: docker build -t docker.pkg.github.com/stubbornjava/stubbornjava/stubbornjava-webapp:latest -f ./docker/Dockerfile .
+
+    - name: Build docker qa container
+      if: github.ref != 'refs/heads/master'
+      working-directory: ./stubbornjava-webapp
+      run: docker build -t docker.pkg.github.com/stubbornjava/stubbornjava/stubbornjava-webapp:qa -f ./docker/Dockerfile .
+
+
+    # - name: Publish Docker Image
+    #   uses: elgohr/Publish-Docker-Github-Action@master
+    #   if: github.ref == 'refs/heads/master'
+    #   with:
+    #     name: stubbornjava/stubbornjava/stubbornjava-webapp
+    #     username: ${{ github.actor }}
+    #     password: ${{ secrets.GITHUB_TOKEN }}
+    #     registry: docker.pkg.github.com
+    #     tag_names: true
+    #     tags: "qa"
+    #     dockerfile: stubbornjava-webapp/docker/Dockerfile
+    #     context: stubbornjava-webapp
