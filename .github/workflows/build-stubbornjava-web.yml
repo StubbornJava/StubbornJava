@@ -75,16 +75,6 @@ jobs:
       working-directory: ./stubbornjava-webapp
       run: docker build -t docker.pkg.github.com/stubbornjava/stubbornjava/stubbornjava-webapp:qa -f ./docker/Dockerfile .
 
+    - name: Push images and tags
+      run: docker push docker.pkg.github.com/stubbornjava/stubbornjava/stubbornjava-webapp
 
-    # - name: Publish Docker Image
-    #   uses: elgohr/Publish-Docker-Github-Action@master
-    #   if: github.ref == 'refs/heads/master'
-    #   with:
-    #     name: stubbornjava/stubbornjava/stubbornjava-webapp
-    #     username: ${{ github.actor }}
-    #     password: ${{ secrets.GITHUB_TOKEN }}
-    #     registry: docker.pkg.github.com
-    #     tag_names: true
-    #     tags: "qa"
-    #     dockerfile: stubbornjava-webapp/docker/Dockerfile
-    #     context: stubbornjava-webapp
