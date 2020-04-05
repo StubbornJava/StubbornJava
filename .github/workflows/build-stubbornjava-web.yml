@@ -18,17 +18,29 @@ jobs:
     - name: checkout
       uses: actions/checkout@v2
 
+
+    # https://github.com/actions/cache/blob/master/examples.md#java---gradle
+    - name: save / load UI caches
+      id: ui-cache
+      uses: actions/cache@v1
+      with:
+        path: ./stubbornjava-webapp/ui/assets
+        key: ${{ runner.os }}-stubbornjava-webapp-ui-${{ hashFiles('src/**') }}
+
     - name: Set up Node
       uses: actions/setup-node@v1
+      if: steps.ui-cache.outputs.cache-hit != 'true'
       with:
         node-version: '10.x'
         registry-url: 'https://registry.npmjs.org'
 
     - name: npm install
+      if: steps.ui-cache.outputs.cache-hit != 'true'
       working-directory: ./stubbornjava-webapp/ui
       run: npm install
-    
+
     - name: webpack build
+      if: steps.ui-cache.outputs.cache-hit != 'true'
       working-directory: ./stubbornjava-webapp/ui
       run: ./node_modules/webpack/bin/webpack.js
 
