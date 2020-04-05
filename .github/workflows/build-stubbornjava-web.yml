@@ -30,7 +30,7 @@ jobs:
     
     - name: webpack build
       working-directory: ./stubbornjava-webapp/ui
-      run: webpack
+      run: ./node_modules/webpack/bin/webpack.js
 
     - name: Set up JDK
       uses: actions/setup-java@v1
