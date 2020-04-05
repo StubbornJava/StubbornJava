@@ -64,3 +64,11 @@ jobs:
     - name: Build docker container
       working-directory: ./stubbornjava-webapp
       run: docker build -t qa -f ./docker/Dockerfile .
+
+    - name: Publish Docker Image
+      uses: elgohr/Publish-Docker-Github-Action@master
+      with:
+        name: StubbornJava/StubbornJava/stubbornjava-webapp
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+        registry: docker.pkg.github.com
