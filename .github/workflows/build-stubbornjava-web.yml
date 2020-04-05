@@ -67,11 +67,14 @@ jobs:
 
     - name: Publish Docker Image
       uses: elgohr/Publish-Docker-Github-Action@master
+      env:
+        BRANCH: ${{ github.ref }}
       with:
         name: stubbornjava/stubbornjava/stubbornjava-webapp
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
         registry: docker.pkg.github.com
         tag_names: true
+        tags: "$BRANCH"
         dockerfile: stubbornjava-webapp/docker/Dockerfile
         context: stubbornjava-webapp
