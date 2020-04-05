@@ -75,6 +75,6 @@ jobs:
         password: ${{ secrets.GITHUB_TOKEN }}
         registry: docker.pkg.github.com
         tag_names: true
-        tags: "${GITHUB_REF##*/}"
+        tags: "latest"
         dockerfile: stubbornjava-webapp/docker/Dockerfile
         context: stubbornjava-webapp
