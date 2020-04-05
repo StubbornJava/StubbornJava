@@ -27,6 +27,13 @@ public enum Env {
         // This comes from -Denv={environment}
         if (Configs.systemProperties().hasPath("env")) {
             env = Configs.systemProperties().getString("env");
+            log.info("Found env setting {} in system properties", env);
+        } else if (Configs.systemEnvironment().hasPath("ENV")) {
+            env = Configs.systemEnvironment().getString("ENV");
+            log.info("Found env setting {} in env variables", env);
+        } else if (Configs.systemEnvironment().hasPath("env")) {
+            env = Configs.systemEnvironment().getString("env");
+            log.info("Found ENV setting {} in env variables", env);
         }
         currentEnv = Env.valueOf(env.toUpperCase());
         log.info("Current Env: {}", currentEnv.getName());

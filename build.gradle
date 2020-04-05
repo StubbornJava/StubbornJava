@@ -42,6 +42,13 @@ allprojects {
         mavenCentral()
         maven { url 'https://jitpack.io' } // This allows us to use jitpack projects
     }
+    
+    task copyRuntimeLibs(type: Copy) {
+        into "build/libs"
+        from configurations.runtime
+    }
+    
+    build.finalizedBy(copyRuntimeLibs)
 
     configurations.all {
         resolutionStrategy {
