@@ -1,4 +1,6 @@
 ---
+  # from ansible dir
+  # ansible-vault decrypt --vault-password-file .vault_pw.txt inventories/production/group_vars/stubbornjava/vault_webserver_vars.yml
   db:
     url: "{{_vault['db']['url']}}"
     user: "{{_vault['db']['user']}}"
@@ -13,3 +15,4 @@
       host: "{{_vault.metrics.graphite.host}}"
     grafana:
       api_key: "{{_vault.metrics.grafana.api_key}}"
+      

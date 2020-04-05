@@ -19,3 +19,5 @@ spec:
         image: docker.pkg.github.com/stubbornjava/stubbornjava/stubbornjava-webapp:qa
         ports:
         - containerPort: 8080
+      imagePullSecrets:
+        - name: regcred2
