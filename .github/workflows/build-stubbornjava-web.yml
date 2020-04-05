@@ -18,20 +18,31 @@ jobs:
     - name: checkout
       uses: actions/checkout@v2
 
+    - name: Set up Node
+      uses: actions/setup-node@v1
+      with:
+        node-version: '10.x'
+        registry-url: 'https://registry.npmjs.org'
+
+    - name: npm install
+      working-directory: ./stubbornjava-webapp/ui
+      run: npm install
+    
+    - name: webpack build
+      working-directory: ./stubbornjava-webapp/ui
+      run: webpack
+
     - name: Set up JDK
       uses: actions/setup-java@v1
       with:
         java-version: 1.8
 
-      # https://github.com/actions/cache/blob/master/examples.md#java---gradle
-    - name: save / load caches
+    # https://github.com/actions/cache/blob/master/examples.md#java---gradle
+    - name: save / load Gradle caches
       uses: actions/cache@v1
       with:
         path: ~/.gradle/caches
         key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
-        restore-keys: |
-          ${{ runner.os }}-gradle-
-
 
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
