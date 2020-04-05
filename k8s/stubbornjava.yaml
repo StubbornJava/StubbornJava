@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: stubbornjava-deployment
+  labels:
+    app: stubbornjava-web
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: stubbornjava-web
+  template:
+    metadata:
+      labels:
+        app: stubbornjava-web
+    spec:
+      containers:
+      - name: stubbornjava-webapp
+        image: docker.pkg.github.com/stubbornjava/stubbornjava/stubbornjava-webapp:qa
+        ports:
+        - containerPort: 8080
