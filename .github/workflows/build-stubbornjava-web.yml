@@ -61,6 +61,20 @@ jobs:
     - name: Build with Gradle
       run: ./gradlew build
 
-    - name: Build docker container
-      working-directory: ./stubbornjava-webapp
-      run: docker build -t qa -f ./docker/Dockerfile .
+    # - name: Build docker container
+    #   working-directory: ./stubbornjava-webapp
+    #   run: docker build -t qa -f ./docker/Dockerfile .
+
+    - name: Publish Docker Image
+      uses: elgohr/Publish-Docker-Github-Action@master
+      env:
+        BRANCH: ${{ github.ref }}
+      with:
+        name: stubbornjava/stubbornjava/stubbornjava-webapp
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+        registry: docker.pkg.github.com
+        tag_names: true
+        tags: "latest"
+        dockerfile: stubbornjava-webapp/docker/Dockerfile
+        context: stubbornjava-webapp
