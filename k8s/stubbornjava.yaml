@@ -56,6 +56,6 @@ metadata:
 data:
   # Or set as complete file contents (even JSON!)
   sjweb.production.conf: | 
-    cdn {
-      host="https://cdn.stubbornjava.com"
-    }
+    # cdn {
+    #   # host="https://cdn.stubbornjava.com"
+    # }
