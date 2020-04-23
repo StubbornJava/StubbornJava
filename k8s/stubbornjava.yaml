@@ -15,10 +15,23 @@ spec:
         app: sj-web
     spec:
       containers:
-      - name: sj-web
-        image: docker.pkg.github.com/stubbornjava/stubbornjava/stubbornjava-webapp:qa
-        ports:
-        - containerPort: 8080
+        - name: sj-web
+          image: docker.pkg.github.com/stubbornjava/stubbornjava/stubbornjava-webapp:qa
+          ports:
+            - containerPort: 8080
+          env:
+            - name: ENV
+              value: "prod"
+          volumeMounts:
+            - name: config-volume
+              mountPath: /app/config/
+      volumes:
+        - name: config-volume
+          configMap:
+            name: sj-web-config-prod
+            items:
+            - key: sjweb.production.conf
+              path: sjweb.production.conf
       imagePullSecrets:
         - name: regcred
 
@@ -34,3 +47,15 @@ spec:
     - port: 8080
       targetPort: 8080
   type: LoadBalancer
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: sj-web-config-prod
+data:
+  # Or set as complete file contents (even JSON!)
+  sjweb.production.conf: | 
+    cdn {
+      host="https://cdn.stubbornjava.com"
+    }
