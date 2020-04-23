@@ -5,7 +5,7 @@ metadata:
   labels:
     app: stubbornjava-web
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: stubbornjava-web
@@ -20,4 +20,4 @@ spec:
         ports:
         - containerPort: 8080
       imagePullSecrets:
-        - name: regcred2
+        - name: regcred
