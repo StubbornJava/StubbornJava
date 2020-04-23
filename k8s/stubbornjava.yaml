@@ -3,21 +3,34 @@ kind: Deployment
 metadata:
   name: stubbornjava-deployment
   labels:
-    app: stubbornjava-web
+    app: sj-web
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: stubbornjava-web
+      app: sj-web
   template:
     metadata:
       labels:
-        app: stubbornjava-web
+        app: sj-web
     spec:
       containers:
-      - name: stubbornjava-webapp
+      - name: sj-web
         image: docker.pkg.github.com/stubbornjava/stubbornjava/stubbornjava-webapp:qa
         ports:
         - containerPort: 8080
       imagePullSecrets:
         - name: regcred
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: sj-web-lb
+spec:
+  selector:
+    app: sj-web
+  ports:
+    - port: 8080
+      targetPort: 8080
+  type: LoadBalancer
