@@ -1,0 +1,42 @@
+
+https://kubernetes.io/docs/tasks/tools/install-minikube/
+- `brew install hyperkit`
+
+- `brew install minikube`
+- `minikube start`
+  - This should auto detect hyperkit
+- `minikube status` confirm we are up
+
+- `kubectl apply -f stubbornjava.yaml`
+- `kubectl get deployments`
+NAME                      READY   UP-TO-DATE   AVAILABLE   AGE
+stubbornjava-deployment   0/2     2            0           12m
+
+- `kubectl get pods`
+NAME                                       READY   STATUS             RESTARTS   AGE
+stubbornjava-deployment-7b96c7d8db-9gb7w   0/1     ImagePullBackOff   0          13m
+stubbornjava-deployment-7b96c7d8db-nx6q7   0/1     ImagePullBackOff   0          13m
+
+- oops we forgot to auth with github
+
+- `kubectl --kubeconfig=kubeconfig create secret docker-registry regcred --docker-server=docker.pkg.github.com --docker-username=stubbornjava-ops --docker-password=$GITHUB_TOKEN --docker-email=bill@dartalley.com`
+
+`kubectl get pods`
+NAME                                       READY   STATUS    RESTARTS   AGE
+stubbornjava-deployment-65975ff898-6wg4z   1/1     Running   0          18s
+stubbornjava-deployment-65975ff898-lkkfp   1/1     Running   0          18s
+
+`kubectl port-forward stubbornjava-deployment-65975ff898-6wg4z 8080:8080`
+Forwarding from 127.0.0.1:8080 -> 8080
+Forwarding from [::1]:8080 -> 8080
+Handling connection for 8080
+Handling connection for 8080
+
+Now we can hit it
+
+`kubectl exec -it stubbornjava-deployment-65975ff898-6wg4z -- /bin/sh`
+ssh in
+
+https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/#create-a-secret-by-providing-credentials-on-the-command-line
+
+https://kubernetes.io/docs/reference/kubectl/cheatsheet/
