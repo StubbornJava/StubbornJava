@@ -8,7 +8,7 @@ ext {
         undertow          : '2.0.28.Final',// Webserver
         metrics           : '4.1.15',       // Metrics
         guava             : '30.0-jre',    // Common / Helper libraries
-        typesafeConfig    : '1.4.0',       // Configuration
+        typesafeConfig    : '1.4.1',       // Configuration
         handlebars        : '4.2.0',       // HTML templating
         htmlCompressor    : '1.5.2',       // HTML compression
         hikaricp          : '3.4.1',       // JDBC connection pool
