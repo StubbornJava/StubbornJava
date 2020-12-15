@@ -63,7 +63,7 @@ jobs:
 
 
     - name: Docker Login
-      run: echo ${{ secrets.GITHUB_TOKEN }} | docker login -u ${{ github.actor }} --password-stdin https://containers.pkg.github.com
+      run: echo ${{ secrets.SJ_OPS_GH_ACTION_CONTAINER_REGISTRY }} | docker login -u stubbornjava-ops --password-stdin https://containers.pkg.github.com
 
     - name: Build docker prod container
       if: github.ref == 'refs/heads/master'
