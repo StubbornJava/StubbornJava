@@ -68,13 +68,13 @@ jobs:
     - name: Build docker prod container
       if: github.ref == 'refs/heads/master'
       working-directory: ./stubbornjava-webapp
-      run: docker build -t docker.pkg.github.com/stubbornjava/stubbornjava/stubbornjava-webapp:latest -f ./docker/Dockerfile .
+      run: docker build -t containers.pkg.github.com/stubbornjava/stubbornjava-webapp:prod -f ./docker/Dockerfile .
 
     - name: Build docker qa container
       if: github.ref != 'refs/heads/master'
       working-directory: ./stubbornjava-webapp
-      run: docker build -t docker.pkg.github.com/stubbornjava/stubbornjava/stubbornjava-webapp:qa -f ./docker/Dockerfile .
+      run: docker build -t containers.pkg.github.com/stubbornjava/stubbornjava-webapp:qa -f ./docker/Dockerfile .
 
     - name: Push images and tags
-      run: docker push docker.pkg.github.com/stubbornjava/stubbornjava/stubbornjava-webapp
+      run: docker push containers.pkg.github.com/stubbornjava/stubbornjava-webapp
 
