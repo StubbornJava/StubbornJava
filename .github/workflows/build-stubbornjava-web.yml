@@ -64,15 +64,15 @@ jobs:
     - name: Docker Login
       run: echo ${{ secrets.SJ_OPS_GH_ACTION_CONTAINER_REGISTRY }} | docker login -u stubbornjava-ops --password-stdin https://containers.pkg.github.com
 
-    - name: Build docker prod container
+    - name: Build docker container for prod
       if: github.ref == 'refs/heads/master'
       working-directory: ./stubbornjava-webapp
       run: docker build -t containers.pkg.github.com/stubbornjava/stubbornjava-webapp:prod -f ./docker/Dockerfile .
 
-    - name: Build docker qa container
+    - name: Build docker container for branch
       if: github.ref != 'refs/heads/master'
       working-directory: ./stubbornjava-webapp
-      run: docker build -t containers.pkg.github.com/stubbornjava/stubbornjava-webapp:qa -f ./docker/Dockerfile .
+      run: docker build -t containers.pkg.github.com/stubbornjava/stubbornjava-webapp:${GITHUB_REF#refs/heads/} -f ./docker/Dockerfile .
 
     - name: Push images and tags
       run: docker push containers.pkg.github.com/stubbornjava/stubbornjava-webapp
