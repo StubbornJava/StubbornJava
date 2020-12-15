@@ -65,7 +65,7 @@ jobs:
       run: echo ${{ secrets.SJ_OPS_GH_ACTION_CONTAINER_REGISTRY }} | docker login -u stubbornjava-ops --password-stdin https://containers.pkg.github.com
 
     - name: Branch name
-      run: echo running on branch ${{GITHUB_REF#refs/heads/}}
+      run: echo running on branch ${GITHUB_REF#refs/heads/}
 
     - name: Build docker container for prod
       if: github.ref == 'refs/heads/master'
@@ -75,7 +75,7 @@ jobs:
     - name: Build docker container for branch
       if: github.ref != 'refs/heads/master'
       working-directory: ./stubbornjava-webapp
-      run: docker build -t containers.pkg.github.com/stubbornjava/stubbornjava-webapp:${{GITHUB_REF#refs/heads/}} -f ./docker/Dockerfile .
+      run: docker build -t containers.pkg.github.com/stubbornjava/stubbornjava-webapp:${GITHUB_REF#refs/heads/} -f ./docker/Dockerfile .
 
     - name: Push images and tags
       run: docker push containers.pkg.github.com/stubbornjava/stubbornjava-webapp
