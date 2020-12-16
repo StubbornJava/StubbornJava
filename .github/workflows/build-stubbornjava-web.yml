@@ -18,6 +18,26 @@ jobs:
     - name: checkout
       uses: actions/checkout@v2
 
+    # https://github.com/rlespinasse/github-slug-action
+    - name: Inject slug/short variables
+      uses: rlespinasse/github-slug-action@v3.x
+
+    # - name: Print slug/short variables
+    #   run: |
+    #     echo "Slug variables"
+    #     echo "   ref        : ${{ env.GITHUB_REF_SLUG }}"
+    #     echo "   head ref   : ${{ env.GITHUB_HEAD_REF_SLUG }}"
+    #     echo "   base ref   : ${{ env.GITHUB_BASE_REF_SLUG }}"
+    #     echo "   event ref  : ${{ env.GITHUB_EVENT_REF_SLUG }}"
+    #     echo "   repository : ${{ env.GITHUB_REPOSITORY_SLUG }}"
+    #     echo "Slug URL variables"
+    #     echo "   ref        : ${{ env.GITHUB_REF_SLUG_URL }}"
+    #     echo "   head ref   : ${{ env.GITHUB_HEAD_REF_SLUG_URL }}"
+    #     echo "   base ref   : ${{ env.GITHUB_BASE_REF_SLUG_URL }}"
+    #     echo "   event ref  : ${{ env.GITHUB_EVENT_REF_SLUG_URL }}"
+    #     echo "   repository : ${{ env.GITHUB_REPOSITORY_SLUG_URL }}"
+    #     echo "Short SHA variables"
+    #     echo "   sha        : ${{ env.GITHUB_SHA_SHORT }}"
 
     # https://github.com/actions/cache/blob/master/examples.md#java---gradle
     - name: save / load UI caches
@@ -59,22 +79,24 @@ jobs:
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
     - name: Build with Gradle
-      run: ./gradlew build
-
+      run: ./gradlew build --no-daemon
 
     - name: Docker Login
-      run: echo ${{ secrets.GITHUB_TOKEN }} | docker login -u ${{ github.actor }} --password-stdin docker.pkg.github.com
+      run: echo ${{ secrets.SJ_OPS_GH_ACTION_CONTAINER_REGISTRY }} | docker login -u stubbornjava-ops --password-stdin https://containers.pkg.github.com
 
-    - name: Build docker prod container
+    - name: Branch name
+      run: echo running on branch ${{ env.GITHUB_REF_SLUG }}
+
+    - name: Build docker container for prod
       if: github.ref == 'refs/heads/master'
       working-directory: ./stubbornjava-webapp
-      run: docker build -t docker.pkg.github.com/stubbornjava/stubbornjava/stubbornjava-webapp:latest -f ./docker/Dockerfile .
+      run: docker build -t containers.pkg.github.com/stubbornjava/stubbornjava-webapp:prod -f ./docker/Dockerfile .
 
-    - name: Build docker qa container
+    - name: Build docker container for branch
       if: github.ref != 'refs/heads/master'
       working-directory: ./stubbornjava-webapp
-      run: docker build -t docker.pkg.github.com/stubbornjava/stubbornjava/stubbornjava-webapp:qa -f ./docker/Dockerfile .
+      run: docker build -t containers.pkg.github.com/stubbornjava/stubbornjava-webapp:${{ env.GITHUB_HEAD_REF_SLUG }} -f ./docker/Dockerfile .
 
     - name: Push images and tags
-      run: docker push docker.pkg.github.com/stubbornjava/stubbornjava/stubbornjava-webapp
+      run: docker push containers.pkg.github.com/stubbornjava/stubbornjava-webapp
 
