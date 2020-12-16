@@ -18,6 +18,9 @@ jobs:
     - name: checkout
       uses: actions/checkout@v2
 
+    # https://github.com/rlespinasse/github-slug-action
+    - name: Inject slug/short variables
+      uses: rlespinasse/github-slug-action@v3.x
 
     # https://github.com/actions/cache/blob/master/examples.md#java---gradle
     - name: save / load UI caches
@@ -65,7 +68,7 @@ jobs:
       run: echo ${{ secrets.SJ_OPS_GH_ACTION_CONTAINER_REGISTRY }} | docker login -u stubbornjava-ops --password-stdin https://containers.pkg.github.com
 
     - name: Branch name
-      run: echo running on branch ${{ github.ref }}
+      run: echo running on branch ${{ env.GITHUB_REF_SLUG }}
 
     - name: Build docker container for prod
       if: github.ref == 'refs/heads/master'
@@ -75,7 +78,7 @@ jobs:
     - name: Build docker container for branch
       if: github.ref != 'refs/heads/master'
       working-directory: ./stubbornjava-webapp
-      run: docker build -t containers.pkg.github.com/stubbornjava/stubbornjava-webapp:${{ github.ref }} -f ./docker/Dockerfile .
+      run: docker build -t containers.pkg.github.com/stubbornjava/stubbornjava-webapp:${{ env.GITHUB_REF_SLUG }} -f ./docker/Dockerfile .
 
     - name: Push images and tags
       run: docker push containers.pkg.github.com/stubbornjava/stubbornjava-webapp
