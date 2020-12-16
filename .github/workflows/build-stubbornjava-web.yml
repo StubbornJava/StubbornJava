@@ -65,7 +65,7 @@ jobs:
       run: echo ${{ secrets.SJ_OPS_GH_ACTION_CONTAINER_REGISTRY }} | docker login -u stubbornjava-ops --password-stdin https://containers.pkg.github.com
 
     - name: Branch name
-      run: echo running on branch {{ github.head_ref }}
+      run: echo running on branch ${{ github.head_ref }}
 
     - name: Build docker container for prod
       if: github.ref == 'refs/heads/master'
