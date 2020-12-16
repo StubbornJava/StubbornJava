@@ -1,6 +1,5 @@
 package com.stubbornjava.webapp.guide;
 
-import java.nio.charset.Charset;
 import java.util.List;
 import java.util.Map;
 
@@ -47,7 +46,6 @@ public class Guides {
     }
 
     public static void main(String[] args) {
-        Charset charset = Charset.forName("utf8mb4");
         log.debug(Json.serializer().toPrettyString(findBySlug("embedded-java-web-server")));
     }
 }
