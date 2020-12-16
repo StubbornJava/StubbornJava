@@ -22,6 +22,23 @@ jobs:
     - name: Inject slug/short variables
       uses: rlespinasse/github-slug-action@v3.x
 
+    # - name: Print slug/short variables
+    #   run: |
+    #     echo "Slug variables"
+    #     echo "   ref        : ${{ env.GITHUB_REF_SLUG }}"
+    #     echo "   head ref   : ${{ env.GITHUB_HEAD_REF_SLUG }}"
+    #     echo "   base ref   : ${{ env.GITHUB_BASE_REF_SLUG }}"
+    #     echo "   event ref  : ${{ env.GITHUB_EVENT_REF_SLUG }}"
+    #     echo "   repository : ${{ env.GITHUB_REPOSITORY_SLUG }}"
+    #     echo "Slug URL variables"
+    #     echo "   ref        : ${{ env.GITHUB_REF_SLUG_URL }}"
+    #     echo "   head ref   : ${{ env.GITHUB_HEAD_REF_SLUG_URL }}"
+    #     echo "   base ref   : ${{ env.GITHUB_BASE_REF_SLUG_URL }}"
+    #     echo "   event ref  : ${{ env.GITHUB_EVENT_REF_SLUG_URL }}"
+    #     echo "   repository : ${{ env.GITHUB_REPOSITORY_SLUG_URL }}"
+    #     echo "Short SHA variables"
+    #     echo "   sha        : ${{ env.GITHUB_SHA_SHORT }}"
+
     # https://github.com/actions/cache/blob/master/examples.md#java---gradle
     - name: save / load UI caches
       id: ui-cache
@@ -70,23 +87,6 @@ jobs:
     - name: Branch name
       run: echo running on branch ${{ env.GITHUB_REF_SLUG }}
 
-    - name: Print slug/short variables
-      run: |
-        echo "Slug variables"
-        echo "   ref        : ${{ env.GITHUB_REF_SLUG }}"
-        echo "   head ref   : ${{ env.GITHUB_HEAD_REF_SLUG }}"
-        echo "   base ref   : ${{ env.GITHUB_BASE_REF_SLUG }}"
-        echo "   event ref  : ${{ env.GITHUB_EVENT_REF_SLUG }}"
-        echo "   repository : ${{ env.GITHUB_REPOSITORY_SLUG }}"
-        echo "Slug URL variables"
-        echo "   ref        : ${{ env.GITHUB_REF_SLUG_URL }}"
-        echo "   head ref   : ${{ env.GITHUB_HEAD_REF_SLUG_URL }}"
-        echo "   base ref   : ${{ env.GITHUB_BASE_REF_SLUG_URL }}"
-        echo "   event ref  : ${{ env.GITHUB_EVENT_REF_SLUG_URL }}"
-        echo "   repository : ${{ env.GITHUB_REPOSITORY_SLUG_URL }}"
-        echo "Short SHA variables"
-        echo "   sha        : ${{ env.GITHUB_SHA_SHORT }}"
-
     - name: Build docker container for prod
       if: github.ref == 'refs/heads/master'
       working-directory: ./stubbornjava-webapp
@@ -95,7 +95,7 @@ jobs:
     - name: Build docker container for branch
       if: github.ref != 'refs/heads/master'
       working-directory: ./stubbornjava-webapp
-      run: docker build -t containers.pkg.github.com/stubbornjava/stubbornjava-webapp:${{ env.GITHUB_REF_SLUG }} -f ./docker/Dockerfile .
+      run: docker build -t containers.pkg.github.com/stubbornjava/stubbornjava-webapp:${{ env.GITHUB_HEAD_REF_SLUG }} -f ./docker/Dockerfile .
 
     - name: Push images and tags
       run: docker push containers.pkg.github.com/stubbornjava/stubbornjava-webapp
