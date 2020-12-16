@@ -75,7 +75,7 @@ jobs:
     - name: Build docker container for branch
       if: github.ref != 'refs/heads/master'
       working-directory: ./stubbornjava-webapp
-      run: docker build -t containers.pkg.github.com/stubbornjava/stubbornjava-webapp:${GITHUB_REF#refs/heads/} -f ./docker/Dockerfile .
+      run: docker build -t containers.pkg.github.com/stubbornjava/stubbornjava-webapp:${{ github.head_ref }} -f ./docker/Dockerfile .
 
     - name: Push images and tags
       run: docker push containers.pkg.github.com/stubbornjava/stubbornjava-webapp
