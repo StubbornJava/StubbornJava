@@ -19,7 +19,7 @@ stubbornjava-deployment-7b96c7d8db-nx6q7   0/1     ImagePullBackOff   0         
 
 - oops we forgot to auth with github
 
-- `kubectl --kubeconfig=kubeconfig create secret docker-registry regcred --docker-server=docker.pkg.github.com --docker-username=stubbornjava-ops --docker-password=$GITHUB_TOKEN --docker-email=bill@dartalley.com`
+- `kubectl create secret docker-registry regcred --docker-server=containers.pkg.github.com --docker-username=stubbornjava-ops --docker-password=$GITHUB_TOKEN --docker-email=bill@dartalley.com`
 
 `kubectl get pods`
 NAME                                       READY   STATUS    RESTARTS   AGE
@@ -40,3 +40,6 @@ ssh in
 https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/#create-a-secret-by-providing-credentials-on-the-command-line
 
 https://kubernetes.io/docs/reference/kubectl/cheatsheet/
+
+
+https://microk8s.io/docs/working-with-kubectl#heading--kubectl-macos
