@@ -14,7 +14,7 @@ public class StubbornJavaBootstrap {
 
     public static Config getConfig() {
         Config config = Configs.newBuilder()
-           .withOptionalRelativeFile("/secure.conf")
+           .withSystemEnvironment()
            .withResource("sjweb." + Env.get().getName() + ".conf")
            .withResource("sjweb.conf")
            .build();
