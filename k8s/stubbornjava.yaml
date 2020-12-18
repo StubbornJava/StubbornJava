@@ -23,6 +23,16 @@ spec:
           env:
             - name: ENV
               value: "prod"
+            - name: github.client_id
+              valueFrom:
+                secretKeyRef:
+                  name: githubcreds
+                  key: github.client_id
+            - name: github.client_secret
+              valueFrom:
+                secretKeyRef:
+                  name: githubcreds
+                  key: github.client_secret
           volumeMounts:
             - name: config-volume
               mountPath: /app/config/
@@ -36,18 +46,36 @@ spec:
       imagePullSecrets:
         - name: ghregistry
 
+# ---
+# apiVersion: v1
+# kind: Service
+# metadata:
+#   name: sj-web-lb
+# spec:
+#   selector:
+#     app: stubbornjava-deployment
+#   ports:
+#     - protocol: TCP
+#       port: 8080
+#       targetPort: 8080
+#   # externalTrafficPolicy: Local
+#   type: LoadBalancer
+
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: sj-web-lb
+  name: sj-web-nodeport
 spec:
+  type: NodePort
   selector:
     app: sj-web
   ports:
-    - port: 8080
-      targetPort: 8080
-  type: LoadBalancer
+  - name: http
+    port: 8080
+    targetPort: 8080
+    protocol: TCP
+    nodePort: 30030
 
 ---
 apiVersion: v1
