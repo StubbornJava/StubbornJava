@@ -5,7 +5,7 @@ metadata:
   labels:
     app: sj-web
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       app: sj-web
@@ -18,17 +18,24 @@ spec:
         - name: sj-web
           image: containers.pkg.github.com/stubbornjava/stubbornjava-webapp:prod
           imagePullPolicy: Always
+          resources:
+            limits:
+              cpu: "0.5"
+              memory: "500M"
+            requests:
+              cpu: "0.5"
+              memory: "500M"
           ports:
             - containerPort: 8080
           env:
             - name: ENV
               value: "prod"
-            - name: github.client_id
+            - name: github.clientId
               valueFrom:
                 secretKeyRef:
                   name: githubcreds
                   key: github.client_id
-            - name: github.client_secret
+            - name: github.clientSecret
               valueFrom:
                 secretKeyRef:
                   name: githubcreds
