@@ -17,4 +17,4 @@ RUN mkdir -p /app
 WORKDIR /app
 COPY --from=builder /app/libs /app/libs
 COPY docker/entrypoint.sh /app/entrypoint.sh
-CMD ["/usr/bin/java", "-cp", "libs/*", "com.stubbornjava.webapp.StubbornJavaWebApp"]
+CMD ["java", "-cp", "libs/*", "com.stubbornjava.webapp.StubbornJavaWebApp"]
