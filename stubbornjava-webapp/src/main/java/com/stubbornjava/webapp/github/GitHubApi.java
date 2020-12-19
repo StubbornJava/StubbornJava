@@ -15,11 +15,13 @@ import com.stubbornjava.common.HttpClient;
 import com.stubbornjava.common.Json;
 import com.stubbornjava.common.Retry;
 
+import okhttp3.Authenticator;
+import okhttp3.Credentials;
 import okhttp3.HttpUrl;
-import okhttp3.Interceptor;
-import okhttp3.Interceptor.Chain;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.Response;
+import okhttp3.Route;
 
 public class GitHubApi {
     private static final Logger logger = LoggerFactory.getLogger(GitHubApi.class);
@@ -97,22 +99,10 @@ public class GitHubApi {
             OkHttpClient client = HttpClient.globalClient()
                 .newBuilder()
                 .addInterceptor(HttpClient.getHeaderInterceptor("Accept", VERSION_HEADER))
-                .addInterceptor(GitHubApi.gitHubAuth(clientId, clientSecret, ref))
+                .addInterceptor(HttpClient.basicAuth(clientId, clientSecret))
+                .addNetworkInterceptor(HttpClient.getLoggingInterceptor())
                 .build();
             return new GitHubApi(client);
         }
-    }
-
-    private static Interceptor gitHubAuth(String clientId, String clientSecret, String ref) {
-        return (Chain chain) -> {
-            Request orig = chain.request();
-            HttpUrl url = orig.url().newBuilder()
-                              .addQueryParameter("client_id", clientId)
-                              .addQueryParameter("client_secret", clientSecret)
-                              .addQueryParameter("ref", ref)
-                              .build();
-            Request newRequest = orig.newBuilder().url(url).build();
-            return chain.proceed(newRequest);
-        };
     }
 }
