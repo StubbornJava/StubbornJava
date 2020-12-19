@@ -3,16 +3,16 @@ apply plugin: 'com.github.johnrengelman.shadow'
 
 dependencies {
     // Project reference
-    compile project(':stubbornjava-undertow')
-    compile project(':stubbornjava-common')
-    compile project(':stubbornjava-cms-server')
+    api project(':stubbornjava-undertow')
+    api project(':stubbornjava-common')
+    api project(':stubbornjava-cms-server')
 
-    compile libs.romeRss
+    api libs.romeRss
     
     compileOnly libs.lombok
     annotationProcessor libs.lombok
 
-    testCompile libs.junit
+    testImplementation libs.junit
 }
 
 shadowJar {

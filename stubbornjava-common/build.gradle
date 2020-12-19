@@ -1,50 +1,50 @@
 // {{start:dependencies}}
 dependencies {
     // Project reference
-    compile project(':stubbornjava-undertow')
-    compile libs.slf4j
-    compile libs.logback
-    compile libs.jacksonCore
-    compile libs.jacksonDatabind
-    compile libs.jacksonDatabind
-    compile libs.jacksonAnnotations
-    compile libs.jacksonDatatypeJdk8
-    compile libs.jacksonDatatypeJsr310
-    compile libs.jacksonDataformatCsv
-    compile libs.metricsCore
-    compile libs.metricsJvm
-    compile libs.metricsJson
-    compile libs.metricsLogback
-    compile libs.metricsHealthchecks
-    compile libs.metricsGraphite
-    compile libs.guava
-    compile libs.typesafeConfig
-    compile libs.handlebars
-    compile libs.handlebarsJackson
-    compile libs.handlebarsMarkdown
-    compile libs.handlebarsHelpers
-    compile libs.handlebarsHumanize
-    compile libs.htmlCompressor
-    compile libs.hikaricp
-    compile libs.jool
-    compile libs.okhttp
-    compile libs.okhttpUrlConnection
-    compile libs.loggingInterceptor
-    compile libs.s3
-    compile libs.failsafe
-    compile libs.jsoup
-    compile libs.sitemapgen4j
-    compile libs.jbcrypt
-    compile libs.jooq
-    compile libs.jooqCodegen
-    compile libs.flyway
-    compile libs.connectorj
-    compile libs.javaxAnnotation
-    
+    api project(':stubbornjava-undertow')
+    api libs.slf4j
+    api libs.logback
+    api libs.jacksonCore
+    api libs.jacksonDatabind
+    api libs.jacksonDatabind
+    api libs.jacksonAnnotations
+    api libs.jacksonDatatypeJdk8
+    api libs.jacksonDatatypeJsr310
+    api libs.jacksonDataformatCsv
+    api libs.metricsCore
+    api libs.metricsJvm
+    api libs.metricsJson
+    api libs.metricsLogback
+    api libs.metricsHealthchecks
+    api libs.metricsGraphite
+    api libs.guava
+    api libs.typesafeConfig
+    api libs.handlebars
+    api libs.handlebarsJackson
+    api libs.handlebarsMarkdown
+    api libs.handlebarsHelpers
+    api libs.handlebarsHumanize
+    api libs.htmlCompressor
+    api libs.hikaricp
+    api libs.jool
+    api libs.okhttp
+    api libs.okhttpUrlConnection
+    api libs.loggingInterceptor
+    api libs.s3
+    api libs.failsafe
+    api libs.jsoup
+    api libs.sitemapgen4j
+    api libs.jbcrypt
+    api libs.jooq
+    api libs.jooqCodegen
+    api libs.flyway
+    api libs.connectorj
+    api libs.javaxAnnotation
+
     compileOnly libs.lombok
     annotationProcessor libs.lombok
-        
-    testCompile libs.junit
-    testCompile libs.hsqldb
+
+    testImplementation libs.junit
+    testImplementation libs.hsqldb
 }
 // {{end:dependencies}}
