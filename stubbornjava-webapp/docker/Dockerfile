@@ -1,3 +1,5 @@
+# Use adoptopenjdk/openjdk15:alpine-jre because its ~60MB
+# and the openjdk alpine container is ~190MB
 FROM adoptopenjdk/openjdk15:alpine-jre AS builder
 
 # We will eventually need more things here
