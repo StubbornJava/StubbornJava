@@ -14,7 +14,7 @@ apply from: "gradle/dependencies.gradle"
 
 allprojects {
     // Apply the java plugin to add support for Java
-    apply plugin: 'java'
+    apply plugin: 'java-library'
     apply plugin: 'idea'
     apply plugin: 'eclipse'
     apply plugin: 'maven-publish'
@@ -23,8 +23,8 @@ allprojects {
     group = 'com.stubbornjava.StubbornJava'
     version = '0.0.0-SNAPSHOT'
     
-    sourceCompatibility = 1.8
-    targetCompatibility = 1.8
+    sourceCompatibility = 15
+    targetCompatibility = 15
 
     sourceSets {
         main {
