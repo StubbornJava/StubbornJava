@@ -27,10 +27,10 @@ spec:
           resources:
             limits:
               cpu: "0.5"
-              memory: "500M"
+              memory: "250M"
             requests:
               cpu: "0.5"
-              memory: "500M"
+              memory: "250M"
           livenessProbe:
             httpGet:
               path: /ping
