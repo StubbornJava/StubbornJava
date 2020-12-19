@@ -18,6 +18,7 @@ import javax.net.ssl.X509TrustManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import okhttp3.Credentials;
 import okhttp3.Dispatcher;
 import okhttp3.Interceptor;
 import okhttp3.Interceptor.Chain;
@@ -56,6 +57,15 @@ public class HttpClient {
         return (Chain chain) -> {
             Request orig = chain.request();
             Request newRequest = orig.newBuilder().addHeader(name, value).build();
+            return chain.proceed(newRequest);
+        };
+    }
+
+    public static Interceptor basicAuth(String user, String password) {
+        return (Chain chain) -> {
+            Request orig = chain.request();
+            String credential = Credentials.basic(user, password);
+            Request newRequest = orig.newBuilder().addHeader("Authorization", credential).build();
             return chain.proceed(newRequest);
         };
     }
