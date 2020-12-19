@@ -45,7 +45,7 @@ allprojects {
     
     task copyRuntimeLibs(type: Copy) {
         into "build/libs"
-        from configurations.runtime
+        from configurations.runtimeClasspath
     }
     
     build.finalizedBy(copyRuntimeLibs)
