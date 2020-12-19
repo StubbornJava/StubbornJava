@@ -15,7 +15,8 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 public class Http {
-    private static final Logger log = LoggerFactory.getLogger(Http.class);
+    @SuppressWarnings("unused")
+	private static final Logger log = LoggerFactory.getLogger(Http.class);
 
     // {{start:get}}
     public static Response get(OkHttpClient client, String url) {

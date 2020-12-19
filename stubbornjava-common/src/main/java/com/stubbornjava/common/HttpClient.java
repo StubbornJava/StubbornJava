@@ -42,9 +42,9 @@ public class HttpClient {
         });
     static {
         if (log.isDebugEnabled()) {
-            loggingInterceptor.setLevel(Level.BASIC);
+            loggingInterceptor.level(Level.BASIC);
         } else if (log.isTraceEnabled()) {
-            loggingInterceptor.setLevel(Level.BODY);
+            loggingInterceptor.level(Level.BODY);
         }
     }
 

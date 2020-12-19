@@ -53,7 +53,8 @@ public class DeterministicObjectMapper {
      * before we added our module to it. If we have a Collection -> Collection converter
      * it delegates to itself and infinite loops until the stack overflows.
      */
-    private static class CustomDelegatingSerializerProvider extends StdDelegatingSerializer
+    @SuppressWarnings("serial")
+	private static class CustomDelegatingSerializerProvider extends StdDelegatingSerializer
     {
         private final SerializerProvider serializerProvider;
 
