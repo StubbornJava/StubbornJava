@@ -3,11 +3,11 @@ apply plugin: 'com.github.johnrengelman.shadow'
 
 dependencies {
     // Project reference
-    implementation project(':stubbornjava-undertow')
-    implementation project(':stubbornjava-common')
-    implementation project(':stubbornjava-cms-server')
+    api project(':stubbornjava-undertow')
+    api project(':stubbornjava-common')
+    api project(':stubbornjava-cms-server')
 
-    implementation libs.romeRss
+    api libs.romeRss
     
     compileOnly libs.lombok
     annotationProcessor libs.lombok

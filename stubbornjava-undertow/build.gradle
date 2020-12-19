@@ -1,8 +1,8 @@
 // {{start:dependencies}}
 dependencies {
-    implementation libs.undertowCore
-    implementation libs.slf4j
-    implementation libs.logback
+    api libs.undertowCore
+    api libs.slf4j
+    api libs.logback
 
     testImplementation libs.junit
 }
