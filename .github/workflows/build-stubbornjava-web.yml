@@ -67,7 +67,7 @@ jobs:
     - name: Set up JDK
       uses: actions/setup-java@v1
       with:
-        java-version: 1.8
+        java-version: 15
 
     # https://github.com/actions/cache/blob/master/examples.md#java---gradle
     - name: save / load Gradle caches
