@@ -1,9 +1,9 @@
 // {{start:dependencies}}
 dependencies {
-    compile project(':stubbornjava-undertow')
-    compile project(':stubbornjava-common')
-    compile libs.hsqldb
-    compile libs.hashids
-    testCompile libs.junit
+    implementation project(':stubbornjava-undertow')
+    implementation project(':stubbornjava-common')
+    implementation libs.hsqldb
+    implementation libs.hashids
+    testImplementation libs.junit
 }
 // {{end:dependencies}}

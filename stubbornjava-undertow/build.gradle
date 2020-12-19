@@ -1,9 +1,9 @@
 // {{start:dependencies}}
 dependencies {
-    compile libs.undertowCore
-    compile libs.slf4j
-    compile libs.logback
+    implementation libs.undertowCore
+    implementation libs.slf4j
+    implementation libs.logback
 
-    testCompile libs.junit
+    testImplementation libs.junit
 }
 // {{end:dependencies}}
