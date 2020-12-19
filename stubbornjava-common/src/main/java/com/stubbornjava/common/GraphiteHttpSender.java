@@ -14,8 +14,6 @@ import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
-import okhttp3.logging.HttpLoggingInterceptor;
-import okhttp3.logging.HttpLoggingInterceptor.Level;
 
 // {{start:sender}}
 /**
@@ -26,7 +24,8 @@ import okhttp3.logging.HttpLoggingInterceptor.Level;
  *
  */
 class GraphiteHttpSender implements GraphiteSender {
-    private static final Logger log = LoggerFactory.getLogger(GraphiteHttpSender.class);
+    @SuppressWarnings("unused")
+	private static final Logger log = LoggerFactory.getLogger(GraphiteHttpSender.class);
 
     private final OkHttpClient client;
     private final String host;
@@ -58,9 +57,9 @@ class GraphiteHttpSender implements GraphiteSender {
     public void flush() throws IOException {
         Request request = new Request.Builder()
                 .url(host + "/metrics")
-                .post(RequestBody.create(MediaType.parse("application/json"), Json.serializer().toByteArray(metrics)))
+                .post(RequestBody.Companion.create(Json.serializer().toByteArray(metrics), MediaType.Companion.parse("application/json")))
                 .build();
-        String response = Retry.retryUntilSuccessfulWithBackoff(() -> client.newCall(request).execute());
+        Retry.retryUntilSuccessfulWithBackoff(() -> client.newCall(request).execute());
         metrics.clear();
     }
 
@@ -74,14 +73,6 @@ class GraphiteHttpSender implements GraphiteSender {
     public int getFailures() {
         // TODO Auto-generated method stub
         return 0;
-    }
-
-    private static final HttpLoggingInterceptor getLogger(Level level) {
-        HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor((msg) -> {
-            log.debug(msg);
-        });
-        loggingInterceptor.setLevel(level);
-        return loggingInterceptor;
     }
 
     private static final class GraphiteMetric {
@@ -100,16 +91,20 @@ class GraphiteHttpSender implements GraphiteSender {
             this.time = time;
         }
 
-        public String getName() {
+        @SuppressWarnings("unused")
+		public String getName() {
             return name;
         }
-        public int getInterval() {
+        @SuppressWarnings("unused")
+		public int getInterval() {
             return interval;
         }
-        public double getValue() {
+        @SuppressWarnings("unused")
+		public double getValue() {
             return value;
         }
-        public long getTime() {
+        @SuppressWarnings("unused")
+		public long getTime() {
             return time;
         }
     }
