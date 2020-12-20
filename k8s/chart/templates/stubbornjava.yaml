@@ -4,6 +4,10 @@ metadata:
   name: stubbornjava-deployment
   labels:
     app: sj-web
+    app.kubernetes.io/managed-by: Helm
+  annotations:
+    meta.helm.sh/release-name: stubbornjava
+    meta.helm.sh/release-namespace: default
 spec:
   replicas: 2
   strategy:
@@ -22,11 +26,6 @@ spec:
     spec:
       containers:
         - name: sj-web
-          # Using the prod tag here is kind of a dirty hack so we don't have
-          # to update this file on every CD deploy. CD will always deploy containers
-          # tagged by their hash but the most recent container is also tagged with
-          # prod. That should allow us to rerun this manifest without accidentally
-          # rolling back code.
           image: {{ required "image input required" .Values.image | quote }}
           resources:
             limits:
@@ -96,6 +95,11 @@ apiVersion: v1
 kind: Service
 metadata:
   name: sj-web-nodeport
+  labels:
+    app.kubernetes.io/managed-by: Helm
+  annotations:
+    meta.helm.sh/release-name: stubbornjava
+    meta.helm.sh/release-namespace: default
 spec:
   type: NodePort
   selector:
@@ -112,6 +116,11 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: sj-web-config-prod
+  labels:
+    app.kubernetes.io/managed-by: Helm
+  annotations:
+    meta.helm.sh/release-name: stubbornjava
+    meta.helm.sh/release-namespace: default
 data:
   # Or set as complete file contents (even JSON!)
   sjweb.production.conf: | 
