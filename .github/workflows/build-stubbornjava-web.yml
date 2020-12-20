@@ -114,7 +114,7 @@ jobs:
       - name: deploy stubbornjava
         uses: stefanprodan/kube-tools@v1
         with:
-          command: helm upgrade --install --wait stubbornjava k8s/chart/ --set image=containers.pkg.github.com/stubbornjava/stubbornjava-webapp:${{ env.GITHUB_SHA_SHORT }}
+          command: helm3 upgrade --install --wait stubbornjava k8s/chart/ --set image=containers.pkg.github.com/stubbornjava/stubbornjava-webapp:${{ env.GITHUB_SHA_SHORT }}
 
       - name: Slack Notification - Deploy Failed
         if: ${{ failure() }}
