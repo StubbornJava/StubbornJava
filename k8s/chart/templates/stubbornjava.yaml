@@ -27,7 +27,7 @@ spec:
           # tagged by their hash but the most recent container is also tagged with
           # prod. That should allow us to rerun this manifest without accidentally
           # rolling back code.
-          image: containers.pkg.github.com/stubbornjava/stubbornjava-webapp:prod
+          image: {{ required "image input required" .Values.image | quote }}
           resources:
             limits:
               cpu: "0.5"
