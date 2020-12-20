@@ -22,8 +22,12 @@ spec:
     spec:
       containers:
         - name: sj-web
-          # Be careful with this now. Auto deploy will always leave this out of sync.
-          image: containers.pkg.github.com/stubbornjava/stubbornjava-webapp:f008633e
+          # Using the prod tag here is kind of a dirty hack so we don't have
+          # to update this file on every CD deploy. CD will always deploy containers
+          # tagged by their hash but the most recent container is also tagged with
+          # prod. That should allow us to rerun this manifest without accidentally
+          # rolling back code.
+          image: containers.pkg.github.com/stubbornjava/stubbornjava-webapp:prod
           resources:
             limits:
               cpu: "0.5"
