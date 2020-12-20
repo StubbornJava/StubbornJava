@@ -103,8 +103,8 @@ jobs:
 
       - name: Configure KUBECONFIG
         run: |
-        mkdir -p .kube
-        echo "${{ env.KUBE_CONFIG_DATA }}" | base64 -d > .kube/config
+          mkdir -p .kube
+          echo "${{ env.KUBE_CONFIG_DATA }}" | base64 -d > .kube/config
 
       - name: Slack Notification - Deploying
         uses: rtCamp/action-slack-notify@v2
