@@ -21,23 +21,6 @@ jobs:
     - name: Inject slug/short variables
       uses: rlespinasse/github-slug-action@v3.x
 
-    # - name: Print slug/short variables
-    #   run: |
-    #     echo "Slug variables"
-    #     echo "   ref        : ${{ env.GITHUB_REF_SLUG }}"
-    #     echo "   head ref   : ${{ env.GITHUB_HEAD_REF_SLUG }}"
-    #     echo "   base ref   : ${{ env.GITHUB_BASE_REF_SLUG }}"
-    #     echo "   event ref  : ${{ env.GITHUB_EVENT_REF_SLUG }}"
-    #     echo "   repository : ${{ env.GITHUB_REPOSITORY_SLUG }}"
-    #     echo "Slug URL variables"
-    #     echo "   ref        : ${{ env.GITHUB_REF_SLUG_URL }}"
-    #     echo "   head ref   : ${{ env.GITHUB_HEAD_REF_SLUG_URL }}"
-    #     echo "   base ref   : ${{ env.GITHUB_BASE_REF_SLUG_URL }}"
-    #     echo "   event ref  : ${{ env.GITHUB_EVENT_REF_SLUG_URL }}"
-    #     echo "   repository : ${{ env.GITHUB_REPOSITORY_SLUG_URL }}"
-    #     echo "Short SHA variables"
-    #     echo "   sha        : ${{ env.GITHUB_SHA_SHORT }}"
-
     # https://github.com/actions/cache/blob/master/examples.md#java---gradle
     - name: save / load UI caches
       id: ui-cache
@@ -80,6 +63,17 @@ jobs:
     - name: Build with Gradle
       run: ./gradlew build --no-daemon
 
+  build-containers:
+    needs: [build]
+    runs-on: ubuntu-latest
+    steps:
+    - name: checkout
+      uses: actions/checkout@v2
+
+    # https://github.com/rlespinasse/github-slug-action
+    - name: Inject slug/short variables
+      uses: rlespinasse/github-slug-action@v3.x
+
     - name: Docker Login
       run: echo ${{ secrets.SJ_OPS_GH_ACTION_CONTAINER_REGISTRY }} | docker login -u stubbornjava-ops --password-stdin https://containers.pkg.github.com
 
@@ -90,21 +84,14 @@ jobs:
       working-directory: ./stubbornjava-webapp
       run: docker build -t containers.pkg.github.com/stubbornjava/stubbornjava-webapp:${{ env.GITHUB_SHA_SHORT }} -f ./docker/Dockerfile .
 
-    # See comment in file for the reason we are tagging this as prod.
-    # https://github.com/StubbornJava/StubbornJava/blob/master/k8s/stubbornjava.yaml
-    - name: Tag docker container for production
-      if: github.ref == 'refs/heads/master'
-      working-directory: ./stubbornjava-webapp
-      run: docker tag containers.pkg.github.com/stubbornjava/stubbornjava-webapp:${{ env.GITHUB_SHA_SHORT }} containers.pkg.github.com/stubbornjava/stubbornjava-webapp:prod
-
     - name: Push images and tags
       run: docker push containers.pkg.github.com/stubbornjava/stubbornjava-webapp
 
   # Deploy to k8s
-  deploy:
-    needs: [build]
+  deploy-prod:
+    needs: [build-containers]
     # Only auto deploy from master
-    if: github.ref == 'refs/heads/master'
+    # if: github.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
     steps:
       - name: checkout
@@ -113,6 +100,11 @@ jobs:
       # https://github.com/rlespinasse/github-slug-action
       - name: Inject slug/short variables
         uses: rlespinasse/github-slug-action@v3.x
+
+      - name: Configure KUBECONFIG
+        run: |
+        mkdir -p .kube
+        echo "${{ env.KUBE_CONFIG_DATA }}" | base64 -d > .kube/config
 
       - name: Slack Notification - Deploying
         uses: rtCamp/action-slack-notify@v2
@@ -124,18 +116,15 @@ jobs:
           SLACK_USERNAME: deploy_bot
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
 
-      - name: deploy to cluster
-        uses: steebchen/kubectl@v1.0.0
-        env:
-          KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG_DATA }}
+      - name: deploy stubbornjava
+        uses: stefanprodan/kube-tools@v1
         with:
-          args: set image --record deployment/stubbornjava-deployment sj-web=containers.pkg.github.com/stubbornjava/stubbornjava-webapp:${{ env.GITHUB_SHA_SHORT }}
-      - name: verify deployment
-        uses: steebchen/kubectl@v1.0.0
-        env:
-          KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG_DATA }}
+          command: helm upgrade --install stubbornjava k8s/chart/ --set image=containers.pkg.github.com/stubbornjava/stubbornjava-webapp:${{ env.GITHUB_SHA_SHORT }}
+
+      - name: deploy stubbornjava
+        uses: stefanprodan/kube-tools@v1
         with:
-          args: '"rollout status deployment/stubbornjava-deployment"'
+          command: kubectl rollout status deployment/stubbornjava-deployment
 
       - name: Slack Notification - Deploy Failed
         if: ${{ failure() }}
