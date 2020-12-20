@@ -22,15 +22,15 @@ spec:
     spec:
       containers:
         - name: sj-web
-          image: containers.pkg.github.com/stubbornjava/stubbornjava-webapp:prod
-          imagePullPolicy: Always
+          # Be careful with this now. Auto deploy will always leave this out of sync.
+          image: containers.pkg.github.com/stubbornjava/stubbornjava-webapp:f008633e
           resources:
             limits:
               cpu: "0.5"
               memory: "250M"
             requests:
-              cpu: "0.5"
-              memory: "250M"
+              cpu: "0.25"
+              memory: "150M"
           livenessProbe:
             httpGet:
               path: /ping
