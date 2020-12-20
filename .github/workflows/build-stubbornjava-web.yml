@@ -118,16 +118,15 @@ jobs:
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
 
       - name: deploy to cluster
-        uses: steebchen/kubectl@master
+        uses: steebchen/kubectl@v1.0.0
         env:
           KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG_DATA }}
         with:
           args: set image --record deployment/stubbornjava-deployment sj-web=containers.pkg.github.com/stubbornjava/stubbornjava-webapp:${{ env.GITHUB_SHA_SHORT }}
       - name: verify deployment
-        uses: steebchen/kubectl@master
+        uses: steebchen/kubectl@v1.0.0
         env:
           KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG_DATA }}
-          KUBECTL_VERSION: "1.20"
         with:
           args: '"rollout status deployment/stubbornjava-deployment"'
 
