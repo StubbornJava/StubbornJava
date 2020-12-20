@@ -85,8 +85,9 @@ jobs:
     needs: [build]
     # Only auto deploy from master
     # if: github.ref == 'refs/heads/master' && github.repository == 'StubbornJava/StubbornJava'
-
     runs-on: ubuntu-latest
+    env:
+      KUBECONFIG: .kube/config
     steps:
       - name: checkout
         uses: actions/checkout@v2
