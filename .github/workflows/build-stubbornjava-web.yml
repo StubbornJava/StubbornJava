@@ -107,12 +107,22 @@ jobs:
       - name: Inject slug/short variables
         uses: rlespinasse/github-slug-action@v3.x
 
+      - name: Slack Notification - Deploying
+        uses: rtCamp/action-slack-notify@v2
+        env:
+          SLACK_CHANNEL: deploys
+          SLACK_COLOR: 'warning'
+          SLACK_MESSAGE: 'Deploying containers.pkg.github.com/stubbornjava/stubbornjava-webapp:${{ env.GITHUB_SHA_SHORT }}'
+          SLACK_TITLE: Deploying StubbornJava
+          SLACK_USERNAME: deploy_bot
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+
       - name: deploy to cluster
         uses: steebchen/kubectl@master
         env:
           KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG_DATA }}
         with:
-          args: set image --record stubbornjava-deployment container=containers.pkg.github.com/stubbornjava/stubbornjava-webapp:${{ env.GITHUB_SHA_SHORT }}
+          args: set image --record deployment/stubbornjava-deployment sj-web=containers.pkg.github.com/stubbornjava/stubbornjava-webapp:${{ env.GITHUB_SHA_SHORT }}
       - name: verify deployment
         uses: steebchen/kubectl@master
         env:
@@ -120,3 +130,23 @@ jobs:
           KUBECTL_VERSION: "1.20"
         with:
           args: '"rollout status stubbornjava-deployment"'
+      
+      - name: Slack Notification - Deploy Failed
+        if: ${{ failure() }}
+        uses: rtCamp/action-slack-notify@v2
+        env:
+          SLACK_CHANNEL: deploys
+          SLACK_COLOR: 'danger'
+          SLACK_MESSAGE: 'containers.pkg.github.com/stubbornjava/stubbornjava-webapp:${{ env.GITHUB_SHA_SHORT }}'
+          SLACK_TITLE: Deploy StubbornJava Failed!
+          SLACK_USERNAME: deploy_bot
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+      - name: Slack Notification - Deploy Succeeded
+        uses: rtCamp/action-slack-notify@v2
+        env:
+          SLACK_CHANNEL: deploys
+          SLACK_COLOR: 'good'
+          SLACK_MESSAGE: 'containers.pkg.github.com/stubbornjava/stubbornjava-webapp:${{ env.GITHUB_SHA_SHORT }}'
+          SLACK_TITLE: Deploy StubbornJava Succeeded!
+          SLACK_USERNAME: deploy_bot
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
