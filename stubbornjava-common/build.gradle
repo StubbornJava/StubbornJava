@@ -11,6 +11,7 @@ dependencies {
     api libs.jacksonDatatypeJdk8
     api libs.jacksonDatatypeJsr310
     api libs.jacksonDataformatCsv
+    api libs.jacksonDataFormatCbor
     api libs.metricsCore
     api libs.metricsJvm
     api libs.metricsJson

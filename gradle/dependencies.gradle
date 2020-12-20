@@ -1,7 +1,7 @@
 // {{start:dependencies}}
 ext {
     versions = [
-        jackson           : '2.11.3',      // Json Serializer / Deserializer
+        jackson           : '2.12.0',      // Json Serializer / Deserializer
         okhttp            : '4.2.2',       // HTTP Client
         slf4j             : '1.7.30',      // Logging 
         logback           : '1.2.3',       // Logging
@@ -40,6 +40,7 @@ ext {
         jacksonDatatypeJdk8       : "com.fasterxml.jackson.datatype:jackson-datatype-jdk8:$versions.jackson",
         jacksonDatatypeJsr310     : "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$versions.jackson",
         jacksonDataformatCsv      : "com.fasterxml.jackson.dataformat:jackson-dataformat-csv:$versions.jackson",
+        jacksonDataFormatCbor     : "com.fasterxml.jackson.dataformat:jackson-dataformat-cbor:$versions.jackson",
         metricsCore               : "io.dropwizard.metrics:metrics-core:$versions.metrics",
         metricsJvm                : "io.dropwizard.metrics:metrics-jvm:$versions.metrics",
         metricsJson               : "io.dropwizard.metrics:metrics-json:$versions.metrics",
