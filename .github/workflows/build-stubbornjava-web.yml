@@ -129,8 +129,8 @@ jobs:
           KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG_DATA }}
           KUBECTL_VERSION: "1.20"
         with:
-          args: '"rollout status stubbornjava-deployment"'
-      
+          args: '"rollout status deployment/stubbornjava-deployment"'
+
       - name: Slack Notification - Deploy Failed
         if: ${{ failure() }}
         uses: rtCamp/action-slack-notify@v2
