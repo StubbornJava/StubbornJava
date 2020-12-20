@@ -63,17 +63,6 @@ jobs:
     - name: Build with Gradle
       run: ./gradlew build --no-daemon
 
-  build-containers:
-    needs: [build]
-    runs-on: ubuntu-latest
-    steps:
-    - name: checkout
-      uses: actions/checkout@v2
-
-    # https://github.com/rlespinasse/github-slug-action
-    - name: Inject slug/short variables
-      uses: rlespinasse/github-slug-action@v3.x
-
     - name: Docker Login
       run: echo ${{ secrets.SJ_OPS_GH_ACTION_CONTAINER_REGISTRY }} | docker login -u stubbornjava-ops --password-stdin https://containers.pkg.github.com
 
@@ -119,12 +108,7 @@ jobs:
       - name: deploy stubbornjava
         uses: stefanprodan/kube-tools@v1
         with:
-          command: helm upgrade --install stubbornjava k8s/chart/ --set image=containers.pkg.github.com/stubbornjava/stubbornjava-webapp:${{ env.GITHUB_SHA_SHORT }}
-
-      - name: deploy stubbornjava
-        uses: stefanprodan/kube-tools@v1
-        with:
-          command: kubectl rollout status deployment/stubbornjava-deployment
+          command: helm upgrade --install --wait stubbornjava k8s/chart/ --set image=containers.pkg.github.com/stubbornjava/stubbornjava-webapp:${{ env.GITHUB_SHA_SHORT }}
 
       - name: Slack Notification - Deploy Failed
         if: ${{ failure() }}
