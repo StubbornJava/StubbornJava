@@ -5,7 +5,7 @@ ext {
         okhttp            : '4.2.2',       // HTTP Client
         slf4j             : '1.7.30',      // Logging 
         logback           : '1.2.3',       // Logging
-        undertow          : '2.0.28.Final',// Webserver
+        undertow          : '2.2.3.Final',// Webserver
         metrics           : '4.1.16',       // Metrics
         guava             : '30.1-jre',    // Common / Helper libraries
         typesafeConfig    : '1.4.1',       // Configuration
@@ -27,7 +27,9 @@ ext {
         romeRss           : '1.0',         // RSS Library
         kotlin            : '1.4.21',      // Kotlin
         javax             : '1.3.2',
-
+        jbossLogging      : '3.4.1.Final',
+        jbossThreads      : '3.1.0.Final',
+        wildflyCommon     : '1.5.2.Final',
         junit             : '4.13.1',        // Unit Testing
     ]
     libs = [
@@ -76,6 +78,9 @@ ext {
         romeRss                   : "rome:rome:$versions.romeRss",
         kotlin                    : "org.jetbrains.kotlin:kotlin-stdlib:$versions.kotlin",
         javaxAnnotation           : "javax.annotation:javax.annotation-api:$versions.javax",
+        jbossLogging              : "org.jboss.logging:jboss-logging:$versions.jbossLogging",
+        jbossThreads              : "org.jboss.threads:jboss-threads:$versions.jbossThreads",
+        wildflyCommon             : "org.wildfly.common:wildfly-common:$versions.wildflyCommon",
 
         junit                     : "junit:junit:$versions.junit",
     ]
