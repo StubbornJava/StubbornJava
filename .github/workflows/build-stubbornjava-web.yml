@@ -64,23 +64,28 @@ jobs:
       run: ./gradlew build --no-daemon
 
     - name: Docker Login
+      if: github.repository == 'StubbornJava/StubbornJava'
       run: echo ${{ secrets.SJ_OPS_GH_ACTION_CONTAINER_REGISTRY }} | docker login -u stubbornjava-ops --password-stdin https://containers.pkg.github.com
 
     - name: Branch name
+      if: github.repository == 'StubbornJava/StubbornJava'
       run: echo running on branch ${{ env.GITHUB_REF_SLUG }}
 
     - name: Build docker container for branch
+      if: github.repository == 'StubbornJava/StubbornJava'
       working-directory: ./stubbornjava-webapp
       run: docker build -t containers.pkg.github.com/stubbornjava/stubbornjava-webapp:${{ env.GITHUB_SHA_SHORT }} -f ./docker/Dockerfile .
 
     - name: Push images and tags
+      if: github.repository == 'StubbornJava/StubbornJava'
       run: docker push containers.pkg.github.com/stubbornjava/stubbornjava-webapp
 
   # Deploy to k8s
   deploy-prod:
-    needs: [build-containers]
+    needs: [build]
     # Only auto deploy from master
-    # if: github.ref == 'refs/heads/master'
+    # if: github.ref == 'refs/heads/master' && github.repository == 'StubbornJava/StubbornJava'
+
     runs-on: ubuntu-latest
     steps:
       - name: checkout
