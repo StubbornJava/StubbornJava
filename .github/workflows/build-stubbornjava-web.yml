@@ -93,7 +93,7 @@ jobs:
     # See comment in file for the reason we are tagging this as prod.
     # https://github.com/StubbornJava/StubbornJava/blob/master/k8s/stubbornjava.yaml
     - name: Tag docker container for production
-      # if: github.ref == 'refs/heads/master'
+      if: github.ref == 'refs/heads/master'
       working-directory: ./stubbornjava-webapp
       run: docker tag containers.pkg.github.com/stubbornjava/stubbornjava-webapp:${{ env.GITHUB_SHA_SHORT }} containers.pkg.github.com/stubbornjava/stubbornjava-webapp:prod
 
