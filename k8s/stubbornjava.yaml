@@ -39,15 +39,15 @@ spec:
             httpGet:
               path: /ping
               port: 8080
-            initialDelaySeconds: 1
-            periodSeconds: 2
+            initialDelaySeconds: 2
+            periodSeconds: 3
           # Right now this is all we need. Make this more sophisticated once we add a database.
           readinessProbe:
             httpGet:
               path: /ping
               port: 8080
-            initialDelaySeconds: 1
-            periodSeconds: 2
+            initialDelaySeconds: 2
+            periodSeconds: 3
           ports:
             - containerPort: 8080
           env:
