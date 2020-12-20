@@ -3,7 +3,8 @@ dependencies {
     api libs.undertowCore
     api libs.slf4j
     api libs.logback
-
+    api libs.jbossLogging
+    
     testImplementation libs.junit
 }
 // {{end:dependencies}}
