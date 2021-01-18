@@ -16,7 +16,7 @@ ext {
         hsqldb            : '2.5.1',       // In memory SQL db
         aws               : '1.11.939',    // AWS Java SDK
         flyway            : '5.1.4',       // DB migrations
-        connectorj        : '8.0.22',      // JDBC MYSQL driver
+        connectorj        : '8.0.23',      // JDBC MYSQL driver
         jooq              : '3.14.4',      // jOOQ
         hashids           : '1.0.3',       // Id hashing
         failsafe          : '1.1.0',       // retry and circuit breakers
