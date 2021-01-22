@@ -15,7 +15,7 @@ ext {
         jool              : '0.9.14',      // Functional Utils
         hsqldb            : '2.5.1',       // In memory SQL db
         aws               : '1.11.940',    // AWS Java SDK
-        flyway            : '5.1.4',       // DB migrations
+        flyway            : '7.5.1',       // DB migrations
         connectorj        : '8.0.23',      // JDBC MYSQL driver
         jooq              : '3.14.4',      // jOOQ
         hashids           : '1.0.3',       // Id hashing
