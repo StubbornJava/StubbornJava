@@ -17,7 +17,7 @@ ext {
         aws               : '1.11.942',    // AWS Java SDK
         flyway            : '5.1.4',       // DB migrations
         connectorj        : '8.0.23',      // JDBC MYSQL driver
-        jooq              : '3.14.4',      // jOOQ
+        jooq              : '3.14.6',      // jOOQ
         hashids           : '1.0.3',       // Id hashing
         failsafe          : '1.1.0',       // retry and circuit breakers
         jsoup             : '1.13.1',      // DOM parsing library
