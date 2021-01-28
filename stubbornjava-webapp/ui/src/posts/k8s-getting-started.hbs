@@ -19,7 +19,7 @@ stubbornjava-deployment-7b96c7d8db-nx6q7   0/1     ImagePullBackOff   0         
 
 - oops we forgot to auth with github
 
-- `kubectl create secret docker-registry regcred --docker-server=containers.pkg.github.com --docker-username=stubbornjava-ops --docker-password=$GITHUB_TOKEN --docker-email=bill@dartalley.com`
+- `kubectl create secret docker-registry ghregistry --docker-server=containers.pkg.github.com --docker-username=stubbornjava-ops --docker-password=$GITHUB_TOKEN --docker-email=bill@dartalley.com`
 
 `kubectl get pods`
 NAME                                       READY   STATUS    RESTARTS   AGE
@@ -43,3 +43,21 @@ https://kubernetes.io/docs/reference/kubectl/cheatsheet/
 
 
 https://microk8s.io/docs/working-with-kubectl#heading--kubectl-macos
+
+
+https://rancher.com/docs/k3s/latest/en/installation/install-options/
+
+https://jyeee.medium.com/kubernetes-on-your-macos-laptop-with-multipass-k3s-and-rancher-2-4-6e9cbf013f58
+
+
+curl -sLS https://get.k3s.io | INSTALL_K3S_EXEC='server --tls-san 54.84.224.246 --write-kubeconfig-mode "0644"' sh -
+
+
+https://medium.com/google-cloud/kubernetes-nodeport-vs-loadbalancer-vs-ingress-when-should-i-use-what-922f010849e0
+
+
+kubectl create secret docker-registry ghregistry --docker-server=containers.pkg.github.com --docker-username=stubbornjava-ops --docker-password=$GITHUB_TOKEN --docker-email=bill@dartalley.com
+
+kubectl create secret generic githubcreds \
+ --from-literal=github.client_id=??? \
+ --from-literal=github.client_secret=???
