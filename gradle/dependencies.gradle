@@ -21,7 +21,7 @@ ext {
         hashids           : '1.0.3',       // Id hashing
         failsafe          : '1.1.0',       // retry and circuit breakers
         jsoup             : '1.13.1',      // DOM parsing library
-        lombok            : '1.18.16',     // Code gen
+        lombok            : '1.18.18',     // Code gen
         sitemapgen4j      : '1.0.6',       // Sitemap generator for SEO
         jbcrypt           : '0.4',         // BCrypt salted hashing library
         romeRss           : '1.0',         // RSS Library
