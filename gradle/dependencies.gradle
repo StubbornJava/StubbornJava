@@ -30,7 +30,7 @@ ext {
         jbossLogging      : '3.4.1.Final',
         jbossThreads      : '3.1.0.Final',
         wildflyCommon     : '1.5.4.Final-format-001',
-        junit             : '4.13.1',        // Unit Testing
+        junit             : '4.13.2',        // Unit Testing
     ]
     libs = [
         okhttp                    : "com.squareup.okhttp3:okhttp:$versions.okhttp",
