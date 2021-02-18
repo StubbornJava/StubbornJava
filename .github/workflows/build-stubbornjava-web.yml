@@ -78,7 +78,7 @@ jobs:
 
     - name: Push images and tags
       if: github.repository == 'StubbornJava/StubbornJava'
-      run: docker push containers.pkg.github.com/stubbornjava/stubbornjava-webapp
+      run: docker push containers.pkg.github.com/stubbornjava/stubbornjava-webapp:${{ env.GITHUB_SHA_SHORT }}
 
   # Deploy to k8s
   deploy-prod:
