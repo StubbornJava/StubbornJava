@@ -106,7 +106,7 @@ jobs:
         env:
           SLACK_CHANNEL: deploys
           SLACK_COLOR: 'warning'
-          SLACK_MESSAGE: 'Deploying containers.pkg.github.com/stubbornjava/stubbornjava-webapp:${{ env.GITHUB_SHA_SHORT }}'
+          SLACK_MESSAGE: '${{ github.event.head_commit.message }} \n Deploying containers.pkg.github.com/stubbornjava/stubbornjava-webapp:${{ env.GITHUB_SHA_SHORT }}'
           SLACK_TITLE: Deploying StubbornJava
           SLACK_USERNAME: deploy_bot
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
@@ -122,7 +122,7 @@ jobs:
         env:
           SLACK_CHANNEL: deploys
           SLACK_COLOR: 'danger'
-          SLACK_MESSAGE: 'containers.pkg.github.com/stubbornjava/stubbornjava-webapp:${{ env.GITHUB_SHA_SHORT }}'
+          SLACK_MESSAGE: '${{ github.event.head_commit.message }} \n containers.pkg.github.com/stubbornjava/stubbornjava-webapp:${{ env.GITHUB_SHA_SHORT }}'
           SLACK_TITLE: Deploy StubbornJava Failed!
           SLACK_USERNAME: deploy_bot
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
@@ -131,7 +131,7 @@ jobs:
         env:
           SLACK_CHANNEL: deploys
           SLACK_COLOR: 'good'
-          SLACK_MESSAGE: 'containers.pkg.github.com/stubbornjava/stubbornjava-webapp:${{ env.GITHUB_SHA_SHORT }}'
+          SLACK_MESSAGE: '${{ github.event.head_commit.message }} \n containers.pkg.github.com/stubbornjava/stubbornjava-webapp:${{ env.GITHUB_SHA_SHORT }}'
           SLACK_TITLE: Deploy StubbornJava Succeeded!
           SLACK_USERNAME: deploy_bot
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
