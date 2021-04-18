@@ -13,7 +13,7 @@ ext {
         htmlCompressor    : '1.5.2',       // HTML compression
         hikaricp          : '4.0.3',       // JDBC connection pool
         jool              : '0.9.14',      // Functional Utils
-        hsqldb            : '2.5.1',       // In memory SQL db
+        hsqldb            : '2.6.0',       // In memory SQL db
         aws               : '1.11.996',    // AWS Java SDK
         flyway            : '5.1.4',       // DB migrations
         connectorj        : '8.0.23',      // JDBC MYSQL driver
