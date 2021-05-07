@@ -14,7 +14,7 @@ ext {
         hikaricp          : '4.0.3',       // JDBC connection pool
         jool              : '0.9.14',      // Functional Utils
         hsqldb            : '2.6.0',       // In memory SQL db
-        aws               : '1.11.996',    // AWS Java SDK
+        aws               : '1.11.1014',    // AWS Java SDK
         flyway            : '5.1.4',       // DB migrations
         connectorj        : '8.0.24',      // JDBC MYSQL driver
         jooq              : '3.14.9',      // jOOQ
