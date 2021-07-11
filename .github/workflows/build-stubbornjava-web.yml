@@ -63,7 +63,7 @@ jobs:
     - name: Build with Gradle
       run: ./gradlew build --no-daemon
 
-    - name: Login to GitHub Container Registry
+    - name: Login to GitHub Container Registry (ghcr.io)
       uses: docker/login-action@v1
       with:
         registry: ghcr.io
