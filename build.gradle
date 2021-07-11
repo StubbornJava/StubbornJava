@@ -12,7 +12,6 @@ allprojects {
     apply plugin: 'idea'
     apply plugin: 'eclipse'
     apply plugin: 'maven-publish'
-    apply plugin: 'sonarqube'
 
     // Using Jitpack so I need the repo name in the group to match.
     group = 'com.stubbornjava.StubbornJava'
