@@ -16,6 +16,8 @@ jobs:
     steps:
     - name: checkout
       uses: actions/checkout@v2
+      with:
+        fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis for Sonarqube
 
     # https://github.com/rlespinasse/github-slug-action
     - name: Inject slug/short variables
@@ -62,6 +64,12 @@ jobs:
       run: chmod +x gradlew
     - name: Build with Gradle
       run: ./gradlew build --no-daemon
+      
+    - name: SonarCloud Scan
+      uses: SonarSource/sonarcloud-github-action@master
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
     # This should be switched to use ${{ github.actor }} and ${{ secrets.GITHUB_TOKEN }}
     - name: Login to GitHub Container Registry (ghcr.io)
