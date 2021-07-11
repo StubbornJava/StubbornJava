@@ -63,9 +63,12 @@ jobs:
     - name: Build with Gradle
       run: ./gradlew build --no-daemon
 
-    - name: Docker Login
-      if: github.repository == 'StubbornJava/StubbornJava'
-      run: echo ${{ secrets.SJ_OPS_GH_ACTION_CONTAINER_REGISTRY }} | docker login -u stubbornjava-ops --password-stdin https://containers.pkg.github.com
+    - name: Login to GitHub Container Registry
+      uses: docker/login-action@v1
+      with:
+        registry: ghcr.io
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Branch name
       if: github.repository == 'StubbornJava/StubbornJava'
@@ -74,11 +77,11 @@ jobs:
     - name: Build docker container for branch
       if: github.repository == 'StubbornJava/StubbornJava'
       working-directory: ./stubbornjava-webapp
-      run: docker build -t containers.pkg.github.com/stubbornjava/stubbornjava-webapp:${{ env.GITHUB_SHA_SHORT }} -f ./docker/Dockerfile .
+      run: docker build -t ghcr.io/stubbornjava/stubbornjava-webapp:${{ env.GITHUB_SHA_SHORT }} -f ./docker/Dockerfile .
 
     - name: Push images and tags
       if: github.repository == 'StubbornJava/StubbornJava'
-      run: docker push containers.pkg.github.com/stubbornjava/stubbornjava-webapp:${{ env.GITHUB_SHA_SHORT }}
+      run: docker push ghcr.io/stubbornjava/stubbornjava-webapp
 
   # Deploy to k8s
   deploy-prod:
@@ -106,7 +109,7 @@ jobs:
         env:
           SLACK_CHANNEL: deploys
           SLACK_COLOR: 'warning'
-          SLACK_MESSAGE: '${{ github.event.head_commit.message }} \n Deploying containers.pkg.github.com/stubbornjava/stubbornjava-webapp:${{ env.GITHUB_SHA_SHORT }}'
+          SLACK_MESSAGE: '${{ github.event.head_commit.message }} \n Deploying ghcr.io/stubbornjava/stubbornjava-webapp:${{ env.GITHUB_SHA_SHORT }}'
           SLACK_TITLE: Deploying StubbornJava
           SLACK_USERNAME: deploy_bot
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
@@ -114,7 +117,7 @@ jobs:
       - name: deploy stubbornjava
         uses: stefanprodan/kube-tools@v1
         with:
-          command: helmv3 upgrade --install --wait stubbornjava k8s/chart/ --set image=containers.pkg.github.com/stubbornjava/stubbornjava-webapp:${{ env.GITHUB_SHA_SHORT }}
+          command: helmv3 upgrade --install --wait stubbornjava k8s/chart/ --set image=ghcr.io/stubbornjava/stubbornjava-webapp:${{ env.GITHUB_SHA_SHORT }}
 
       - name: Slack Notification - Deploy Failed
         if: ${{ failure() }}
@@ -122,7 +125,7 @@ jobs:
         env:
           SLACK_CHANNEL: deploys
           SLACK_COLOR: 'danger'
-          SLACK_MESSAGE: '${{ github.event.head_commit.message }} \n containers.pkg.github.com/stubbornjava/stubbornjava-webapp:${{ env.GITHUB_SHA_SHORT }}'
+          SLACK_MESSAGE: '${{ github.event.head_commit.message }} \n ghcr.io/stubbornjava/stubbornjava-webapp:${{ env.GITHUB_SHA_SHORT }}'
           SLACK_TITLE: Deploy StubbornJava Failed!
           SLACK_USERNAME: deploy_bot
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
@@ -131,7 +134,7 @@ jobs:
         env:
           SLACK_CHANNEL: deploys
           SLACK_COLOR: 'good'
-          SLACK_MESSAGE: '${{ github.event.head_commit.message }} \n containers.pkg.github.com/stubbornjava/stubbornjava-webapp:${{ env.GITHUB_SHA_SHORT }}'
+          SLACK_MESSAGE: '${{ github.event.head_commit.message }} \n ghcr.io/stubbornjava/stubbornjava-webapp:${{ env.GITHUB_SHA_SHORT }}'
           SLACK_TITLE: Deploy StubbornJava Succeeded!
           SLACK_USERNAME: deploy_bot
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
