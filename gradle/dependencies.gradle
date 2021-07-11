@@ -1,7 +1,7 @@
 // {{start:dependencies}}
 ext {
     versions = [
-        jackson           : '2.12.3',      // Json Serializer / Deserializer
+        jackson           : '2.12.4',      // Json Serializer / Deserializer
         okhttp            : '4.9.1',       // HTTP Client
         slf4j             : '1.7.31',      // Logging 
         logback           : '1.2.3',       // Logging
