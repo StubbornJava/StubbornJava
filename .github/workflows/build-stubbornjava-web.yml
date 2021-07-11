@@ -58,10 +58,17 @@ jobs:
         path: ~/.gradle/caches
         key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
 
+    - name: Cache SonarCloud packages
+      uses: actions/cache@v1
+      with:
+        path: ~/.sonar/cache
+        key: ${{ runner.os }}-sonar
+        restore-keys: ${{ runner.os }}-sonar
+
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
     - name: Build with Gradle
-      run: ./gradlew build --no-daemon
+      run: ./gradlew build sonarqube --no-daemon
 
     # This should be switched to use ${{ github.actor }} and ${{ secrets.GITHUB_TOKEN }}
     - name: Login to GitHub Container Registry (ghcr.io)
