@@ -1,12 +1,6 @@
 // {{start:build}}
-buildscript {
-    repositories {
-        jcenter()
-    }
-    // buildscript dependencies can be used for build time plugins.
-    dependencies {
-        id "org.sonarqube" version "3.3"
-    }
+plugins {
+  id "org.sonarqube" version "3.3"
 }
 
 // Include a gradle script that has all of our dependencies split out.
