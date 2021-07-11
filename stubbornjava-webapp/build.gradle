@@ -1,5 +1,4 @@
 // {{start:dependencies}}
-apply plugin: 'com.github.johnrengelman.shadow'
 
 dependencies {
     // Project reference
@@ -13,12 +12,6 @@ dependencies {
     annotationProcessor libs.lombok
 
     testImplementation libs.junit
-}
-
-shadowJar {
-   archiveBaseName = 'stubbornjava-all'
-   classifier = null
-   archiveVersion = null
 }
 
 // {{end:dependencies}}
