@@ -42,6 +42,7 @@ dependencies {
     api libs.connectorj
     api libs.javaxAnnotation
     api libs.commonsCodec
+    api libs.kotlin
 
     compileOnly libs.lombok
     annotationProcessor libs.lombok
