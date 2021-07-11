@@ -70,10 +70,10 @@ jobs:
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
     - name: Build with Gradle
-      run: ./gradlew build sonarqube --no-daemon
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      run: ./gradlew build sonarqube --no-daemon --info
 
     # This should be switched to use ${{ github.actor }} and ${{ secrets.GITHUB_TOKEN }}
     - name: Login to GitHub Container Registry (ghcr.io)
