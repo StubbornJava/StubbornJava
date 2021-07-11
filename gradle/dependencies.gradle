@@ -30,6 +30,7 @@ ext {
         jbossLogging      : '3.4.2.Final',
         jbossThreads      : '3.4.0.Final',
         wildflyCommon     : '1.5.4.Final-format-001',
+        commonsCodec      : '1.15',
         junit             : '4.13.2',        // Unit Testing
     ]
     libs = [
@@ -81,6 +82,7 @@ ext {
         jbossLogging              : "org.jboss.logging:jboss-logging:$versions.jbossLogging",
         jbossThreads              : "org.jboss.threads:jboss-threads:$versions.jbossThreads",
         wildflyCommon             : "org.wildfly.common:wildfly-common:$versions.wildflyCommon",
+        commonsCodec              : "commons-codec:commons-codec:$versions.commonsCodec",
 
         junit                     : "junit:junit:$versions.junit",
     ]

@@ -41,6 +41,7 @@ dependencies {
     api libs.flyway
     api libs.connectorj
     api libs.javaxAnnotation
+    api libs.commonsCodec
 
     compileOnly libs.lombok
     annotationProcessor libs.lombok
