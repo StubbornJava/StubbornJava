@@ -47,8 +47,8 @@ public class FileContentUtils {
                                 int indentSpaces = matcher.group(1).length();
                                 StringBuilder sb = new StringBuilder();
                                 lines.stream().forEach(line -> {
-                                    line.replaceAll("\t", "    "); // replace tabs with 4 spaces
-                                    sb.append(line.substring(Math.min(line.length(), indentSpaces)) + "\n");
+                                    String replaced = line.replaceAll("\t", "    "); // replace tabs with 4 spaces
+                                    sb.append(line.substring(Math.min(replaced.length(), indentSpaces)) + "\n");
                                 });
                                 sections.put(sectionName, new FileContent.Section(startLineNum, endLineNum, sb.toString()));
                             }
