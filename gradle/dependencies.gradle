@@ -19,7 +19,7 @@ ext {
         connectorj        : '8.0.25',      // JDBC MYSQL driver
         jooq              : '3.15.0',      // jOOQ
         hashids           : '1.0.3',       // Id hashing
-        failsafe          : '1.1.0',       // retry and circuit breakers
+        failsafe          : '2.4.2',       // retry and circuit breakers
         jsoup             : '1.14.1',      // DOM parsing library
         lombok            : '1.18.20',     // Code gen
         sitemapgen4j      : '1.1.2',       // Sitemap generator for SEO
