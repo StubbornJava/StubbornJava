@@ -3,7 +3,7 @@ ext {
     versions = [
         jackson           : '2.12.4',      // Json Serializer / Deserializer
         okhttp            : '4.9.1',       // HTTP Client
-        slf4j             : '1.7.31',      // Logging 
+        slf4j             : '1.7.32',      // Logging 
         logback           : '1.2.5',       // Logging
         undertow          : '2.2.8.Final',// Webserver
         metrics           : '4.2.2',       // Metrics
