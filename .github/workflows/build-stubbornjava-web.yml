@@ -80,8 +80,8 @@ jobs:
       uses: docker/login-action@v1
       with:
         registry: ghcr.io
-        username: stubbornjava-ops
-        password: ${{ secrets.SJ_OPS_GH_ACTION_CONTAINER_REGISTRY }}
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Branch name
       if: github.repository == 'StubbornJava/StubbornJava'
