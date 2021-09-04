@@ -84,6 +84,7 @@ allprojects {
             property "sonar.projectKey", "StubbornJava_StubbornJava"
             property "sonar.organization", "stubbornjava"
             property "sonar.host.url", "https://sonarcloud.io"
+            property "sonar.exclusions", "**/src/generated/*.java"
         }
     }
     // Maven Publish End
