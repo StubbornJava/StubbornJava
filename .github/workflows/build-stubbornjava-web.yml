@@ -74,6 +74,13 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
       run: ./gradlew build sonarqube --no-daemon --info
+      
+    - name: Publish Unit Test Results
+      uses: EnricoMi/publish-unit-test-result-action@v1
+      if: always()
+      with:
+        files: build/test-results/test/**/*.xml
+          
 
     # This should be switched to use ${{ github.actor }} and ${{ secrets.GITHUB_TOKEN }}
     - name: Login to GitHub Container Registry (ghcr.io)
