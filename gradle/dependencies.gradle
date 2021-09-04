@@ -54,6 +54,7 @@ ext {
         slf4j                     : "org.slf4j:slf4j-api:$versions.slf4j",
         slf4jLog4j                : "org.slf4j:log4j-over-slf4j:$versions.slf4j",
         logback                   : "ch.qos.logback:logback-classic:$versions.logback",
+        logbackCore               : "ch.qos.logback:logback-core:$versions.logback",
         guava                     : "com.google.guava:guava:$versions.guava",
         typesafeConfig            : "com.typesafe:config:$versions.typesafeConfig",
         handlebars                : "com.github.jknack:handlebars:$versions.handlebars",
