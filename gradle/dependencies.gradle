@@ -20,7 +20,7 @@ ext {
         jooq              : '3.15.0',      // jOOQ
         hashids           : '1.0.3',       // Id hashing
         failsafe          : '1.1.0',       // retry and circuit breakers
-        jsoup             : '1.14.1',      // DOM parsing library
+        jsoup             : '1.14.2',      // DOM parsing library
         lombok            : '1.18.20',     // Code gen
         sitemapgen4j      : '1.1.2',       // Sitemap generator for SEO
         jbcrypt           : '0.4',         // BCrypt salted hashing library
