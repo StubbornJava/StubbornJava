@@ -8,6 +8,8 @@ https://www.stubbornjava.com/
 
 This is very much a work in progress and in the early stages. No code will be pushed to maven central or supported in any way currently. Feel free to clone and install locally. The website is built using all the methods described on the site and in the examples. There is no backing blog framework.
 
+Potentially moving to [GitLab](https://gitlab.com/stubbornjava/StubbornJava)
+
 ## Quick Example (full example [Simple REST server in Undertow](https://www.stubbornjava.com/posts/lightweight-embedded-java-rest-server-without-a-framework))
 
 ```java
