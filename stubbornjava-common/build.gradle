@@ -4,6 +4,8 @@ dependencies {
     api project(':stubbornjava-undertow')
     api libs.slf4j
     api libs.logback
+    api libs.logbackJson
+    api libs.logbackJackson
     api libs.jacksonCore
     api libs.jacksonDatabind
     api libs.jacksonDatabind

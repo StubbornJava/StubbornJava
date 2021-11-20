@@ -52,6 +52,8 @@ spec:
           env:
             - name: ENV
               value: "prod"
+            - name: LOG_APPENDER
+              value: "JSON"
             - name: github.clientId
               valueFrom:
                 secretKeyRef:
