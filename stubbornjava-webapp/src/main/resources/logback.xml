@@ -1,5 +1,8 @@
 <configuration> 
 
+  <property name="LOG_APPENDER" value="${LOG_APPENDER:-STDOUT}" />
+
+  <!-- This appender is primarily used for local development -->
   <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender"> 
     <!-- encoders are  by default assigned the type
          ch.qos.logback.classic.encoder.PatternLayoutEncoder -->
@@ -8,8 +11,19 @@
     </encoder>
   </appender>
 
+  <!-- The JSON appender is meant to be machine friendly for log parsing -->
+  <appender name="JSON" class="ch.qos.logback.core.ConsoleAppender">
+    <layout class="ch.qos.logback.contrib.json.classic.JsonLayout">
+        <jsonFormatter
+            class="ch.qos.logback.contrib.jackson.JacksonJsonFormatter">
+            <prettyPrint>true</prettyPrint>
+        </jsonFormatter>
+        <timestampFormat>yyyy-MM-dd' 'HH:mm:ss.SSS</timestampFormat>
+    </layout>
+  </appender>
+
   <root level="INFO">
-    <appender-ref ref="STDOUT" />
+    <appender-ref ref="${LOG_APPENDER}" />
   </root>
   
   <!-- 
