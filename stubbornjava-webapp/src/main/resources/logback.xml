@@ -14,9 +14,11 @@
   <!-- The JSON appender is meant to be machine friendly for log parsing -->
   <appender name="JSON" class="ch.qos.logback.core.ConsoleAppender">
     <layout class="ch.qos.logback.contrib.json.classic.JsonLayout">
+        <!-- This pushes all logs on a single line by default -->
+        <appendLineSeparator>true</appendLineSeparator>
         <jsonFormatter
             class="ch.qos.logback.contrib.jackson.JacksonJsonFormatter">
-            <prettyPrint>true</prettyPrint>
+            <prettyPrint>false</prettyPrint>
         </jsonFormatter>
         <timestampFormat>yyyy-MM-dd' 'HH:mm:ss.SSS</timestampFormat>
     </layout>
