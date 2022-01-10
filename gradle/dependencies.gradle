@@ -12,7 +12,7 @@ ext {
         typesafeConfig    : '1.4.1',       // Configuration
         handlebars        : '4.2.0',       // HTML templating
         htmlCompressor    : '1.5.2',       // HTML compression
-        hikaricp          : '4.0.3',       // JDBC connection pool
+        hikaricp          : '5.0.1',       // JDBC connection pool
         jool              : '0.9.14',      // Functional Utils
         hsqldb            : '2.6.0',       // In memory SQL db
         aws               : '1.12.62',     // AWS Java SDK
