@@ -6,7 +6,7 @@ ext {
         slf4j             : '1.7.31',      // Logging 
         logback           : '1.2.5',       // Logging
         logbackJson       : '0.1.5',
-        undertow          : '2.2.8.Final', // Webserver
+        undertow          : '2.2.15.Final', // Webserver
         metrics           : '4.2.2',       // Metrics
         guava             : '30.1.1-jre',  // Common / Helper libraries
         typesafeConfig    : '1.4.1',       // Configuration
